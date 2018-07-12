@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/SphereComponent.h"
 #include "ZombieCharacter.generated.h"
 
 UCLASS()
@@ -19,6 +20,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere)
+		USphereComponent * Head;
+
+	UPROPERTY(EditAnywhere)
+		USphereComponent * Body;
+
+	int Health;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -26,6 +35,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	
-	
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	FORCEINLINE class USphereComponent* GetHeadComp() const { return Head; }
+
+	FORCEINLINE class USphereComponent* GetBodyComp() const { return Body; }
+
 };
