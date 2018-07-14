@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "ZombieCharacter.generated.h"
 
 UCLASS()
@@ -21,11 +21,12 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
-		USphereComponent * Head;
+		UCapsuleComponent * Head;
 
 	UPROPERTY(EditAnywhere)
-		USphereComponent * Body;
+		UCapsuleComponent * Body;
 
+	UPROPERTY(EditAnywhere)
 	int Health;
 
 public:	
@@ -35,10 +36,17 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
+	UFUNCTION()
+	virtual void OnHeadshot(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	FORCEINLINE class USphereComponent* GetHeadComp() const { return Head; }
+	UFUNCTION()
+	virtual void OnBodyshot(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	FORCEINLINE class USphereComponent* GetBodyComp() const { return Body; }
+	FORCEINLINE class UCapsuleComponent* GetHeadComp() const { return Head; }
+
+	FORCEINLINE class UCapsuleComponent* GetBodyComp() const { return Body; }
 
 };
