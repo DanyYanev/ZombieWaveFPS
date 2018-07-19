@@ -2,8 +2,11 @@
 
 #include "ZombieCharacter.h"
 #include "ZombieSurvivalFPSProjectile.h"
+#include "ZombieSurvivalFPSGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/ActorComponent.h"
+#include "Engine/World.h"
 
 // Sets default values
 AZombieCharacter::AZombieCharacter()
@@ -21,6 +24,7 @@ AZombieCharacter::AZombieCharacter()
 
 
 	Health = 100;
+	Speed = 1;
 }
 
 // Called when the game starts or when spawned
@@ -37,6 +41,10 @@ void AZombieCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//SetActorLocation((GetActorForwardVector() * GetActorRotation().Vector().GetSafeNormal()) * 10);
+	FVector Dir = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() - GetActorLocation();
+	//LaunchCharacter(Dir.GetSafeNormal() * 100, true, true);
+	LaunchCharacter(FVector(0.f, 0.f, 100.f), true, true);
 }
 
 // Called to bind functionality to input
@@ -53,8 +61,18 @@ float AZombieCharacter::TakeDamage(float Damage, struct FDamageEvent const& Dama
 	UE_LOG(LogTemp, Warning, TEXT("Dealt: %d, Remaining: %d"), Damage, Health);
 
 	if (Health <= 0) {
+
+		AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
+
 		Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("Death"));
+
+		if (GameMode) {
+			AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
+			if (ZombieGameMode) {
+				ZombieGameMode->ZombieDeath();
+			}
+		}
 	}
 
 	return 0.0f;
@@ -65,29 +83,37 @@ void AZombieCharacter::OnHeadshot(UPrimitiveComponent * OverlappedComponent, AAc
 	AZombieSurvivalFPSProjectile* projectile = Cast<AZombieSurvivalFPSProjectile>(OtherActor);
 
 	if (projectile != nullptr) {
+
+		AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
+
+		if (GameMode) {
+			AZombieSurvivalFPSGameMode * ZombieGameMode =  Cast<AZombieSurvivalFPSGameMode>(GameMode);
+			if (ZombieGameMode) {
+				ZombieGameMode->UpdateCurrentScoreBy(20);
+			}
+		}
 		
 		UE_LOG(LogTemp, Warning, TEXT("Headshot attempting to deal: %d"), projectile->GetDamage() * 2);
 		UGameplayStatics::ApplyPointDamage(this, projectile->GetDamage() * 2, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
 
 		//Somehow calls TakeDamage of OtherActor
+		OtherActor->Destroy();
 	}
-
-	OtherActor->Destroy();
 }
 
 void AZombieCharacter::OnBodyshot(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	AZombieSurvivalFPSProjectile* projectile = Cast<AZombieSurvivalFPSProjectile>(OtherActor);
 
-	if (projectile != nullptr) {
+	if (projectile) {
 
 		UE_LOG(LogTemp, Warning, TEXT("Body shot attempting to deal: %d"), projectile->GetDamage() * 1);
 		UGameplayStatics::ApplyPointDamage(this, projectile->GetDamage() * 1, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
 		
 		//Somehow calls TakeDamage of OtherActor
+		OtherActor->Destroy();
 	}
-
-	OtherActor->Destroy();
+	
 }
 
 
