@@ -48,6 +48,9 @@ public:
 	UBehaviorTree * BehaviorTree;
 
 	UFUNCTION()
+	void DealDamage(AActor * Target);
+
+	UFUNCTION()
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	
 	UFUNCTION()

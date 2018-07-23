@@ -25,8 +25,11 @@ EBTNodeResult::Type UBTTask_AttackTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	if (Target) {
 
-		UGameplayStatics::ApplyDamage(Target, Zombie->GetAttackDamage(), ZombieAI, Zombie, nullptr);
+		ZombieAI->bIsAttacking = true;
 
+		//UGameplayStatics::ApplyDamage(Target, Zombie->GetAttackDamage(), ZombieAI, Zombie, nullptr);
+
+		//ZombieAI->bIsAttacking = false;
 		return EBTNodeResult::Succeeded;
 	}
 

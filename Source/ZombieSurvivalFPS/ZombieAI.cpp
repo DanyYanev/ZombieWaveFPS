@@ -28,6 +28,18 @@ void AZombieAI::BeginPlay()
 	}
 }
 
+void AZombieAI::AttackTarget()
+{
+	AZombieCharacter * Zombie = Cast<AZombieCharacter>(GetPawn());
+
+	if (Zombie) {
+		AActor * Target = Cast<AActor>(BehaviorTreeComp->GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(TargetKeyId));
+		if (Target) {
+			Zombie->DealDamage(Target);
+		}
+	}
+}
+
 void AZombieAI::SetNewTarget()
 {
 	BehaviorTreeComp->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Object>(TargetKeyId, FindClosestTarget());

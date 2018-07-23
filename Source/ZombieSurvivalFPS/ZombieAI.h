@@ -34,6 +34,18 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	uint8 TargetKeyId;
 
+	UPROPERTY(EditAnywhere)
+	bool bIsAttacking;
+
+	UFUNCTION(BlueprintCallable)
+	bool GetIsAttacking() const { return bIsAttacking; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetIsAttacking(bool Value) { bIsAttacking = Value; }
+
+	UFUNCTION(BlueprintCallable)
+	void AttackTarget();	
+
 	TArray<AActor *> const * Targets;
 
 	void SetNewTarget();

@@ -57,6 +57,11 @@ void AZombieCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 }
 
+void AZombieCharacter::DealDamage(AActor * Target)
+{
+	UGameplayStatics::ApplyDamage(Target, GetAttackDamage(), GetController(), this, nullptr);
+}
+
 float AZombieCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Health -= Damage;
