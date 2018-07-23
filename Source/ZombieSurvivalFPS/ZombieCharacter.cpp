@@ -3,6 +3,7 @@
 #include "ZombieCharacter.h"
 #include "ZombieSurvivalFPSProjectile.h"
 #include "ZombieSurvivalFPSGameMode.h"
+#include "ZombieBarrier.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ActorComponent.h"
@@ -25,6 +26,7 @@ AZombieCharacter::AZombieCharacter()
 
 	Health = 100;
 	Speed = 1;
+	AttackDamage = 100;
 }
 
 // Called when the game starts or when spawned
@@ -34,6 +36,7 @@ void AZombieCharacter::BeginPlay()
 
 	Head->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnHeadshot);
 	Body->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnBodyshot);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnHeadshot);
 }
 
 // Called every frame
@@ -42,9 +45,9 @@ void AZombieCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//SetActorLocation((GetActorForwardVector() * GetActorRotation().Vector().GetSafeNormal()) * 10);
-	FVector Dir = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() - GetActorLocation();
+	//FVector Dir = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() - GetActorLocation();
 	//LaunchCharacter(Dir.GetSafeNormal() * 100, true, true);
-	LaunchCharacter(FVector(0.f, 0.f, 100.f), true, true);
+	//LaunchCharacter(FVector(0.f, 0.f, 100.f), true, true);
 }
 
 // Called to bind functionality to input
@@ -115,5 +118,3 @@ void AZombieCharacter::OnBodyshot(UPrimitiveComponent * OverlappedComponent, AAc
 	}
 	
 }
-
-

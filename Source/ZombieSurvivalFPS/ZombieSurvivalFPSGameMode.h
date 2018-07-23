@@ -29,6 +29,10 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<FTransform> ZombieSpawnWest;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<AActor*> Targets;
+
 public:
 
 	/** The class of Zombie to spawn. */
@@ -42,6 +46,9 @@ public:
 	
 	UFUNCTION()
 	void ZombieDeath();
+
+	UFUNCTION()
+	void TargetDestroyed(AActor * Barricade);
 	
 	UFUNCTION()
 	void NextWave();
@@ -50,5 +57,7 @@ public:
 	virtual void BeginPlay() override;
 
 	FORCEINLINE int GetScore() const { return Score; }
+
+	FORCEINLINE const TArray<AActor*> * GetTargets() const { return &Targets; }
 };
 

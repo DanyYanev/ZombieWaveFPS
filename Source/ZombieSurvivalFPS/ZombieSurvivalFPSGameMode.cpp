@@ -3,6 +3,7 @@
 #include "ZombieSurvivalFPSGameMode.h"
 #include "ZombieSurvivalFPSHUD.h"
 #include "ZombieSurvivalFPSCharacter.h"
+#include "ZombieBarrier.h"
 #include "ZombieCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -32,14 +33,17 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 {
 	Super::InitGameState();
 
-	TArray<AActor*> ActorResult;
-	UGameplayStatics::GetAllActorsOfClass(this, APlayerStart::StaticClass(), ActorResult);
+	TArray<AActor*> SpawnResult;
+
+	UGameplayStatics::GetAllActorsOfClass(this, APlayerStart::StaticClass(), SpawnResult);
+	UGameplayStatics::GetAllActorsOfClass(this, AZombieBarrier::StaticClass(), Targets);
+
 
 	TArray<APlayerStart *> Result;
 
-	for (int i = 0; i < ActorResult.Num(); i++) {
+	for (int i = 0; i < SpawnResult.Num(); i++) {
 
-		APlayerStart * PlayerStart = Cast<APlayerStart>(ActorResult[i]);
+		APlayerStart * PlayerStart = Cast<APlayerStart>(SpawnResult[i]);
 
 		if (PlayerStart) {
 			Result.Add(PlayerStart);
@@ -65,7 +69,7 @@ void AZombieSurvivalFPSGameMode::NextWave()
 	UE_LOG(LogTemp, Warning, TEXT("Wave now: %d"), Wave);
 
 	if (Wave <= 5) {
-		InitialZombies = Wave * 5;
+		InitialZombies = Wave * 3;
 
 		TArray<FTransform> SpawnArray = ZombieSpawnEast;
 
@@ -102,6 +106,15 @@ void AZombieSurvivalFPSGameMode::ZombieDeath()
 	AliveZombies--;
 	if (AliveZombies <= 0) {
 		NextWave();
+	}
+}
+
+void AZombieSurvivalFPSGameMode::TargetDestroyed(AActor * Target)
+{
+	Targets.Remove(Target);
+
+	if (Target->ActorHasTag(TEXT("Final"))) { //Endgame
+		UKismetSystemLibrary::QuitGame(this, UGameplayStatics::GetPlayerController(this, 0), EQuitPreference::Type::Quit);
 	}
 }
 
