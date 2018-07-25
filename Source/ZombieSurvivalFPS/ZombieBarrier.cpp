@@ -1,11 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ZombieBarrier.h"
+#include <algorithm>
 #include "GameFramework/GameModeBase.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SceneComponent.h"
 #include "ZombieSurvivalFPSGameMode.h"
+#include "Runtime/Engine/Classes/Engine/TargetPoint.h"
+#include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 
+//#define DEBUG_
 
 // Sets default values
 AZombieBarrier::AZombieBarrier()
@@ -18,6 +23,61 @@ AZombieBarrier::AZombieBarrier()
 	RootComponent = Mesh;
 }
 
+
+void AZombieBarrier::BeginPlay()
+{
+	Super::BeginPlay();
+
+	FVector Scale3D = GetActorScale3D();
+	float length;
+	//Offset of end points before end of actor
+	float offset = 40;
+	//Which way the barrier is scaled
+	bool bScaleX = Scale3D.X > Scale3D.Y;
+
+	
+	FVector Origin;
+	FVector BoxExtent;
+	GetActorBounds(true, Origin, BoxExtent);
+
+	//GetActor Length to calculate number of targets needed
+	if (bScaleX) {
+		length = (FVector(Origin.X + BoxExtent.X, Origin.Y, Origin.Z) - FVector(Origin.X - BoxExtent.X, Origin.Y, Origin.Z)).Size();
+	}
+	else {
+		length = (FVector(Origin.X, Origin.Y + BoxExtent.Y, Origin.Z) - FVector(Origin.X, Origin.Y - BoxExtent.Y, Origin.Z)).Size();
+	}
+
+	length -= 2 * offset;
+	TargetNumber = length / 150;
+
+#ifdef DEBUG_
+	UE_LOG(LogTemp, Warning, TEXT("Target Numbers: %d, Every %f, TotalLength %f"), TargetNumber, length / (float)TargetNumber, length);
+#endif
+
+	for (int i = 0; i < TargetNumber + 1; i++) { //Add last point at the end of actor
+		if (bScaleX) {
+			TargetPoints.Add(FVector(Origin.X - BoxExtent.X + (i * (length / (float)TargetNumber)) + offset, Origin.Y, Origin.Z));
+		}
+		else {
+			TargetPoints.Add(FVector(Origin.X, Origin.Y - BoxExtent.Y + (i * (length / (float)TargetNumber)) + offset, Origin.Z));
+		}
+	}
+
+#ifdef DEBUG_
+	for (int i = 0; i < TargetPoints.Num(); i++) {
+		DrawDebugPoint(
+			GetWorld(),
+			FVector(TargetPoints[i].X, TargetPoints[i].Y, TargetPoints[i].Z + 100.f),
+			30,
+			FColor::Red,
+			false,
+			20
+		);
+	}
+#endif
+
+}
 
 float AZombieBarrier::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {

@@ -28,14 +28,20 @@ class ZOMBIESURVIVALFPS_API AZombieAI : public AAIController
 	UFUNCTION()
 	AActor * FindClosestTarget();
 
+	UFUNCTION()
+	FVector FindClosestTargetPoint();
+
 public:
 	AZombieAI();
 
 	UPROPERTY(VisibleAnywhere)
 	uint8 TargetKeyId;
 
+	UPROPERTY(VisibleAnywhere)
+	uint8 TargetPointKeyId;
+
 	UPROPERTY(EditAnywhere)
-	bool bIsAttacking;
+	bool bIsAttacking = false;
 
 	UFUNCTION(BlueprintCallable)
 	bool GetIsAttacking() const { return bIsAttacking; }
@@ -44,7 +50,7 @@ public:
 	void SetIsAttacking(bool Value) { bIsAttacking = Value; }
 
 	UFUNCTION(BlueprintCallable)
-	void AttackTarget();	
+	void AttackTarget();
 
 	TArray<AActor *> const * Targets;
 

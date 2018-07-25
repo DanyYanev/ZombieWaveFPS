@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/SceneComponent.h"
+#include "Runtime/Engine/Classes/Engine/TargetPoint.h"
 #include "ZombieBarrier.generated.h"
 
 UCLASS()
@@ -19,11 +21,17 @@ public:
 	int Health;
 
 	UPROPERTY(EditAnywhere)
+	int TargetNumber = 0;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<FVector> TargetPoints;
+
+	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent * Mesh;
 
 protected:
 	// Called when the game starts or when spawned
-	//virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 
 public:	
 	// Called every frame

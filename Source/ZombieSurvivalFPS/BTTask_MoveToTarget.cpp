@@ -7,6 +7,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 #include "ZombieCharacter.h"
 #include "ZombieSurvivalFPSCharacter.h"
+#include "DrawDebugHelpers.h"
 #include "ZombieAI.h"
 
 
@@ -14,19 +15,31 @@ EBTNodeResult::Type UBTTask_MoveToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	AZombieAI * ZombieAI = Cast<AZombieAI>(OwnerComp.GetAIOwner());
 
-	AActor * Target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(ZombieAI->TargetKeyId));
+	FVector TargetPoint = OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Vector>(ZombieAI->TargetPointKeyId);
 
-	if (Target) {
-		ZombieAI->MoveToActor(Target, 5., true, true, true, 0, true);
-		if (ZombieAI->GetPawn()->GetActorLocation().Equals(Target->GetActorLocation(), 100.f)) {
-			UE_LOG(LogTemp, Warning, TEXT("ACtorReached"));
-			return EBTNodeResult::Succeeded;
-		}
-		else {
-			return EBTNodeResult::Failed;
-		}
-		
+	//TargetPoint = FVector(-476.945374, 441.319275, 268.373718);
+
+	ZombieAI->MoveToLocation(TargetPoint, 5.f, true, true, true, true);
+
+	EPathFollowingStatus::Type status = ZombieAI->GetPathFollowingComponent()->GetStatus();
+
+	DrawDebugPoint(
+		GetWorld(),
+		TargetPoint,
+		50,
+		FColor::Blue,
+		false,
+		20
+	);
+
+	if (ZombieAI->GetPawn()->GetActorLocation().Equals(TargetPoint, 100.f)) {
+		UE_LOG(LogTemp, Warning, TEXT("ACtorReached"));
+		return EBTNodeResult::Succeeded;
 	}
+	else {
+		return EBTNodeResult::Failed;
+	}
+		
 
 	return EBTNodeResult::Failed;
 }

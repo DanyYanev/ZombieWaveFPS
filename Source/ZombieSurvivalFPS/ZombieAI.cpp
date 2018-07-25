@@ -2,7 +2,9 @@
 
 #include "ZombieAI.h"
 #include "ZombieCharacter.h"
+#include "ZombieBarrier.h"
 #include "ZombieSurvivalFPSGameMode.h"
+#include "DrawDebugHelpers.h"
 #include "Math/NumericLimits.h"
 
 AZombieAI::AZombieAI() {
@@ -42,7 +44,25 @@ void AZombieAI::AttackTarget()
 
 void AZombieAI::SetNewTarget()
 {
-	BehaviorTreeComp->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Object>(TargetKeyId, FindClosestTarget());
+	AActor * Target = FindClosestTarget();
+	BehaviorTreeComp->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Object>(TargetKeyId, Target);
+
+	AZombieBarrier * Barrier = Cast<AZombieBarrier>(Target);
+
+	if (Barrier) {
+		FVector TargetPoint = FindClosestTargetPoint();
+		BehaviorTreeComp->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Vector>(TargetPointKeyId, TargetPoint);
+	/*
+		DrawDebugPoint(
+			GetWorld(),
+			TargetPoint,
+			50,
+			FColor::Red,
+			false,
+			20
+		);
+	*/
+	}
 }
 
 AActor * AZombieAI::FindClosestTarget()
@@ -68,6 +88,32 @@ AActor * AZombieAI::FindClosestTarget()
 	return NewTarget;
 }
 
+FVector AZombieAI::FindClosestTargetPoint()
+{
+	FVector NewTarget;
+
+	AZombieBarrier * Barrier = Cast<AZombieBarrier>(BehaviorTreeComp->GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(TargetKeyId));
+
+	if (Barrier) {
+		float MinDistance = TNumericLimits< float >::Max();
+		APawn * Character = GetPawn();
+		TArray<FVector> * const TargetPoints = &Barrier->TargetPoints;
+		if (Character) {
+			for (int i = 0; i < TargetPoints->Num(); i++) {
+				FVector Distance = Character->GetActorLocation() - (*TargetPoints)[i];
+
+				if (Distance.Size() < MinDistance) {
+					NewTarget = (*TargetPoints)[i];
+					MinDistance = Distance.Size();
+				}
+			}
+		}
+
+	}
+
+	return NewTarget;
+}
+
 void AZombieAI::Possess(APawn * InPawn)
 {
 	Super::Possess(InPawn);
@@ -78,6 +124,7 @@ void AZombieAI::Possess(APawn * InPawn)
 		BlackboardComp->InitializeBlackboard(*Zombie->BehaviorTree->BlackboardAsset);
 
 		TargetKeyId = BlackboardComp->GetKeyID("Target");
+		TargetPointKeyId = BlackboardComp->GetKeyID("TargetPoint");
 
 		//SetNewTarget();
 
