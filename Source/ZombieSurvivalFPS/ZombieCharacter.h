@@ -37,6 +37,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	int AttackDamage;
 
+	UPROPERTY(EditAnywhere)
+	bool bIsDying = false;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -46,6 +49,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	UBehaviorTree * BehaviorTree;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsDying() const { return bIsDying; }
 
 	UFUNCTION()
 	void DealDamage(AActor * Target);

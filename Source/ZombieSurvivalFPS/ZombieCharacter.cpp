@@ -36,7 +36,7 @@ void AZombieCharacter::BeginPlay()
 
 	Head->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnHeadshot);
 	Body->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnBodyshot);
-	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnHeadshot);
+	//GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnHeadshot);
 }
 
 // Called every frame
@@ -64,6 +64,10 @@ void AZombieCharacter::DealDamage(AActor * Target)
 
 float AZombieCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	//Already dying dont try to render its killing twice
+	if (bIsDying)
+		return 0.0f;
+	
 	Health -= Damage;
 
 	UE_LOG(LogTemp, Warning, TEXT("Dealt: %d, Remaining: %d"), Damage, Health);
@@ -72,7 +76,8 @@ float AZombieCharacter::TakeDamage(float Damage, struct FDamageEvent const& Dama
 
 		AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
 
-		Destroy();
+		//Destroy();
+		bIsDying = true;
 		UE_LOG(LogTemp, Warning, TEXT("Death"));
 
 		if (GameMode) {

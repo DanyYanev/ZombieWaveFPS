@@ -22,7 +22,7 @@ EBTNodeResult::Type UBTTask_MoveToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 	ZombieAI->MoveToLocation(TargetPoint, 5.f, true, true, true, true);
 
 	EPathFollowingStatus::Type status = ZombieAI->GetPathFollowingComponent()->GetStatus();
-
+	/*
 	DrawDebugPoint(
 		GetWorld(),
 		TargetPoint,
@@ -31,9 +31,9 @@ EBTNodeResult::Type UBTTask_MoveToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 		false,
 		20
 	);
-
+	*/
 	if (ZombieAI->GetPawn()->GetActorLocation().Equals(TargetPoint, 100.f)) {
-		UE_LOG(LogTemp, Warning, TEXT("ACtorReached"));
+		//UE_LOG(LogTemp, Warning, TEXT("ACtorReached"));
 		return EBTNodeResult::Succeeded;
 	}
 	else {
