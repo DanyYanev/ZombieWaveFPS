@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "ZombieCharacter.h"
+#include "Scoreboard.h"
 #include "ZombieSurvivalFPSGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -13,10 +14,16 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere)
-	int Score;
+	int Countdown = TimeBetweenWaves;
 
 	UPROPERTY(VisibleAnywhere)
 	int InitialZombies;
+
+	UPROPERTY(VisibleAnywhere)
+	int Score;
+
+	UPROPERTY(VisibleAnywhere)
+	int Money;
 
 	UPROPERTY(VisibleAnywhere)
 	int AliveZombies;
@@ -33,6 +40,19 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	UPROPERTY(VisibleAnywhere)
 	TArray<AActor*> Targets;
 
+	UPROPERTY(VisibleAnywhere)
+	AScoreboard * Scoreboard;
+
+	UPROPERTY(VisibleAnywhere)
+	FTimerHandle CountdownTimerHandle;
+
+	UFUNCTION()
+	void TickTimer();
+
+	UFUNCTION()
+	void SpawnZombies();
+
+
 public:
 
 	/** The class of Zombie to spawn. */
@@ -41,8 +61,15 @@ public:
 
 	AZombieSurvivalFPSGameMode();
 
+	//In seconds
+	UPROPERTY(EditAnywhere)
+	int TimeBetweenWaves = 20;
+
 	UFUNCTION()
 	void UpdateCurrentScoreBy(int Value);
+
+	UFUNCTION()
+	void UpdateCurrentMoneyBy(int Value);
 	
 	UFUNCTION()
 	void ZombieDeath();
@@ -52,6 +79,9 @@ public:
 	
 	UFUNCTION()
 	void NextWave();
+
+	UFUNCTION()
+	void AttachScoreboard(AScoreboard * ScoreboardInstance);
 
 	UFUNCTION()
 	virtual void BeginPlay() override;

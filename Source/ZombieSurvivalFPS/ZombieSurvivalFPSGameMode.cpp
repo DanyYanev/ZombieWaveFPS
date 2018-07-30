@@ -23,6 +23,7 @@ AZombieSurvivalFPSGameMode::AZombieSurvivalFPSGameMode()
 
 	Score = 0;
 	Wave = 0;
+	Countdown = TimeBetweenWaves;
 
 	AliveZombies = 0;
 	InitialZombies = 0;
@@ -66,42 +67,81 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 void AZombieSurvivalFPSGameMode::NextWave()
 {
 	Wave++;
-	UE_LOG(LogTemp, Warning, TEXT("Wave now: %d"), Wave);
+
+	if (Scoreboard) {
+		Scoreboard->UpdateWave(Wave);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Scoreboard not found!"));
+	}
+
 
 	if (Wave <= 5) {
-		InitialZombies = Wave * 3;
-
-		TArray<FTransform> SpawnArray = ZombieSpawnEast;
-
-		if (Wave > 2) {
-			SpawnArray += ZombieSpawnEast += ZombieSpawnWest;
-		} else if (Wave % 2 == 0) {
-			SpawnArray = ZombieSpawnWest;
-		}
-
-		for (int i = 0; AliveZombies < InitialZombies && i < SpawnArray.Num(); i++) {
-			FTransform SpawnTransform = SpawnArray[i];
-			//UE_LOG(LogTemp, Error, TEXT("Zombie Spawn Location: %s"), *SpawnTransform.GetLocation().ToString());
-			UWorld* World = GetWorld();
-			AActor* Zombie = World->SpawnActor<AActor>(ZombieClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator());
-			if (IsValid(Zombie)) {
-				AliveZombies++;
-			}
-			else {
-				UE_LOG(LogTemp, Error, TEXT("Zombie Spawn Failed"));
-			}
-		}
+		GetWorld()->GetTimerManager().SetTimer(CountdownTimerHandle, this, &AZombieSurvivalFPSGameMode::TickTimer, 1, true);
 	}
 	else {
 		UKismetSystemLibrary::QuitGame(this, UGameplayStatics::GetPlayerController(this, 0), EQuitPreference::Type::Quit);
 	}
 }
 
+void AZombieSurvivalFPSGameMode::SpawnZombies()
+{
+	InitialZombies = Wave * 3;
+
+	TArray<FTransform> SpawnArray = ZombieSpawnEast;
+
+	if (Wave > 2) {
+		SpawnArray += ZombieSpawnEast += ZombieSpawnWest;
+	}
+	else if (Wave % 2 == 0) {
+		SpawnArray = ZombieSpawnWest;
+	}
+
+	for (int i = 0; AliveZombies < InitialZombies && i < SpawnArray.Num(); i++) {
+		FTransform SpawnTransform = SpawnArray[i];
+		//UE_LOG(LogTemp, Error, TEXT("Zombie Spawn Location: %s"), *SpawnTransform.GetLocation().ToString());
+		UWorld* World = GetWorld();
+		AActor* Zombie = World->SpawnActor<AActor>(ZombieClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator());
+		if (IsValid(Zombie)) {
+			AliveZombies++;
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Zombie Spawn Failed"));
+		}
+	}
+}
+
+void AZombieSurvivalFPSGameMode::TickTimer()
+{
+	if (Countdown <= 0) {
+		SpawnZombies();
+		GetWorld()->GetTimerManager().ClearTimer(CountdownTimerHandle);
+		Countdown = TimeBetweenWaves;
+		Scoreboard->ClearCountdown();
+	}
+	else {
+		Countdown--;
+		Scoreboard->UpdateCountdown(Countdown);
+	}
+}
+
+void AZombieSurvivalFPSGameMode::AttachScoreboard(AScoreboard * ScoreboardInstance)
+{
+	if (IsValid(ScoreboardInstance)) {
+		Scoreboard = ScoreboardInstance;
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Unable to attach scoreboard - Pointer invalid"));
+	}
+		
+}
+
 void AZombieSurvivalFPSGameMode::ZombieDeath()
 {
-	UE_LOG(LogTemp, Error, TEXT("Zombie death counted"));
+	//UE_LOG(LogTemp, Error, TEXT("Zombie death counted"));
 
 	UpdateCurrentScoreBy(100);
+	UpdateCurrentMoneyBy(100);
 
 	AliveZombies--;
 	if (AliveZombies <= 0) {
@@ -121,5 +161,23 @@ void AZombieSurvivalFPSGameMode::TargetDestroyed(AActor * Target)
 void AZombieSurvivalFPSGameMode::UpdateCurrentScoreBy(int Value) {
 	Score += Value;
 
-	UE_LOG(LogTemp, Warning, TEXT("Score: %d"), Score);
+	if (IsValid(Scoreboard)) {
+		Scoreboard->UpdateScore(Score);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Scoreboard not found!"));
+	}
 }
+
+void AZombieSurvivalFPSGameMode::UpdateCurrentMoneyBy(int Value)
+{
+	Money += Value;
+
+	if (IsValid(Scoreboard)) {
+		Scoreboard->UpdateMoney(Score);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Scoreboard not found!"));
+	}
+}
+
