@@ -117,11 +117,22 @@ void AZombieSurvivalFPSGameMode::TickTimer()
 		SpawnZombies();
 		GetWorld()->GetTimerManager().ClearTimer(CountdownTimerHandle);
 		Countdown = TimeBetweenWaves;
-		Scoreboard->ClearCountdown();
+		if (Scoreboard) {
+			Scoreboard->ClearCountdown();
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Scoreboard not found."));
+		}
 	}
 	else {
 		Countdown--;
-		Scoreboard->UpdateCountdown(Countdown);
+		if (Scoreboard) {
+			Scoreboard->UpdateCountdown(Countdown);
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Scoreboard not found."));
+		}
+		
 	}
 }
 

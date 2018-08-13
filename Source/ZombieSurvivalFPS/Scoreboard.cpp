@@ -2,6 +2,7 @@
 
 #include "Scoreboard.h"
 #include "Engine/World.h"
+#include "Components/CapsuleComponent.h"
 #include "ZombieSurvivalFPSGameMode.h"
 
 
@@ -11,23 +12,24 @@ AScoreboard::AScoreboard()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	Score = CreateDefaultSubobject<UTextRenderComponent>("Score");
-	Money = CreateDefaultSubobject<UTextRenderComponent>("Money");
-	ScoreText = CreateDefaultSubobject<UTextRenderComponent>("ScoreText");
-	MoneyText = CreateDefaultSubobject<UTextRenderComponent>("MoneyText");
-	Wave = CreateDefaultSubobject<UTextRenderComponent>("Wave");
-	Countdown = CreateDefaultSubobject<UTextRenderComponent>("Countdown");
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	
+
+	Score = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Score"));
+	Money = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Money"));
+	ScoreText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("ScoreText"));
+	MoneyText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("MoneyText"));
+	Wave = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Wave"));
+	Countdown = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Countdown"));
 
 	SetRootComponent(Mesh);
-
+	
 	Score->SetupAttachment(Mesh);
 	Money->SetupAttachment(Mesh);
 	ScoreText->SetupAttachment(Mesh);
 	MoneyText->SetupAttachment(Mesh);
 	Wave->SetupAttachment(Mesh);
 	Countdown->SetupAttachment(Mesh);
-
 }
 
 // Called when the game starts or when spawned
