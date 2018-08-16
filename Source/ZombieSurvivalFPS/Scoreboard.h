@@ -7,6 +7,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "InteractableComponent.h"
 #include "Scoreboard.generated.h"
 
 UCLASS()
@@ -23,11 +24,19 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+
+	SignatureOnHoverBegin OnHoverBeginDelegate;
+	SignatureOnHoverEnd OnHoverEndDelegate;
+	SignatureOnUse OnUseDelegate;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleDefaultsOnly)
 	UStaticMeshComponent * Mesh;
+
+	UPROPERTY(EditAnywhere)
+	UInteractableComponent * InteractableComponent;
 
 	UPROPERTY(EditAnywhere)
 	UTextRenderComponent * ScoreText;
@@ -62,4 +71,13 @@ public:
 	UFUNCTION()
 	void ClearCountdown();
 	
+	UFUNCTION()
+	void HoverBegin();
+
+	UFUNCTION()
+	void HoverEnd();
+
+	UFUNCTION()
+	void Use();
+
 };

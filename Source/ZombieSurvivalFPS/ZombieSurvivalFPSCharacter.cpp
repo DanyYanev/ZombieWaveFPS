@@ -87,6 +87,11 @@ AZombieSurvivalFPSCharacter::AZombieSurvivalFPSCharacter()
 	//bUsingMotionControllers = true;
 }
 
+void AZombieSurvivalFPSCharacter::Overlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	UE_LOG(LogTemp, Error, TEXT("DING"));
+}
+
 void AZombieSurvivalFPSCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -106,6 +111,8 @@ void AZombieSurvivalFPSCharacter::BeginPlay()
 		VR_Gun->SetHiddenInGame(true, true);
 		Mesh1P->SetHiddenInGame(false, true);
 	}
+
+	UseHand->OnComponentBeginOverlap.AddDynamic(this, &AZombieSurvivalFPSCharacter::Overlap);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -63,7 +63,7 @@ public:
 
 	//In seconds
 	UPROPERTY(EditAnywhere)
-	int TimeBetweenWaves = 20;
+	int TimeBetweenWaves;
 
 	UFUNCTION()
 	void UpdateCurrentScoreBy(int Value);

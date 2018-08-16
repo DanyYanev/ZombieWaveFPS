@@ -14,7 +14,7 @@ AScoreboard::AScoreboard()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	
-
+	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
 	Score = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Score"));
 	Money = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Money"));
 	ScoreText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("ScoreText"));
@@ -24,6 +24,7 @@ AScoreboard::AScoreboard()
 
 	SetRootComponent(Mesh);
 	
+	InteractableComponent->SetupAttachment(Mesh);
 	Score->SetupAttachment(Mesh);
 	Money->SetupAttachment(Mesh);
 	ScoreText->SetupAttachment(Mesh);
@@ -37,12 +38,23 @@ void AScoreboard::BeginPlay()
 {
 	Super::BeginPlay();
 
+	OnHoverBeginDelegate.BindUFunction(this, TEXT("HoverBegin"));
+	OnHoverEndDelegate.BindUFunction(this, TEXT("HoverEnd"));
+	OnUseDelegate.BindUFunction(this, TEXT("Use"));
+
+	if (InteractableComponent) {
+		InteractableComponent->InitializeDelegates(&OnHoverBeginDelegate, &OnHoverEndDelegate, &OnUseDelegate);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Interactable Component is NULL"));
+	}
+
 	AZombieSurvivalFPSGameMode * GameMode = Cast<AZombieSurvivalFPSGameMode>(GetWorld()->GetAuthGameMode());
 
 	if (GameMode) {
 		GameMode->AttachScoreboard(this);
-		Wave->SetText("");
-		Countdown->SetText("");
+		Wave->SetText(FText().FromString(FString("")));
+		Countdown->SetText(FText().FromString(FString("")));
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
@@ -54,31 +66,48 @@ void AScoreboard::BeginPlay()
 void AScoreboard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AScoreboard::UpdateScore(int Value)
 {
-	Score->SetText(FString::FromInt(Value));
+	Score->SetText(FText().FromString(FString::FromInt(Value)));
 }
 
 void AScoreboard::UpdateMoney(int Value)
 {
-	Money->SetText(FString::FromInt(Value) + FString("$"));
+	Money->SetText(FText().FromString(FString::FromInt(Value) + FString("$")));
 }
 
 void AScoreboard::UpdateWave(int Value)
 {
-	Wave->SetText(FString("Wave ") + FString::FromInt(Value));
+	Wave->SetText(FText().FromString(FString("Wave ") + FString::FromInt(Value)));
 }
 
 void AScoreboard::UpdateCountdown(int Value)
 {
-	Countdown->SetText(FString("in ") + FString::FromInt(Value));
+	Countdown->SetText(FText().FromString(FString("in ") + FString::FromInt(Value)));
 }
 
 void AScoreboard::ClearCountdown()
 {
-	Countdown->SetText("");
+	Countdown->SetText(FText().FromString(FString("")));
+}
+
+void AScoreboard::HoverBegin()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Hover Begin"));
+	Mesh->SetRenderCustomDepth(true);
+}
+
+void AScoreboard::HoverEnd()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Hover End"));
+	Mesh->SetRenderCustomDepth(false);
+}
+
+
+void AScoreboard::Use()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Use"));
 }
 

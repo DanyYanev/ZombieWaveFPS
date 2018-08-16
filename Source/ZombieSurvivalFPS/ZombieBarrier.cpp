@@ -12,15 +12,31 @@
 
 //#define DEBUG_
 
+void AZombieBarrier::UpdateHealthText()
+{
+	if (HealthText) {
+		HealthText->SetText(FText().FromString(FString::FromInt(CurrentHealth) + FString("/") + FString::FromInt(Health)));
+	}
+	else
+		UE_LOG(LogTemp, Warning, TEXT("HealthText not initialized!"));
+}
+
 // Sets default values
 AZombieBarrier::AZombieBarrier()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	
-	RootComponent = Mesh;
+	HealthText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("HealthText"));
+	TextRotation = CreateDefaultSubobject<UTextRotationComponent>(TEXT("TextRotation"));
+
+	SetRootComponent(Mesh);
+
+	HealthText->SetupAttachment(Mesh);
+	TextRotation->AddToRoot();
+
+	TextRotation->AddTextComponent(HealthText);
 }
 
 
@@ -77,16 +93,21 @@ void AZombieBarrier::BeginPlay()
 	}
 #endif
 
+	CurrentHealth = Health;
+
+	UpdateHealthText();
 }
 
 float AZombieBarrier::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
 
-	Health -= DamageAmount;
+	CurrentHealth -= DamageAmount;
+
+	UpdateHealthText();
 
 	UE_LOG(LogTemp, Warning, TEXT("Dealt to barricade: %d, Remaining: %d"), DamageAmount, Health);
 
-	if (Health <= 0) {
+	if (CurrentHealth <= 0) {
 
 		AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
 
@@ -97,6 +118,7 @@ float AZombieBarrier::TakeDamage(float DamageAmount, FDamageEvent const & Damage
 			}
 		}
 
+		TextRotation->RemoveFromRoot();
 		Destroy();
 		UE_LOG(LogTemp, Error, TEXT("Barricade Destroyed"));
 	}

@@ -5,14 +5,18 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/SceneComponent.h"
+#include "Components/TextRenderComponent.h"
 #include "Runtime/Engine/Classes/Engine/TargetPoint.h"
+#include "TextRotationComponent.h"
 #include "ZombieBarrier.generated.h"
 
 UCLASS()
 class ZOMBIESURVIVALFPS_API AZombieBarrier : public AActor
 {
 	GENERATED_BODY()
-	
+
+	void UpdateHealthText();
+
 public:	
 	// Sets default values for this actor's properties
 	AZombieBarrier();
@@ -20,7 +24,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	int Health;
 
-	UPROPERTY(EditAnywhere)
+	int CurrentHealth;
+
+	UPROPERTY(VisibleAnywhere)
 	int TargetNumber = 0;
 
 	UPROPERTY(VisibleAnywhere)
@@ -28,6 +34,13 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent * Mesh;
+
+	UPROPERTY(EditAnywhere)
+	UTextRenderComponent * HealthText;
+
+	UPROPERTY(EditAnywhere)
+	UTextRotationComponent * TextRotation;
+
 
 protected:
 	// Called when the game starts or when spawned
