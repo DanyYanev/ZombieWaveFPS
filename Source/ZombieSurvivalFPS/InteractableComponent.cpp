@@ -13,7 +13,8 @@ UInteractableComponent::UInteractableComponent()
 
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
 
-	Box->SetupAttachment(GetAttachmentRoot());
+	//Box->SetupAttachment(GetAttachmentRoot());
+	Box->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
 
 	Box->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	Box->SetCollisionObjectType(INTERACTABLE_CHANNEL);

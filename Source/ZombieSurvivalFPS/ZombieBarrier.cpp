@@ -33,8 +33,9 @@ AZombieBarrier::AZombieBarrier()
 
 	SetRootComponent(Mesh);
 
-	HealthText->SetupAttachment(Mesh);
-	TextRotation->AddToRoot();
+	FAttachmentTransformRules rules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, false);
+
+	HealthText->AttachToComponent(Mesh, rules);
 
 	TextRotation->AddTextComponent(HealthText);
 }
@@ -118,7 +119,6 @@ float AZombieBarrier::TakeDamage(float DamageAmount, FDamageEvent const & Damage
 			}
 		}
 
-		TextRotation->RemoveFromRoot();
 		Destroy();
 		UE_LOG(LogTemp, Error, TEXT("Barricade Destroyed"));
 	}

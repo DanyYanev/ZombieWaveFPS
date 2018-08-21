@@ -20,8 +20,10 @@ AZombieCharacter::AZombieCharacter()
 	Head = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Head"));
 	Body = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Body"));
 
-	Head->SetupAttachment(GetCapsuleComponent());
-	Body->SetupAttachment(GetCapsuleComponent());
+	FAttachmentTransformRules rules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, false);
+
+	Head->AttachToComponent(GetCapsuleComponent(), rules);
+	Body->AttachToComponent(GetCapsuleComponent(), rules);
 
 
 	Health = 100;
