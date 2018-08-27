@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "UpgradableStatItemComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "LevelUpShop.generated.h"
 
@@ -34,8 +33,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		UTextRenderComponent * Money;
 
-	UUpgradableStatItemComponent * DamageStatComponent;
-	
 	UFUNCTION()
 		void UpdateMoney(int Value);
 	

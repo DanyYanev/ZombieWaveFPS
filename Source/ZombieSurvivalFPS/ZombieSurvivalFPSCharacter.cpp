@@ -87,9 +87,21 @@ AZombieSurvivalFPSCharacter::AZombieSurvivalFPSCharacter()
 	//bUsingMotionControllers = true;
 }
 
-void AZombieSurvivalFPSCharacter::Overlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void AZombieSurvivalFPSCharacter::OverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	UE_LOG(LogTemp, Error, TEXT("DING"));
+	if (!InteractableActor) {
+		InteractableActor = OtherActor;
+	}
+}
+
+void AZombieSurvivalFPSCharacter::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
+	//Remove InteractableActor reference
+	if (InteractableActor) {
+		if (InteractableActor == OtherActor) {
+			InteractableActor = nullptr;
+		}
+	}
 }
 
 void AZombieSurvivalFPSCharacter::BeginPlay()
@@ -112,7 +124,8 @@ void AZombieSurvivalFPSCharacter::BeginPlay()
 		Mesh1P->SetHiddenInGame(false, true);
 	}
 
-	UseHand->OnComponentBeginOverlap.AddDynamic(this, &AZombieSurvivalFPSCharacter::Overlap);
+	UseHand->OnComponentBeginOverlap.AddDynamic(this, &AZombieSurvivalFPSCharacter::OverlapBegin);
+	UseHand->OnComponentEndOverlap.AddDynamic(this, &AZombieSurvivalFPSCharacter::OverlapEnd);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -126,6 +139,8 @@ void AZombieSurvivalFPSCharacter::SetupPlayerInputComponent(class UInputComponen
 	// Bind jump events
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("Use", IE_Pressed, this, &AZombieSurvivalFPSCharacter::Use);
 
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AZombieSurvivalFPSCharacter::OnFire);
@@ -146,6 +161,20 @@ void AZombieSurvivalFPSCharacter::SetupPlayerInputComponent(class UInputComponen
 	PlayerInputComponent->BindAxis("TurnRate", this, &AZombieSurvivalFPSCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AZombieSurvivalFPSCharacter::LookUpAtRate);
+}
+
+void AZombieSurvivalFPSCharacter::Use()
+{
+	if (InteractableActor) {
+		UInteractableComponent * InteractableComponent = InteractableActor->FindComponentByClass<UInteractableComponent>();
+
+		if (InteractableComponent) {
+			UE_LOG(LogTemp, Warning, TEXT("No InteractableComponent on TargetActor"));
+		}
+		else {
+			InteractableComponent->Use();
+		}
+	}
 }
 
 void AZombieSurvivalFPSCharacter::OnFire()

@@ -12,13 +12,12 @@ ALevelUpShop::ALevelUpShop()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Money = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Money"));
 	TitleText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TitleText"));
-	DamageStatComponent = CreateDefaultSubobject<UUpgradableStatItemComponent>(TEXT("DamageStatComponent"));
 
 	SetRootComponent(Mesh);
 
 	Money->SetupAttachment(Mesh);
 	TitleText->SetupAttachment(Mesh);
-	DamageStatComponent->SetupAttachment(Mesh);
+	
 }
 
 // Called when the game starts or when spawned

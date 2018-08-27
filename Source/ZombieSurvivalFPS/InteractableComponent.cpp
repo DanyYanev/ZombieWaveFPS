@@ -52,17 +52,37 @@ void UInteractableComponent::InitializeDelegates(SignatureOnHoverBegin * pOnHove
 	OnUseDelegate = pOnUse;
 }
 
+void UInteractableComponent::Use()
+{
+	if (OnUseDelegate) {
+		if (!OnUseDelegate->ExecuteIfBound()) {
+			UE_LOG(LogTemp, Warning, TEXT("OnUseDelegate Not Bound"));
+		}
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("OnUseDelegate is null"));
+	
+}
+
 
 void UInteractableComponent::OnHoverBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (!OnHoverBeginDelegate->ExecuteIfBound()) {
-		UE_LOG(LogTemp, Warning, TEXT("OnHoverBeginDelegate Not Bound"));
+	if (OnHoverBeginDelegate) {
+		if (!OnHoverBeginDelegate->ExecuteIfBound()) {
+			UE_LOG(LogTemp, Warning, TEXT("OnHoverBeginDelegate Not Bound"));
+		}
 	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("OnHoverBeginDelegate is null"));
 }
 
 void UInteractableComponent::OnHoverEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (!OnHoverEndDelegate->ExecuteIfBound()) {
-		UE_LOG(LogTemp, Warning, TEXT("OnHoverEndDelegate Not Bound"));
+	if (OnHoverEndDelegate) {
+		if (!OnHoverEndDelegate->ExecuteIfBound()) {
+			UE_LOG(LogTemp, Warning, TEXT("OnHoverEndDelegate Not Bound"));
+		}
 	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("OnHoverEndDelegate is null"));
 }
