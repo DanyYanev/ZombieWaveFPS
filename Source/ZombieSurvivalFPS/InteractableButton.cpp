@@ -32,24 +32,13 @@ void AInteractableButton::BeginPlay()
 	OnHoverBeginDelegate.BindUFunction(this, TEXT("HoverBegin"));
 	OnHoverEndDelegate.BindUFunction(this, TEXT("HoverEnd"));
 	OnUseDelegate.BindUFunction(this, TEXT("Use"));
+
+	InteractableComponent->InitializeDelegates(&OnHoverBeginDelegate, &OnHoverEndDelegate, &OnUseDelegate);
 }
 
 void AInteractableButton::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-
-void AInteractableButton::Use()
-{
-	if (CurrentState == EButtonState::VE_Purchasable) {
-		SetState(EButtonState::VE_Unlocked);
-	}
-
-	//Play Sound
-
-	//AZombieSurvivalFPSGameMode * GameMode = Cast<AZombieSurvivalFPSGameMode>(GetWorld()->GetAuthGameMode());
-	//Notify StatHolder for purchase
 }
 
 void AInteractableButton::SetState(EButtonState::State NewState)
@@ -66,4 +55,18 @@ void AInteractableButton::HoverBegin()
 void AInteractableButton::HoverEnd()
 {
 	Mesh->SetRenderCustomDepth(false);
+}
+
+void AInteractableButton::Use()
+{
+	if (CurrentState == EButtonState::VE_Purchasable) {
+		SetState(EButtonState::VE_Unlocked);
+	}
+
+	//Play Sound
+
+	UE_LOG(LogTemp, Warning, TEXT("Useed button :)"));
+
+	//AZombieSurvivalFPSGameMode * GameMode = Cast<AZombieSurvivalFPSGameMode>(GetWorld()->GetAuthGameMode());
+	//Notify StatHolder for purchase
 }

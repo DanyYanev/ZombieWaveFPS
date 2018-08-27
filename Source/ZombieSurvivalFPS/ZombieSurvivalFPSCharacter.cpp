@@ -169,10 +169,10 @@ void AZombieSurvivalFPSCharacter::Use()
 		UInteractableComponent * InteractableComponent = InteractableActor->FindComponentByClass<UInteractableComponent>();
 
 		if (InteractableComponent) {
-			UE_LOG(LogTemp, Warning, TEXT("No InteractableComponent on TargetActor"));
+			InteractableComponent->Use();
 		}
 		else {
-			InteractableComponent->Use();
+			UE_LOG(LogTemp, Warning, TEXT("No InteractableComponent on TargetActor"));
 		}
 	}
 }

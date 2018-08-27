@@ -8,7 +8,7 @@
 #include "InteractableComponent.h"
 #include "InteractableButton.generated.h"
 
-UENUM(BlueprintType)
+UENUM()
 namespace EButtonState
 {
 	enum State
