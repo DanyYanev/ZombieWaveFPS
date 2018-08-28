@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LevelUpShop.h"
+#include "ZombieSurvivalFPSGameMode.h"
 
 
 // Sets default values
@@ -25,6 +26,22 @@ void ALevelUpShop::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	GameMode = Cast<AZombieSurvivalFPSGameMode>(GetWorld()->GetAuthGameMode());
+
+	OnLevelPurchasedDelegate.BindUFunction(this, TEXT("LevelPurchased"));
+
+	if (GameMode) {
+		GameMode->AttachLevelUpShop(this);
+		UpdateMoney(0);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+	}
+
+	MaxLevel = Buttons.Num();
+
+	for (int i = 0; i < MaxLevel; i++)
+		Buttons[i]->InitializeButton(&OnLevelPurchasedDelegate);
 }
 
 // Called every frame
@@ -37,5 +54,32 @@ void ALevelUpShop::Tick(float DeltaTime)
 void ALevelUpShop::UpdateMoney(int Value)
 {
 	Money->SetText(FText().FromString(FString::FromInt(Value) + FString("$")));
+
+	if (CurrentLevel < MaxLevel) {
+		if (Value >= CostForNextLevel) {
+			Buttons[CurrentLevel]->SetState(EButtonState::VE_Purchasable);
+			bPurchaseWasAvaiable = true;
+		}
+		else if(bPurchaseWasAvaiable)
+			Buttons[CurrentLevel]->SetState(EButtonState::VE_Locked);
+	}
+	
+}
+
+void ALevelUpShop::LevelPurchased()
+{
+	if (GameMode) {
+
+		UE_LOG(LogTemp, Warning, TEXT("Level Purchased!"));
+
+		GameMode->UpdateCurrentMoneyBy(-(CostForNextLevel));
+		Buttons[CurrentLevel]->SetState(EButtonState::VE_Unlocked);
+
+		CurrentLevel++;
+		CostForNextLevel *= 2;
+		bPurchaseWasAvaiable = false;
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("GameMode not found"));
 }
 

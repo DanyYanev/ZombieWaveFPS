@@ -15,6 +15,9 @@ AInteractableButton::AInteractableButton()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
+	Locked = CreateDefaultSubobject<UMaterial>(TEXT("LockedM"));
+	Purchaseable = CreateDefaultSubobject<UMaterial>(TEXT("PurchaseableM"));
+	Unlocked = CreateDefaultSubobject<UMaterial>(TEXT("UnlockedM"));
 
 	SetRootComponent(Mesh);
 
@@ -34,6 +37,7 @@ void AInteractableButton::BeginPlay()
 	OnUseDelegate.BindUFunction(this, TEXT("Use"));
 
 	InteractableComponent->InitializeDelegates(&OnHoverBeginDelegate, &OnHoverEndDelegate, &OnUseDelegate);
+
 }
 
 void AInteractableButton::Tick(float DeltaTime)
@@ -44,7 +48,25 @@ void AInteractableButton::Tick(float DeltaTime)
 void AInteractableButton::SetState(EButtonState::State NewState)
 {
 	CurrentState = NewState;
-	//ColorChanging
+	
+	if (CurrentState == EButtonState::VE_Locked) {
+		Mesh->SetMaterial(0, Locked);
+		UE_LOG(LogTemp, Warning, TEXT("Button set to VE_Locked"));
+	}
+	else if (CurrentState == EButtonState::VE_Purchasable) {
+		Mesh->SetMaterial(0, Purchaseable);
+		UE_LOG(LogTemp, Warning, TEXT("Button set to VE_Purchasable"));
+	} 
+	else if (CurrentState == EButtonState::VE_Unlocked) {
+		Mesh->SetMaterial(0, Unlocked);
+		UE_LOG(LogTemp, Warning, TEXT("Button set to VE_Unlocked"));
+	}
+}
+
+void AInteractableButton::InitializeButton(SignatureOnLevelPurchased * pOnPurchasedDelegate)
+{
+	OnLevelPurchasedDelegate = pOnPurchasedDelegate;
+	SetState(EButtonState::VE_Locked);
 }
 
 void AInteractableButton::HoverBegin()
@@ -60,7 +82,12 @@ void AInteractableButton::HoverEnd()
 void AInteractableButton::Use()
 {
 	if (CurrentState == EButtonState::VE_Purchasable) {
-		SetState(EButtonState::VE_Unlocked);
+		if (OnLevelPurchasedDelegate) {
+			if (!OnLevelPurchasedDelegate->ExecuteIfBound()) {
+				UE_LOG(LogTemp, Error, TEXT("OnLevelPurchasedDelegate not bound"));
+			}
+		} else
+			UE_LOG(LogTemp, Error, TEXT("OnLevelPurchasedDelegate is null"));
 	}
 
 	//Play Sound

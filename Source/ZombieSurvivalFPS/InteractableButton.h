@@ -19,6 +19,7 @@ namespace EButtonState
 	};
 }
 
+DECLARE_DELEGATE(SignatureOnLevelPurchased);
 
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ZOMBIESURVIVALFPS_API AInteractableButton : public AActor
@@ -29,14 +30,6 @@ public:
 	// Sets default values for this component's properties
 	AInteractableButton();
 
-private:
-	EButtonState::State CurrentState;
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 		
@@ -44,8 +37,17 @@ public:
 	SignatureOnHoverEnd OnHoverEndDelegate;
 	SignatureOnUse OnUseDelegate;
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent * Mesh;
+
+	UPROPERTY(EditAnywhere, Category = "Materials")
+	UMaterial * Locked;
+
+	UPROPERTY(EditAnywhere, Category = "Materials")
+	UMaterial * Purchaseable;
+
+	UPROPERTY(EditAnywhere, Category = "Materials")
+	UMaterial * Unlocked;
 
 	UPROPERTY(EditAnywhere)
 	UInteractableComponent * InteractableComponent;
@@ -60,4 +62,16 @@ public:
 	void HoverEnd();
 
 	void SetState(EButtonState::State NewState);
+
+	void InitializeButton(SignatureOnLevelPurchased * pOnPurchasedDelegate);
+
+protected:
+
+	virtual void BeginPlay() override;
+
+private:
+	EButtonState::State CurrentState;
+
+	SignatureOnLevelPurchased * OnLevelPurchasedDelegate;
+
 };

@@ -28,6 +28,8 @@ AZombieSurvivalFPSGameMode::AZombieSurvivalFPSGameMode()
 	AliveZombies = 0;
 	InitialZombies = 0;
 
+	TimeBetweenWaves = 10;
+
 }
 
 void AZombieSurvivalFPSGameMode::BeginPlay()
@@ -147,6 +149,16 @@ void AZombieSurvivalFPSGameMode::AttachScoreboard(AScoreboard * ScoreboardInstan
 		
 }
 
+void AZombieSurvivalFPSGameMode::AttachLevelUpShop(ALevelUpShop * LevelUpShopInstance)
+{
+	if (IsValid(LevelUpShopInstance)) {
+		LevelUpShop = LevelUpShopInstance;
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Unable to attach LevelUpShop - Pointer invalid"));
+	}
+}
+
 void AZombieSurvivalFPSGameMode::ZombieDeath()
 {
 	//UE_LOG(LogTemp, Error, TEXT("Zombie death counted"));
@@ -185,10 +197,17 @@ void AZombieSurvivalFPSGameMode::UpdateCurrentMoneyBy(int Value)
 	Money += Value;
 
 	if (IsValid(Scoreboard)) {
-		Scoreboard->UpdateMoney(Score);
+		Scoreboard->UpdateMoney(Money);
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("Scoreboard not found!"));
+	}
+
+	if (IsValid(LevelUpShop)) {
+		LevelUpShop->UpdateMoney(Money);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("LevelUpShop not found!"));
 	}
 }
 

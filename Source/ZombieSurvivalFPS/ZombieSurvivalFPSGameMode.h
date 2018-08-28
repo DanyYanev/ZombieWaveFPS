@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "ZombieCharacter.h"
 #include "Scoreboard.h"
+#include "LevelUpShop.h"
 #include "ZombieSurvivalFPSGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -44,6 +45,9 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	AScoreboard * Scoreboard;
 
 	UPROPERTY(VisibleAnywhere)
+	ALevelUpShop * LevelUpShop;
+
+	UPROPERTY(VisibleAnywhere)
 	FTimerHandle CountdownTimerHandle;
 
 	UFUNCTION()
@@ -63,25 +67,21 @@ public:
 
 	//In seconds
 	UPROPERTY(EditAnywhere)
-	int TimeBetweenWaves = 200;
+	int TimeBetweenWaves;
 
-	UFUNCTION()
 	void UpdateCurrentScoreBy(int Value);
 
-	UFUNCTION()
 	void UpdateCurrentMoneyBy(int Value);
 	
-	UFUNCTION()
 	void ZombieDeath();
 
-	UFUNCTION()
 	void TargetDestroyed(AActor * Barricade);
 	
-	UFUNCTION()
 	void NextWave();
 
-	UFUNCTION()
 	void AttachScoreboard(AScoreboard * ScoreboardInstance);
+
+	void AttachLevelUpShop(ALevelUpShop * LevelUpShopInstance);
 
 	UFUNCTION()
 	virtual void BeginPlay() override;

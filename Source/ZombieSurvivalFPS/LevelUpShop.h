@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/TextRenderComponent.h"
+#include "InteractableButton.h"
 #include "LevelUpShop.generated.h"
+
+class AZombieSurvivalFPSGameMode;
 
 UCLASS()
 class ZOMBIESURVIVALFPS_API ALevelUpShop : public AActor
@@ -33,8 +36,26 @@ public:
 	UPROPERTY(EditAnywhere)
 		UTextRenderComponent * Money;
 
+	UPROPERTY(EditAnywhere)
+		TArray<AInteractableButton *> Buttons;
+
 	UFUNCTION()
-		void UpdateMoney(int Value);
+	void UpdateMoney(int Value);
+
+	UFUNCTION()
+	void LevelPurchased();
 	
-	
+private:
+
+	bool bPurchaseWasAvaiable = false;
+
+	int CurrentLevel = 0;
+
+	int CostForNextLevel = 500;
+
+	int MaxLevel;
+
+	AZombieSurvivalFPSGameMode * GameMode;
+
+	SignatureOnLevelPurchased OnLevelPurchasedDelegate;
 };
