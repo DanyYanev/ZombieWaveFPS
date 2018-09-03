@@ -10,8 +10,7 @@
 AZombieAI::AZombieAI() {
 	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComp"));
 
-	BehaviorTreeComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComp"));
-	BrainComponent = CreateDefaultSubobject<UBrainComponent>(TEXT("BrainComponent"));
+	BrainComponent = BehaviorTreeComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComp"));
 
 	PrimaryActorTick.bCanEverTick = true;
 	//Targets = nullptr;
