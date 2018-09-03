@@ -106,7 +106,7 @@ float AZombieBarrier::TakeDamage(float DamageAmount, FDamageEvent const & Damage
 
 	UpdateHealthText();
 
-	UE_LOG(LogTemp, Warning, TEXT("Dealt to barricade: %d, Remaining: %d"), DamageAmount, Health);
+	UE_LOG(LogTemp, Warning, TEXT("Dealt to barricade: %d, Remaining: %d"), DamageAmount, CurrentHealth);
 
 	if (CurrentHealth <= 0) {
 

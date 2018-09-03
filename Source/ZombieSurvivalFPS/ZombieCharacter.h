@@ -40,7 +40,14 @@ protected:
 	UPROPERTY(EditAnywhere)
 	bool bIsDying = false;
 
+	UPROPERTY(EditAnywhere)
+	bool bIsCelebrating = false;
+
+
 public:	
+
+	void EndGame(bool Won);
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -52,6 +59,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDying() const { return bIsDying; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsCelebrating() const { return bIsCelebrating; }
 
 	UFUNCTION()
 	void DealDamage(AActor * Target);

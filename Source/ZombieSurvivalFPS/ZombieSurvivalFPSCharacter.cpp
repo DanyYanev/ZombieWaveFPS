@@ -19,6 +19,9 @@ DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 AZombieSurvivalFPSCharacter::AZombieSurvivalFPSCharacter()
 {
+
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
@@ -31,6 +34,12 @@ AZombieSurvivalFPSCharacter::AZombieSurvivalFPSCharacter()
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCameraComponent->RelativeLocation = FVector(-39.56f, 1.75f, 64.f); // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
+
+	DeathCameraSpring = CreateDefaultSubobject<USpringArmComponent>(TEXT("DeathCameraSpringArm"));
+	DeathCameraSpring->SetupAttachment(RootComponent);
+
+	DeathCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("DeathCamera"));
+	DeathCameraComponent->SetupAttachment(DeathCameraSpring);
 
 	UseHand = CreateDefaultSubobject<UCapsuleComponent>("UseHand");
 	UseHand->SetupAttachment(FirstPersonCameraComponent);
@@ -161,6 +170,24 @@ void AZombieSurvivalFPSCharacter::SetupPlayerInputComponent(class UInputComponen
 	PlayerInputComponent->BindAxis("TurnRate", this, &AZombieSurvivalFPSCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AZombieSurvivalFPSCharacter::LookUpAtRate);
+}
+
+void AZombieSurvivalFPSCharacter::EndGame(bool Won)
+{
+	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(DeathCameraComponent);
+	FirstPersonCameraComponent->Deactivate();
+	DeathCameraComponent->Activate();
+	bGameEnded = true;
+	this->DisableInput(UGameplayStatics::GetPlayerController(this, 0));
+}
+
+void AZombieSurvivalFPSCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (bGameEnded) {
+		DeathCameraSpring->AddRelativeRotation(FRotator(0, DeathCameraSpeed * DeltaSeconds, 0));
+	}
 }
 
 void AZombieSurvivalFPSCharacter::Use()

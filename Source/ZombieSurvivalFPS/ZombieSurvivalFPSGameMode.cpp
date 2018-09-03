@@ -103,14 +103,39 @@ void AZombieSurvivalFPSGameMode::SpawnZombies()
 		FTransform SpawnTransform = SpawnArray[i];
 		//UE_LOG(LogTemp, Error, TEXT("Zombie Spawn Location: %s"), *SpawnTransform.GetLocation().ToString());
 		UWorld* World = GetWorld();
-		AActor* Zombie = World->SpawnActor<AActor>(ZombieClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator());
+		AZombieCharacter* Zombie = World->SpawnActor<AZombieCharacter>(ZombieClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator());
 		if (IsValid(Zombie)) {
 			AliveZombies++;
+			Zombies.Add(Zombie);
 		}
 		else {
 			UE_LOG(LogTemp, Error, TEXT("Zombie Spawn Failed"));
 		}
 	}
+}
+
+void AZombieSurvivalFPSGameMode::EndGame(bool Won)
+{
+	for (int i = 0; i < Zombies.Num(); i++) {
+		Zombies[i]->EndGame(!Won);
+	}
+
+	AZombieSurvivalFPSCharacter * Character = Cast<AZombieSurvivalFPSCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+	if (Character) {
+		Character->EndGame(Won);
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("Character cast failed"));
+		
+	AHUD * HUD = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD();
+
+	if (HUD) {
+		HUD->ShowHUD();
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
+
 }
 
 void AZombieSurvivalFPSGameMode::TickTimer()
@@ -159,7 +184,7 @@ void AZombieSurvivalFPSGameMode::AttachLevelUpShop(ALevelUpShop * LevelUpShopIns
 	}
 }
 
-void AZombieSurvivalFPSGameMode::ZombieDeath()
+void AZombieSurvivalFPSGameMode::ZombieDeath(AZombieCharacter * Zombie)
 {
 	//UE_LOG(LogTemp, Error, TEXT("Zombie death counted"));
 
@@ -167,6 +192,8 @@ void AZombieSurvivalFPSGameMode::ZombieDeath()
 	UpdateCurrentMoneyBy(100);
 
 	AliveZombies--;
+	Zombies.Remove(Zombie);
+
 	if (AliveZombies <= 0) {
 		NextWave();
 	}
@@ -177,7 +204,10 @@ void AZombieSurvivalFPSGameMode::TargetDestroyed(AActor * Target)
 	Targets.Remove(Target);
 
 	if (Target->ActorHasTag(TEXT("Final"))) { //Endgame
-		UKismetSystemLibrary::QuitGame(this, UGameplayStatics::GetPlayerController(this, 0), EQuitPreference::Type::Quit);
+		//UKismetSystemLibrary::QuitGame(this, UGameplayStatics::GetPlayerController(this, 0), EQuitPreference::Type::Quit);
+
+		EndGame(false);
+
 	}
 }
 

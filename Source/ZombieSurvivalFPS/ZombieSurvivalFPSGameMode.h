@@ -56,6 +56,11 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	UFUNCTION()
 	void SpawnZombies();
 
+	UFUNCTION()
+	void EndGame(bool Won);
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<AZombieCharacter *> Zombies;
 
 public:
 
@@ -73,7 +78,7 @@ public:
 
 	void UpdateCurrentMoneyBy(int Value);
 	
-	void ZombieDeath();
+	void ZombieDeath(AZombieCharacter * Zombie);
 
 	void TargetDestroyed(AActor * Barricade);
 	

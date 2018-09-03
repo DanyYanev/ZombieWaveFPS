@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ActorComponent.h"
+#include "ZombieAI.h"
 #include "Engine/World.h"
 
 // Sets default values
@@ -39,6 +40,22 @@ void AZombieCharacter::BeginPlay()
 	Head->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnHeadshot);
 	Body->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnBodyshot);
 	//GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnHeadshot);
+}
+
+void AZombieCharacter::EndGame(bool Won)
+{
+	if (Won) {
+		bIsCelebrating = true;
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("ZOMBIE ALIVE AND GAME WON"));
+
+	AZombieAI * ZombieAI = Cast<AZombieAI>(GetController());
+
+	if (ZombieAI) {
+		ZombieAI->BrainComponent->StopLogic(TEXT("Game Over"));
+	}
+
 }
 
 // Called every frame
@@ -85,7 +102,7 @@ float AZombieCharacter::TakeDamage(float Damage, struct FDamageEvent const& Dama
 		if (GameMode) {
 			AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
 			if (ZombieGameMode) {
-				ZombieGameMode->ZombieDeath();
+				ZombieGameMode->ZombieDeath(this);
 			}
 		}
 	}

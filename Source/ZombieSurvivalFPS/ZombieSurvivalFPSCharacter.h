@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InteractableComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "ZombieSurvivalFPSCharacter.generated.h"
 
 class UInputComponent;
@@ -38,6 +39,14 @@ class AZombieSurvivalFPSCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
 
+	/** Death camera */
+	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* DeathCameraComponent;
+
+	/** Death camera spring arm*/
+	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USpringArmComponent* DeathCameraSpring;
+
 	/** Motion controller (right hand) */
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	class UMotionControllerComponent* R_MotionController;
@@ -53,6 +62,13 @@ protected:
 	virtual void BeginPlay();
 
 public:
+
+	float DeathCameraSpeed = 10;
+
+	void EndGame(bool Won);
+
+	void Tick(float DeltaSeconds) override;
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -91,7 +107,7 @@ public:
 		void OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 protected:
-	bool bCanRayCast;
+	bool bGameEnded = false;
 
 	AActor * InteractableActor;
 
