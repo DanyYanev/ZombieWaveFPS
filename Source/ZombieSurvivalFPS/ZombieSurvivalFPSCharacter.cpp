@@ -181,6 +181,11 @@ void AZombieSurvivalFPSCharacter::SetupPlayerInputComponent(class UInputComponen
 void AZombieSurvivalFPSCharacter::EndGame(bool Won)
 {
 	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(DeathCameraComponent);
+	Mesh1P->SetVisibility(false);
+	FP_Gun->SetVisibility(false);
+	VR_Gun->SetVisibility(false);
+	Mesh3P->bOwnerNoSee = false;
+	Mesh3P->MarkRenderStateDirty();
 	FirstPersonCameraComponent->Deactivate();
 	DeathCameraComponent->Activate();
 	bGameEnded = true;
