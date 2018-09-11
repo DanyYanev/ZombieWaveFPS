@@ -35,9 +35,9 @@ void AZombieAI::AttackTarget()
 {
 	AZombieCharacter * Zombie = Cast<AZombieCharacter>(GetPawn());
 
-	if (Zombie) {
+	if (IsValid(Zombie)) {
 		AActor * Target = Cast<AActor>(BehaviorTreeComp->GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(TargetKeyId));
-		if (Target) {
+		if (IsValid(Target)) {
 			Zombie->DealDamage(Target);
 		}
 	}

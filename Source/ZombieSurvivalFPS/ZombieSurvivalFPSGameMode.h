@@ -7,12 +7,19 @@
 #include "ZombieCharacter.h"
 #include "Scoreboard.h"
 #include "LevelUpShop.h"
+#include "Blueprint/UserWidget.h"
 #include "ZombieSurvivalFPSGameMode.generated.h"
 
 UCLASS(minimalapi)
 class AZombieSurvivalFPSGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere)
+	bool bGameEndStatus;
+
+	UPROPERTY(VisibleAnywhere)
+	bool bGameWon;
 
 	UPROPERTY(VisibleAnywhere)
 	int Countdown = TimeBetweenWaves;
@@ -62,6 +69,8 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	UPROPERTY(VisibleAnywhere)
 	TArray<AZombieCharacter *> Zombies;
 
+	UUserWidget * EndGameWidgetInstance;
+
 public:
 
 	/** The class of Zombie to spawn. */
@@ -72,7 +81,11 @@ public:
 
 	//In seconds
 	UPROPERTY(EditAnywhere)
-	int TimeBetweenWaves;
+	int TimeBetweenWaves = 20;
+
+	/* The widget to spawn after game end*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets") 
+	TSubclassOf<class UUserWidget> EndGameWidgetClass;
 
 	void UpdateCurrentScoreBy(int Value);
 
@@ -91,7 +104,14 @@ public:
 	UFUNCTION()
 	virtual void BeginPlay() override;
 
-	FORCEINLINE int GetScore() const { return Score; }
+	UFUNCTION(BlueprintCallable, Category = "Score")
+	int GetScore() const { return Score; }
+
+	UFUNCTION(BlueprintCallable, Category = "GameStatus")
+	bool IsGameOver() const { return bGameEndStatus; }
+
+	UFUNCTION(BlueprintCallable, Category = "GameStatus")
+	bool IsGameWon() const { return bGameWon; }
 
 	FORCEINLINE const TArray<AActor*> * GetTargets() const { return &Targets; }
 };

@@ -27,14 +27,23 @@ AZombieSurvivalFPSGameMode::AZombieSurvivalFPSGameMode()
 
 	AliveZombies = 0;
 	InitialZombies = 0;
-
-	TimeBetweenWaves = 10;
-
 }
 
 void AZombieSurvivalFPSGameMode::BeginPlay()
 {
 	Super::InitGameState();
+
+	if (EndGameWidgetClass)
+	{
+		EndGameWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), EndGameWidgetClass, TEXT("EndGameWidget"));
+
+		if (!EndGameWidgetInstance) {
+			UE_LOG(LogTemp, Error, TEXT("Widget instance failed to create"));
+		}	
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("Widget class not set"));
+
 
 	TArray<AActor*> SpawnResult;
 
@@ -68,6 +77,7 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 
 void AZombieSurvivalFPSGameMode::NextWave()
 {
+
 	Wave++;
 
 	if (Scoreboard) {
@@ -116,6 +126,9 @@ void AZombieSurvivalFPSGameMode::SpawnZombies()
 
 void AZombieSurvivalFPSGameMode::EndGame(bool Won)
 {
+	bGameEndStatus = true;
+	bGameWon = Won;
+
 	for (int i = 0; i < Zombies.Num(); i++) {
 		Zombies[i]->EndGame(!Won);
 	}
@@ -136,6 +149,7 @@ void AZombieSurvivalFPSGameMode::EndGame(bool Won)
 	else
 		UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
 
+	EndGameWidgetInstance->AddToViewport();
 }
 
 void AZombieSurvivalFPSGameMode::TickTimer()
