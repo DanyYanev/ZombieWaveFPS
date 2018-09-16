@@ -14,22 +14,10 @@ UCLASS()
 class ZOMBIESURVIVALFPS_API AScoreboard : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:	
-	// Sets default values for this actor's properties
 	AScoreboard();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-
-	SignatureOnHoverBegin OnHoverBeginDelegate;
-	SignatureOnHoverEnd OnHoverEndDelegate;
-	SignatureOnUse OnUseDelegate;
-
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(VisibleDefaultsOnly)
@@ -80,4 +68,12 @@ public:
 	UFUNCTION()
 	void Use();
 
+protected:
+	virtual void BeginPlay() override;
+
+private:
+
+	SignatureOnHoverBegin OnHoverBeginDelegate;
+	SignatureOnHoverEnd OnHoverEndDelegate;
+	SignatureOnUse OnUseDelegate;
 };

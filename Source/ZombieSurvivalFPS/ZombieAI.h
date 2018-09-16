@@ -18,19 +18,6 @@ class ZOMBIESURVIVALFPS_API AZombieAI : public AAIController
 {
 	GENERATED_BODY()
 
-	UPROPERTY(transient)
-	UBlackboardComponent* BlackboardComp;
-	
-	
-	UPROPERTY(transient)
-	UBehaviorTreeComponent* BehaviorTreeComp;
-
-	UFUNCTION()
-	AActor * FindClosestTarget();
-
-	UFUNCTION()
-	FVector FindClosestTargetPoint();
-
 public:
 	AZombieAI();
 
@@ -59,4 +46,18 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void Possess(APawn* InPawn) override;
+
+private:
+	UPROPERTY(transient)
+	UBlackboardComponent* BlackboardComp;
+
+	UPROPERTY(transient)
+	UBehaviorTreeComponent* BehaviorTreeComp;
+
+	UFUNCTION()
+	AActor * FindClosestTarget();
+
+	UFUNCTION()
+	FVector FindClosestTargetPoint();
+
 };

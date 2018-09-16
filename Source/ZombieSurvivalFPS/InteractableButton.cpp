@@ -13,15 +13,15 @@ AInteractableButton::AInteractableButton()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	SetRootComponent(Mesh);
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
+	InteractableComponent->SetupAttachment(Mesh);
+
 	Locked = CreateDefaultSubobject<UMaterial>(TEXT("LockedM"));
 	Purchaseable = CreateDefaultSubobject<UMaterial>(TEXT("PurchaseableM"));
 	Unlocked = CreateDefaultSubobject<UMaterial>(TEXT("UnlockedM"));
 
-	SetRootComponent(Mesh);
-
-	InteractableComponent->SetupAttachment(Mesh);
 }
 
 
@@ -30,14 +30,11 @@ void AInteractableButton::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetState(EButtonState::VE_Locked);
-
 	OnHoverBeginDelegate.BindUFunction(this, TEXT("HoverBegin"));
 	OnHoverEndDelegate.BindUFunction(this, TEXT("HoverEnd"));
 	OnUseDelegate.BindUFunction(this, TEXT("Use"));
 
 	InteractableComponent->InitializeDelegates(&OnHoverBeginDelegate, &OnHoverEndDelegate, &OnUseDelegate);
-
 }
 
 void AInteractableButton::Tick(float DeltaTime)
@@ -66,7 +63,6 @@ void AInteractableButton::SetState(EButtonState::State NewState)
 void AInteractableButton::InitializeButton(SignatureOnLevelPurchased * pOnPurchasedDelegate)
 {
 	OnLevelPurchasedDelegate = pOnPurchasedDelegate;
-	SetState(EButtonState::VE_Locked);
 }
 
 void AInteractableButton::HoverBegin()
@@ -94,6 +90,4 @@ void AInteractableButton::Use()
 
 	UE_LOG(LogTemp, Warning, TEXT("Useed button :)"));
 
-	//AZombieSurvivalFPSGameMode * GameMode = Cast<AZombieSurvivalFPSGameMode>(GetWorld()->GetAuthGameMode());
-	//Notify StatHolder for purchase
 }

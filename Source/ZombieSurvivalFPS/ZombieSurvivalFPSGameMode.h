@@ -57,6 +57,10 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	UPROPERTY(VisibleAnywhere)
 	FTimerHandle CountdownTimerHandle;
 
+	//In seconds
+	UPROPERTY(EditAnywhere)
+	int TimeBetweenWaves = 20;
+
 	UFUNCTION()
 	void TickTimer();
 
@@ -65,6 +69,8 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 
 	UFUNCTION()
 	void EndGame(bool Won);
+
+	void NextWave();
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<AZombieCharacter *> Zombies;
@@ -77,15 +83,11 @@ public:
 	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
 	TSubclassOf<ACharacter> ZombieClass;
 
-	AZombieSurvivalFPSGameMode();
-
-	//In seconds
-	UPROPERTY(EditAnywhere)
-	int TimeBetweenWaves = 20;
-
 	/* The widget to spawn after game end*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets") 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UUserWidget> EndGameWidgetClass;
+
+	AZombieSurvivalFPSGameMode();
 
 	void UpdateCurrentScoreBy(int Value);
 
@@ -94,8 +96,6 @@ public:
 	void ZombieDeath(AZombieCharacter * Zombie);
 
 	void TargetDestroyed(AActor * Barricade);
-	
-	void NextWave();
 
 	void AttachScoreboard(AScoreboard * ScoreboardInstance);
 

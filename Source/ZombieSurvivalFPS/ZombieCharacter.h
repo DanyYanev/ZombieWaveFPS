@@ -13,45 +13,13 @@ class ZOMBIESURVIVALFPS_API AZombieCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-
 public:
-	// Sets default values for this character's properties
 	AZombieCharacter();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere)
-	UCapsuleComponent * Head;
-
-	UPROPERTY(EditAnywhere)
-	UCapsuleComponent * Body;
-
-	UPROPERTY(EditAnywhere)
-	int Health;
-
-	UPROPERTY(EditAnywhere)
-	int Speed;
-
-	UPROPERTY(EditAnywhere)
-	int AttackDamage;
-
-	UPROPERTY(EditAnywhere)
-	bool bIsDying = false;
-
-	UPROPERTY(EditAnywhere)
-	bool bIsCelebrating = false;
-
-
-public:	
 
 	void EndGame(bool Won);
 
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
@@ -80,5 +48,29 @@ public:
 	FORCEINLINE class UCapsuleComponent* GetBodyComp() const { return Body; }
 
 	FORCEINLINE int GetAttackDamage() const { return AttackDamage; }
+
+protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere)
+	UCapsuleComponent * Head;
+
+	UPROPERTY(EditAnywhere)
+	UCapsuleComponent * Body;
+
+	UPROPERTY(EditAnywhere)
+	int Health;
+
+	UPROPERTY(EditAnywhere)
+	int Speed;
+
+	UPROPERTY(EditAnywhere)
+	int AttackDamage;
+
+	UPROPERTY(EditAnywhere)
+	bool bIsDying = false;
+
+	UPROPERTY(EditAnywhere)
+	bool bIsCelebrating = false;
 
 };

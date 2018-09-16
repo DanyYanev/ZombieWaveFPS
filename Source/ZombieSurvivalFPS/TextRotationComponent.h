@@ -14,11 +14,15 @@ class ZOMBIESURVIVALFPS_API UTextRotationComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UTextRotationComponent();
 
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
+	void AddTextComponent(UTextRenderComponent * TextComponent);
+
+	void SetTarget(AActor * NewTarget);
+
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 	TArray<UTextRenderComponent * > TextFields;
@@ -27,11 +31,4 @@ protected:
 
 	void SetRotationToTarget(UTextRenderComponent *);
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
-	void AddTextComponent(UTextRenderComponent * TextComponent);
-
-	void SetTarget(AActor * NewTarget);
 };

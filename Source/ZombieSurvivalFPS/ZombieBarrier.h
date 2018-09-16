@@ -15,19 +15,16 @@ class ZOMBIESURVIVALFPS_API AZombieBarrier : public AActor
 {
 	GENERATED_BODY()
 
-	void UpdateHealthText();
-
-public:	
-	// Sets default values for this actor's properties
+public:
 	AZombieBarrier();
 
 	UPROPERTY(EditAnywhere)
 	int Health;
 
-	int CurrentHealth;
-
 	UPROPERTY(VisibleAnywhere)
 	int TargetNumber = 0;
+
+	int CurrentHealth;
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<FVector> TargetPoints;
@@ -41,16 +38,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	UTextRotationComponent * TextRotation;
 
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	//virtual void Tick(float DeltaTime) override;
-
 	UFUNCTION()
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
-	
+
+protected:
+	virtual void BeginPlay() override;
+
+private:	
+	void UpdateHealthText();
+
 };

@@ -14,8 +14,8 @@ namespace EButtonState
 	enum State
 	{
 		VE_Locked			UMETA(DisplayName = "Locked"),
-		VE_Unlocked	UMETA(DisplayName = "Unlocked"),
-		VE_Purchasable			UMETA(DisplayName = "Purchasable")
+		VE_Unlocked			UMETA(DisplayName = "Unlocked"),
+		VE_Purchasable		UMETA(DisplayName = "Purchasable")
 	};
 }
 
@@ -27,15 +27,9 @@ class ZOMBIESURVIVALFPS_API AInteractableButton : public AActor
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	AInteractableButton();
 
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-		
-	SignatureOnHoverBegin OnHoverBeginDelegate;
-	SignatureOnHoverEnd OnHoverEndDelegate;
-	SignatureOnUse OnUseDelegate;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent * Mesh;
@@ -66,12 +60,16 @@ public:
 	void InitializeButton(SignatureOnLevelPurchased * pOnPurchasedDelegate);
 
 protected:
-
 	virtual void BeginPlay() override;
 
 private:
-	EButtonState::State CurrentState;
+	EButtonState::State CurrentState = EButtonState::VE_Locked;
 
-	SignatureOnLevelPurchased * OnLevelPurchasedDelegate;
+	SignatureOnHoverBegin OnHoverBeginDelegate;
 
+	SignatureOnHoverEnd OnHoverEndDelegate;
+
+	SignatureOnUse OnUseDelegate;
+
+	SignatureOnLevelPurchased * OnLevelPurchasedDelegate;	
 };

@@ -15,15 +15,8 @@ class ZOMBIESURVIVALFPS_API ALevelUpShop : public AActor
 {
 	GENERATED_BODY()
 
-public:
-
-	ALevelUpShop();
-	
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 public:	
+	ALevelUpShop();
 
 	virtual void Tick(float DeltaTime) override;
 
@@ -45,8 +38,10 @@ public:
 	UFUNCTION()
 	void LevelPurchased();
 	
-private:
+protected:
+	virtual void BeginPlay() override;
 
+private:
 	bool bPurchaseWasAvaiable = false;
 
 	int CurrentLevel = 0;
