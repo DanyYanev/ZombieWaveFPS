@@ -75,6 +75,12 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 	NextWave();
 }
 
+void AZombieSurvivalFPSGameMode::QuickStartWave()
+{
+	if (Countdown > 0)
+		Countdown = 0;
+}
+
 void AZombieSurvivalFPSGameMode::NextWave()
 {
 
@@ -150,6 +156,15 @@ void AZombieSurvivalFPSGameMode::EndGame(bool Won)
 		UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
 
 	EndGameWidgetInstance->AddToViewport();
+
+	APlayerController* PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	if (PC)
+	{
+		PC->bShowMouseCursor = true;
+		PC->bEnableClickEvents = true;
+		PC->bEnableMouseOverEvents = true;
+	};
 }
 
 void AZombieSurvivalFPSGameMode::TickTimer()

@@ -113,6 +113,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameStatus")
 	bool IsGameWon() const { return bGameWon; }
 
+	//For skipping wait time between waves.
+	void QuickStartWave();
+
 	FORCEINLINE const TArray<AActor*> * GetTargets() const { return &Targets; }
 };
 

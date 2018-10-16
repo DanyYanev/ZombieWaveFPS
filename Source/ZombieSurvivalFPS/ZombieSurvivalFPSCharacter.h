@@ -61,11 +61,6 @@ class AZombieSurvivalFPSCharacter : public ACharacter
 public:
 	AZombieSurvivalFPSCharacter();
 
-protected:
-	virtual void BeginPlay();
-
-public:
-
 	float DeathCameraSpeed = 10;
 
 	void EndGame(bool Won);
@@ -110,9 +105,16 @@ public:
 		void OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 protected:
+
+	virtual void BeginPlay();
+
 	bool bGameEnded = false;
 
+	bool bIsPaused = false;
+
 	AActor * InteractableActor;
+
+	void Pause();
 
 	void Use();
 	

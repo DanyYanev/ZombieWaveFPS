@@ -201,6 +201,17 @@ void AZombieSurvivalFPSCharacter::Tick(float DeltaSeconds)
 	}
 }
 
+void AZombieSurvivalFPSCharacter::Pause()
+{
+	if (!bIsPaused) {
+		//Do pause stuff
+		bIsPaused = true;
+	}
+	else {
+		bIsPaused = false;
+	}
+}
+
 void AZombieSurvivalFPSCharacter::Use()
 {
 	if (InteractableActor) {

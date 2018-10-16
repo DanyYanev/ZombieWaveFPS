@@ -95,19 +95,24 @@ void AScoreboard::ClearCountdown()
 
 void AScoreboard::HoverBegin()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hover Begin"));
 	Mesh->SetRenderCustomDepth(true);
 }
 
 void AScoreboard::HoverEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hover End"));
 	Mesh->SetRenderCustomDepth(false);
 }
 
 
 void AScoreboard::Use()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Use"));
+	AZombieSurvivalFPSGameMode * GameMode = Cast<AZombieSurvivalFPSGameMode>(GetWorld()->GetAuthGameMode());
+
+	if (GameMode) {
+		GameMode->QuickStartWave();
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+	}
 }
 
