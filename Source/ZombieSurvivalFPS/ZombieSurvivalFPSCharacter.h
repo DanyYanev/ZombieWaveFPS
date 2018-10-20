@@ -110,8 +110,6 @@ protected:
 
 	bool bGameEnded = false;
 
-	bool bIsPaused = false;
-
 	AActor * InteractableActor;
 
 	void Pause();

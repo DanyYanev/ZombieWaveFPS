@@ -19,6 +19,9 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	bool bGameEndStatus;
 
 	UPROPERTY(VisibleAnywhere)
+	bool bIsPaused;
+
+	UPROPERTY(VisibleAnywhere)
 	bool bGameWon;
 
 	UPROPERTY(VisibleAnywhere)
@@ -77,11 +80,17 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 
 	UUserWidget * EndGameWidgetInstance;
 
+	UUserWidget * PausedWidgetInstance;
+
 public:
 
 	/** The class of Zombie to spawn. */
 	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
 	TSubclassOf<ACharacter> ZombieClass;
+
+	/*The widget to spawn after pause*/
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = "Widgets")
+	TSubclassOf<class UUserWidget> PausedWidgetClass;
 
 	/* The widget to spawn after game end*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
@@ -112,6 +121,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "GameStatus")
 	bool IsGameWon() const { return bGameWon; }
+
+	UFUNCTION(BlueprintCallable, Category = "GameStatus")
+	void SetGamePause();
 
 	//For skipping wait time between waves.
 	void QuickStartWave();

@@ -38,11 +38,22 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 		EndGameWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), EndGameWidgetClass, TEXT("EndGameWidget"));
 
 		if (!EndGameWidgetInstance) {
-			UE_LOG(LogTemp, Error, TEXT("Widget instance failed to create"));
+			UE_LOG(LogTemp, Error, TEXT("EndGameWidgetInstance instance failed to create"));
 		}	
 	}
 	else
-		UE_LOG(LogTemp, Error, TEXT("Widget class not set"));
+		UE_LOG(LogTemp, Error, TEXT("EndGameWidgetClass class not set"));
+
+	if (PausedWidgetClass)
+	{
+		PausedWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), PausedWidgetClass, TEXT("PausedWidgetClass"));
+
+		if (!PausedWidgetInstance) {
+			UE_LOG(LogTemp, Error, TEXT("PausedWidgetInstance instance failed to create"));
+		}
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("PausedWidgetClass class not set"));
 
 
 	TArray<AActor*> SpawnResult;
@@ -73,6 +84,74 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 	}
 
 	NextWave();
+}
+
+void AZombieSurvivalFPSGameMode::SetGamePause()
+{
+	if (!bIsPaused) {
+
+		if (!UGameplayStatics::SetGamePaused(this, true)) {
+			UE_LOG(LogTemp, Error, TEXT("Pause failed!"));
+		}
+		else {
+			bIsPaused = true;
+
+			AHUD * HUD = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD();
+
+			if (HUD) {
+				HUD->ShowHUD();
+			}
+			else
+				UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
+
+			if (PausedWidgetInstance) {
+				PausedWidgetInstance->AddToViewport();
+			} else
+				UE_LOG(LogTemp, Error, TEXT("PauseGameWidgetInstance not craeted"));
+
+
+			APlayerController* PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+			if (PC)
+			{
+				PC->bShowMouseCursor = true;
+				PC->bEnableClickEvents = true;
+				PC->bEnableMouseOverEvents = true;
+			};
+		}
+
+	}
+	else {
+		if (!UGameplayStatics::SetGamePaused(this, false)) {
+			UE_LOG(LogTemp, Error, TEXT("UnPause failed!"));
+		}
+		else {
+			bIsPaused = false;
+
+			AHUD * HUD = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD();
+
+			if (HUD) {
+				HUD->ShowHUD();
+			}
+			else
+				UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
+
+			if (PausedWidgetInstance) {
+				PausedWidgetInstance->RemoveFromViewport();
+			}
+			else
+				UE_LOG(LogTemp, Error, TEXT("PauseGameWidgetInstance not craeted"));
+
+			APlayerController* PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+			if (PC)
+			{
+				PC->bShowMouseCursor = false;
+				PC->bEnableClickEvents = false;
+				PC->bEnableMouseOverEvents = false;
+			};
+		}
+	}
 }
 
 void AZombieSurvivalFPSGameMode::QuickStartWave()

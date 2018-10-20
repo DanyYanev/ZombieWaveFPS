@@ -1,6 +1,7 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "ZombieSurvivalFPSCharacter.h"
+#include "ZombieSurvivalFPSGameMode.h"
 #include "ZombieSurvivalFPSProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
@@ -154,6 +155,7 @@ void AZombieSurvivalFPSCharacter::SetupPlayerInputComponent(class UInputComponen
 	// Bind jump events
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AZombieSurvivalFPSCharacter::Pause).bExecuteWhenPaused = true;
 
 	PlayerInputComponent->BindAction("Use", IE_Pressed, this, &AZombieSurvivalFPSCharacter::Use);
 
@@ -203,12 +205,14 @@ void AZombieSurvivalFPSCharacter::Tick(float DeltaSeconds)
 
 void AZombieSurvivalFPSCharacter::Pause()
 {
-	if (!bIsPaused) {
-		//Do pause stuff
-		bIsPaused = true;
-	}
-	else {
-		bIsPaused = false;
+	AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
+
+	if (GameMode) {
+		AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
+		if (ZombieGameMode) {
+			ZombieGameMode->SetGamePause();
+			// On first tick, Behaviour tree should call SetNewTarget.
+		}
 	}
 }
 
