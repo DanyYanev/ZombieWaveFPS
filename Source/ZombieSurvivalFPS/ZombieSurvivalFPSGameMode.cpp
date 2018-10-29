@@ -292,7 +292,7 @@ void AZombieSurvivalFPSGameMode::AttachLevelUpShop(ALevelUpShop * LevelUpShopIns
 	}
 }
 
-void AZombieSurvivalFPSGameMode::ZombieDeath(AZombieCharacter * Zombie)
+void AZombieSurvivalFPSGameMode::ZombieDeath(AZombieBase * Zombie)
 {
 	//UE_LOG(LogTemp, Error, TEXT("Zombie death counted"));
 

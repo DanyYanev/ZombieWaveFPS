@@ -76,7 +76,7 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	void NextWave();
 
 	UPROPERTY(VisibleAnywhere)
-	TArray<AZombieCharacter *> Zombies;
+	TArray<AZombieBase *> Zombies;
 
 	UUserWidget * EndGameWidgetInstance;
 
@@ -102,7 +102,7 @@ public:
 
 	void UpdateCurrentMoneyBy(int Value);
 	
-	void ZombieDeath(AZombieCharacter * Zombie);
+	void ZombieDeath(AZombieBase * Zombie);
 
 	void TargetDestroyed(AActor * Barricade);
 

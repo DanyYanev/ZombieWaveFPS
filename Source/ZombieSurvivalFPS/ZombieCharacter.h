@@ -3,74 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ZombieBase.h"
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "ZombieCharacter.generated.h"
 
 UCLASS()
-class ZOMBIESURVIVALFPS_API AZombieCharacter : public ACharacter
+class ZOMBIESURVIVALFPS_API AZombieCharacter : public AZombieBase
 {
 	GENERATED_BODY()
 
 public:
 	AZombieCharacter();
 
-	void EndGame(bool Won);
-
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UPROPERTY(EditAnywhere, Category = Behavior)
-	UBehaviorTree * BehaviorTree;
-
-	UFUNCTION(BlueprintCallable)
-	bool IsDying() const { return bIsDying; }
-
-	UFUNCTION(BlueprintCallable)
-	bool IsCelebrating() const { return bIsCelebrating; }
-
-	UFUNCTION()
-	void DealDamage(AActor * Target);
-
-	UFUNCTION()
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-	
 	UFUNCTION()
 	virtual void OnHeadshot(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	UFUNCTION()
 	virtual void OnBodyshot(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	FORCEINLINE class UCapsuleComponent* GetHeadComp() const { return Head; }
-
-	FORCEINLINE class UCapsuleComponent* GetBodyComp() const { return Body; }
-
-	FORCEINLINE int GetAttackDamage() const { return AttackDamage; }
-
 protected:
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere)
-	UCapsuleComponent * Head;
-
-	UPROPERTY(EditAnywhere)
-	UCapsuleComponent * Body;
-
-	UPROPERTY(EditAnywhere)
-	int Health;
-
-	UPROPERTY(EditAnywhere)
-	int Speed;
-
-	UPROPERTY(EditAnywhere)
-	int AttackDamage;
-
-	UPROPERTY(EditAnywhere)
-	bool bIsDying = false;
-
-	UPROPERTY(EditAnywhere)
-	bool bIsCelebrating = false;
 
 };
