@@ -45,7 +45,7 @@ void AZombieCharacter::OnHeadshot(UPrimitiveComponent * OverlappedComponent, AAc
 			}
 		}
 		
-		UE_LOG(LogTemp, Warning, TEXT("Headshot attempting to deal: %d"), projectile->GetDamage() * 2);
+		//UE_LOG(LogTemp, Warning, TEXT("Headshot attempting to deal: %d"), projectile->GetDamage() * 2);
 		UGameplayStatics::ApplyPointDamage(this, projectile->GetDamage() * 2, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
 
 		//Somehow calls TakeDamage of OtherActor
@@ -59,7 +59,7 @@ void AZombieCharacter::OnBodyshot(UPrimitiveComponent * OverlappedComponent, AAc
 
 	if (projectile) {
 
-		UE_LOG(LogTemp, Warning, TEXT("Body shot attempting to deal: %d"), projectile->GetDamage() * 1);
+		//UE_LOG(LogTemp, Warning, TEXT("Body shot attempting to deal: %d"), projectile->GetDamage() * 1);
 		UGameplayStatics::ApplyPointDamage(this, projectile->GetDamage() * 1, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
 		
 		//Somehow calls TakeDamage of OtherActor

@@ -81,7 +81,7 @@ float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEve
 
 	Health -= Damage;
 
-	UE_LOG(LogTemp, Warning, TEXT("Dealt: %d, Remaining: %d"), Damage, Health);
+	//UE_LOG(LogTemp, Warning, TEXT("Dealt: %d, Remaining: %d"), Damage, Health);
 
 	if (Health <= 0) {
 
@@ -89,7 +89,7 @@ float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEve
 
 		//Destroy();
 		bIsDying = true;
-		UE_LOG(LogTemp, Warning, TEXT("Death"));
+		UE_LOG(LogTemp, Warning, TEXT("ZombieDeath"));
 
 		if (GameMode) {
 			AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
