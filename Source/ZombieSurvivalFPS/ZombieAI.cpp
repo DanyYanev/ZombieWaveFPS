@@ -119,7 +119,7 @@ void AZombieAI::Possess(APawn * InPawn)
 {
 	Super::Possess(InPawn);
 
-	AZombieCharacter * Zombie = Cast<AZombieCharacter>(InPawn);
+	AZombieBase * Zombie = Cast<AZombieBase>(InPawn);
 
 	if (Zombie && Zombie->BehaviorTree) {
 		BlackboardComp->InitializeBlackboard(*Zombie->BehaviorTree->BlackboardAsset);
