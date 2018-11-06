@@ -198,7 +198,7 @@ void AZombieSurvivalFPSGameMode::SpawnZombies()
 		FTransform SpawnTransform = SpawnArray[i];
 		//UE_LOG(LogTemp, Error, TEXT("Zombie Spawn Location: %s"), *SpawnTransform.GetLocation().ToString());
 		UWorld* World = GetWorld();
-		AZombieCharacter* Zombie = World->SpawnActor<AZombieCharacter>(ZombieClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator());
+		AZombieCharacter* Zombie = World->SpawnActor<AZombieCharacter>(BasicZombieClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator());
 		if (IsValid(Zombie)) {
 			AliveZombies++;
 			Zombies.Add(Zombie);

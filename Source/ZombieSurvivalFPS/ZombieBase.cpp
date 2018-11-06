@@ -27,7 +27,7 @@ AZombieBase::AZombieBase()
 	Head->AttachToComponent(GetCapsuleComponent(), rules);
 	Body->AttachToComponent(GetCapsuleComponent(), rules);
 }
-
+   
 // Called when the game starts or when spawned
 void AZombieBase::BeginPlay()
 {

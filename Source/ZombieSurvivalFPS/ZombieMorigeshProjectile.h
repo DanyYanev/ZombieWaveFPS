@@ -1,21 +1,21 @@
-// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProjectileBase.h"
-#include "ZombieSurvivalFPSProjectile.generated.h"
+#include "ZombieMorigeshProjectile.generated.h"
 
-UCLASS(config=Game)
-class AZombieSurvivalFPSProjectile : public AProjectileBase
+UCLASS()
+class ZOMBIESURVIVALFPS_API AZombieMorigeshProjectile : public AProjectileBase
 {
 	GENERATED_BODY()
-
-public:
-	AZombieSurvivalFPSProjectile();
+	
+public:	
+	// Sets default values for this actor's properties
+	AZombieMorigeshProjectile();
 
 	UFUNCTION()
 	virtual void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 };
-

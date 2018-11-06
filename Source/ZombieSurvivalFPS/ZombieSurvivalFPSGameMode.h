@@ -86,7 +86,11 @@ public:
 
 	/** The class of Zombie to spawn. */
 	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
-	TSubclassOf<ACharacter> ZombieClass;
+	TSubclassOf<AZombieBase> BasicZombieClass;
+
+	/** The class of Zombie to spawn. */
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
+	TSubclassOf<AZombieBase> MorigeshZombieClass;
 
 	/*The widget to spawn after pause*/
 	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = "Widgets")
