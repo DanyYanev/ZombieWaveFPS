@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ActorComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "ZombieAI.h"
 #include "Engine/World.h"
 
@@ -16,6 +17,19 @@ AZombieMorigesh::AZombieMorigesh()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	Head = CreateDefaultSubobject<UCapsuleComponent>(TEXT("HeadHitBox"));
+	Body = CreateDefaultSubobject<UCapsuleComponent>(TEXT("BodyHitBox"));
+
+	FAttachmentTransformRules rules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, false);
+
+	//GetMesh()->SetupAttachment(Head, FName("headSocket"));
+	Head->SetupAttachment(GetMesh(), FName("headSocket"));
+	Body->SetupAttachment(GetMesh(), FName("bodySocket"));
+	//GetMesh()->SetupAttachment(Body, FName("bodySocket"));
+
+	if (!(Body && Head))
+		UE_LOG(LogTemp, Error, TEXT("SOMETHING WENT HORRIBLY WRONG"));
 
 	Health = 100;
 	Speed = 2;
@@ -27,8 +41,18 @@ void AZombieMorigesh::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Head->OnComponentBeginOverlap.AddDynamic(this, &AZombieMorigesh::OnHeadshot);
-	Body->OnComponentBeginOverlap.AddDynamic(this, &AZombieMorigesh::OnBodyshot);
+	if (Head) {
+		Head->OnComponentBeginOverlap.AddDynamic(this, &AZombieMorigesh::OnHeadshot);
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("HeadHitbox is NULL"));
+
+
+	if (Body) {
+		Body->OnComponentBeginOverlap.AddDynamic(this, &AZombieMorigesh::OnBodyshot);
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("BodyHitbox is NULL"));
 }
 
 void AZombieMorigesh::OnHeadshot(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)

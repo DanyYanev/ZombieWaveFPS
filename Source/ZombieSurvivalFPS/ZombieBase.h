@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "ZombieBase.generated.h"
 
@@ -38,28 +39,29 @@ public:
 	UFUNCTION()
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-	FORCEINLINE class UCapsuleComponent* GetHeadComp() const { return Head; }
+	//FORCEINLINE class UCapsuleComponent* GetHeadComp() const { return Head; }
 
-	FORCEINLINE class UCapsuleComponent* GetBodyComp() const { return Body; }
+	//FORCEINLINE class UCapsuleComponent* GetBodyComp() const { return Body; }
 
 	FORCEINLINE int GetAttackDamage() const { return AttackDamage; }
 
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere)
-	UCapsuleComponent * Head;
+	/*
+	UPROPERTY(Category = Hitboxes, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		UCapsuleComponent * Head;
 
-	UPROPERTY(EditAnywhere)
-	UCapsuleComponent * Body;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(Category = Hitboxes, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		UCapsuleComponent * Body;
+	*/
+	UPROPERTY(Category = Stats, EditAnywhere)
 	int Health;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(Category = Stats, EditAnywhere)
 	int Speed;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(Category = Stats, EditAnywhere)
 	int AttackDamage;
 
 	UPROPERTY(EditAnywhere)

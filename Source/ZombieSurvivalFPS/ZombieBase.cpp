@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ActorComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "ZombieAI.h"
 #include "Engine/World.h"
 
@@ -18,14 +19,6 @@ AZombieBase::AZombieBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-
-	Head = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Head"));
-	Body = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Body"));
-
-	FAttachmentTransformRules rules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, false);
-
-	Head->AttachToComponent(GetCapsuleComponent(), rules);
-	Body->AttachToComponent(GetCapsuleComponent(), rules);
 }
    
 // Called when the game starts or when spawned
