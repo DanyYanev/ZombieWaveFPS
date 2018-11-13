@@ -2,19 +2,39 @@
 
 #include "ZombieMorigeshProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
 AZombieMorigeshProjectile::AZombieMorigeshProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	// Use a sphere as a simple collision representation
+	CollisionComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SphereComp"));
+	//CollisionComp->InitSphereRadius(5.0f);
+	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
+
+	// Players can't walk on it
+	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
+	CollisionComp->CanCharacterStepUpOn = ECB_No;
+
+	// Set as root component
+	RootComponent = CollisionComp;
+
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
+	ProjectileMovement->UpdatedComponent = CollisionComp;
+
+ 	PrimaryActorTick.bCanEverTick = true;
 	ProjectileMovement->InitialSpeed = 3000.f;
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
+
+	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
+
+	ProjectileMesh->SetupAttachment(CollisionComp);
 
 	Damage = 50.f;
 

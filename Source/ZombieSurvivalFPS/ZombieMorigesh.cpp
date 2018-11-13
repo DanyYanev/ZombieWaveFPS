@@ -21,15 +21,11 @@ AZombieMorigesh::AZombieMorigesh()
 	Head = CreateDefaultSubobject<UCapsuleComponent>(TEXT("HeadHitBox"));
 	Body = CreateDefaultSubobject<UCapsuleComponent>(TEXT("BodyHitBox"));
 
-	FAttachmentTransformRules rules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, false);
+	ProjectileOffSet = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileOffSet"));
 
-	//GetMesh()->SetupAttachment(Head, FName("headSocket"));
+	ProjectileOffSet->SetupAttachment(GetMesh(), FName("FX_Dagger"));
 	Head->SetupAttachment(GetMesh(), FName("headSocket"));
 	Body->SetupAttachment(GetMesh(), FName("bodySocket"));
-	//GetMesh()->SetupAttachment(Body, FName("bodySocket"));
-
-	if (!(Body && Head))
-		UE_LOG(LogTemp, Error, TEXT("SOMETHING WENT HORRIBLY WRONG"));
 
 	Health = 100;
 	Speed = 2;

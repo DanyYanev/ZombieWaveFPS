@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "ZombieBase.h"
+#include "ZombieMorigeshProjectile.h"
 #include "ZombieMorigesh.generated.h"
 
 UCLASS()
@@ -14,6 +15,8 @@ class ZOMBIESURVIVALFPS_API AZombieMorigesh : public AZombieBase
 
 {
 	GENERATED_BODY()
+
+
 
 public:
 	// Sets default values for this character's properties
@@ -30,6 +33,12 @@ public:
 
 	UPROPERTY(Category = Hitboxes, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCapsuleComponent * Body;
+
+	UPROPERTY(Category = Hitboxes, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USceneComponent * ProjectileOffSet;
+
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category=Projectile)
+	TSubclassOf<AZombieMorigeshProjectile> ProjectileClass;
 
 protected:
 	virtual void BeginPlay() override;
