@@ -17,6 +17,11 @@ class ZOMBIESURVIVALFPS_API AZombieCharacter : public AZombieBase
 public:
 	AZombieCharacter();
 
+	virtual void Attack(AActor * Target) override;
+
+	UFUNCTION(BlueprintCallable)
+	void DealDamageToTargetActor(AActor * DamagedActor);
+
 	UPROPERTY(Category = Hitboxes, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCapsuleComponent * Head;
 

@@ -1,14 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ZombieBase.h"
+#include "ZombieAI.h"
 #include "ZombieSurvivalFPSProjectile.h"
 #include "ZombieSurvivalFPSGameMode.h"
 #include "ZombieBarrier.h"
+#include "ZombieBaseAnimationInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ActorComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "ZombieAI.h"
 #include "Engine/World.h"
 
 
@@ -42,10 +44,25 @@ void AZombieBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 }
 
+void AZombieBase::Attack(AActor * Target)
+{
+	UE_LOG(LogTemp, Error, TEXT("If this calls something went terribly wrong. ***ZombieBase Attack***"));
+}
+
 void AZombieBase::EndGame(bool Won)
 {
 	if (Won) {
-		bIsCelebrating = true;
+		if (!GetMesh()) {
+			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
+			if (!AnimInstance) {
+				AnimInstance->SetIsCheering(true);
+			}
+			else
+				UE_LOG(LogTemp, Error, TEXT("MeshAnimBlueprint doesn't derive from ZombieBaseAnimationInstance"));
+
+		}
+		else
+			UE_LOG(LogTemp, Error, TEXT("Mesh is NULL"));
 	}
 	else
 		UE_LOG(LogTemp, Error, TEXT("ZOMBIE ALIVE AND GAME WON"));
@@ -78,11 +95,26 @@ float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEve
 
 	if (Health <= 0) {
 
-		AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
+		//Notifies AnimInstance that death has occured.
+		if (GetMesh()) {
+			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
+			if (!AnimInstance) {
+				AnimInstance->SetIsDying(true);
+			}
+			else
+				UE_LOG(LogTemp, Error, TEXT("MeshAnimBlueprint doesn't derive from ZombieBaseAnimationInstance"));
 
-		//Destroy();
-		bIsDying = true;
+		}
+		else
+			UE_LOG(LogTemp, Error, TEXT("Mesh is NULL"));
+
+		//Disables character movement
+		GetCharacterMovement()->DisableMovement();
+
 		UE_LOG(LogTemp, Warning, TEXT("ZombieDeath"));
+
+		//Notifies Game mode of Zombie's death
+		AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
 
 		if (GameMode) {
 			AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);

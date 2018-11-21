@@ -31,16 +31,17 @@ void AZombieAI::BeginPlay()
 	}
 }
 
-void AZombieAI::AttackTarget()
+void AZombieAI::AttackTarget(AActor * Target)
 {
-	AZombieCharacter * Zombie = Cast<AZombieCharacter>(GetPawn());
+
+	APawn* pawn = GetPawn();
+	AZombieBase* Zombie = Cast<AZombieBase>(pawn);
 
 	if (IsValid(Zombie)) {
-		AActor * Target = Cast<AActor>(BehaviorTreeComp->GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(TargetKeyId));
-		if (IsValid(Target)) {
-			Zombie->DealDamage(Target);
-		}
+		Zombie->Attack(Target);
 	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("Pawn isn't deriving from ZombieBase!"));
 }
 
 void AZombieAI::SetNewTarget()
@@ -131,4 +132,14 @@ void AZombieAI::Possess(APawn * InPawn)
 
 		BehaviorTreeComp->StartTree(*Zombie->BehaviorTree);
 	}
+}
+
+FVector AZombieAI::GetTargetPoint()
+{
+	if (IsValid(BehaviorTreeComp)) {
+		FVector TargetPoint = BehaviorTreeComp->GetBlackboardComponent()->GetValue<UBlackboardKeyType_Vector>(TargetPointKeyId);
+		return TargetPoint;
+	}
+
+	return FVector(-1, -1, -1);
 }

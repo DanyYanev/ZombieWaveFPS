@@ -4,6 +4,7 @@
 #include "ZombieSurvivalFPSProjectile.h"
 #include "ZombieSurvivalFPSGameMode.h"
 #include "ZombieBarrier.h"
+#include "ZombieBaseAnimationInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ActorComponent.h"
@@ -42,6 +43,30 @@ void AZombieCharacter::BeginPlay()
 
 	Head->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnHeadshot);
 	Body->OnComponentBeginOverlap.AddDynamic(this, &AZombieCharacter::OnBodyshot);
+}
+
+void AZombieCharacter::Attack(AActor * Target)
+{
+	if (Target) {
+		if (!GetMesh()) {
+			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
+			if (!AnimInstance) {
+				AnimInstance->SetIsAttacking(true);
+				AnimInstance->SetTarget(Target);
+			}
+			else
+				UE_LOG(LogTemp, Error, TEXT("MeshAnimBlueprint doesn't derive from ZombieBaseAnimationInstance"));
+		}
+		else
+			UE_LOG(LogTemp, Error, TEXT("Mesh is NULL"));
+	}
+}
+
+void AZombieCharacter::DealDamageToTargetActor(AActor * DamagedActor)
+{
+	if (IsValid(DamagedActor)) {
+		UGameplayStatics::ApplyDamage(DamagedActor, AttackDamage, GetController(), this, NULL);
+	}
 }
 
 void AZombieCharacter::OnHeadshot(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)

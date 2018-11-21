@@ -4,11 +4,14 @@
 #include "ZombieSurvivalFPSProjectile.h"
 #include "ZombieSurvivalFPSGameMode.h"
 #include "ZombieBarrier.h"
+#include "ZombieBaseAnimationInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ActorComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "ZombieAI.h"
+#include "AIModule/Classes/Blueprint/AIBlueprintHelperLibrary.h"
+#include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 
 
@@ -23,7 +26,7 @@ AZombieMorigesh::AZombieMorigesh()
 
 	ProjectileOffSet = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileOffSet"));
 
-	ProjectileOffSet->SetupAttachment(GetMesh(), FName("FX_Dagger"));
+	ProjectileOffSet->SetupAttachment(RootComponent);
 	Head->SetupAttachment(GetMesh(), FName("headSocket"));
 	Body->SetupAttachment(GetMesh(), FName("bodySocket"));
 
@@ -49,6 +52,25 @@ void AZombieMorigesh::BeginPlay()
 	}
 	else
 		UE_LOG(LogTemp, Error, TEXT("BodyHitbox is NULL"));
+}
+
+void AZombieMorigesh::Attack(AActor * Target)
+{
+	if (Target) {
+		USkeletalMeshComponent* Mesh = GetMesh();
+		if (Mesh) {
+			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
+			if (AnimInstance) {
+				AnimInstance->SetIsAttacking(true);
+				AnimInstance->SetTarget(Target);
+			}
+			else
+				UE_LOG(LogTemp, Error, TEXT("MeshAnimBlueprint doesn't derive from ZombieBaseAnimationInstance"));
+
+		}
+		else
+			UE_LOG(LogTemp, Error, TEXT("Mesh is NULL"));
+	}
 }
 
 void AZombieMorigesh::OnHeadshot(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -87,5 +109,33 @@ void AZombieMorigesh::OnBodyshot(UPrimitiveComponent * OverlappedComponent, AAct
 		OtherActor->Destroy();
 	}
 
+}
+
+void AZombieMorigesh::LaunchProjectile()
+{
+	if (ProjectileClass) {
+		UWorld* const World = GetWorld();
+		if (World != NULL)
+		{
+			AZombieAI* Controller = Cast<AZombieAI>(GetController());
+			if (Controller) {
+				FVector TargetPoint = Controller->GetTargetPoint();
+				FVector Location = ProjectileOffSet->GetComponentLocation();
+				FVector Direction = ProjectileOffSet->GetComponentLocation() - TargetPoint;
+				FRotator Rotation = Direction.Rotation();
+
+				//UE_LOG(LogTemp, Error, TEXT(FName(Rotation.X));
+				//UE_LOG(LogTemp, Warning, TEXT(GetActorRotation().ToString()));
+
+				//Set Spawn Collision Handling Override
+				FActorSpawnParameters ActorSpawnParams;
+				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+				// spawn the projectile at the muzzle
+				World->SpawnActor<AZombieMorigeshProjectile>(ProjectileClass, Location, GetActorRotation(), ActorSpawnParams);
+				DrawDebugPoint(GetWorld(), Location, 20, FColor(255, 0, 255), true, 3);
+			}
+		}
+	}
 }
 

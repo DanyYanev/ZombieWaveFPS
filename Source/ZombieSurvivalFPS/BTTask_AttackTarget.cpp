@@ -17,19 +17,12 @@ EBTNodeResult::Type UBTTask_AttackTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 	if(!ZombieAI)
 		return EBTNodeResult::Failed;
 
-	AZombieCharacter * Zombie = Cast<AZombieCharacter>(ZombieAI->GetPawn());
-	if (!Zombie)
-		return EBTNodeResult::Failed;
-
 	AActor * Target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(ZombieAI->TargetKeyId));
 
 	if (Target) {
 
-		ZombieAI->bIsAttacking = true;
+		ZombieAI->AttackTarget(Target);
 
-		//UGameplayStatics::ApplyDamage(Target, Zombie->GetAttackDamage(), ZombieAI, Zombie, nullptr);
-
-		//ZombieAI->bIsAttacking = false;
 		return EBTNodeResult::Succeeded;
 	}
 

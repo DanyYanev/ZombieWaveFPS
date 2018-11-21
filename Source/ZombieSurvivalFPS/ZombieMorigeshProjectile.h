@@ -24,7 +24,7 @@ public:
 
 	/** Sphere collision component */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Projectile)
-	class UCapsuleComponent* CollisionComp;
+	class UBoxComponent * CollisionComp;
 
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))

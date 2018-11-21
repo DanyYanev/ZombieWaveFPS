@@ -36,12 +36,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetIsAttacking(bool Value) { bIsAttacking = Value; }
 
-	UFUNCTION(BlueprintCallable)
-	void AttackTarget();
+	void AttackTarget(AActor * Target);
 
 	TArray<AActor *> const * Targets;
 
 	void SetNewTarget();
+
+	FVector GetTargetPoint();
 
 	virtual void BeginPlay() override;
 
