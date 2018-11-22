@@ -50,10 +50,10 @@ public:
 	void Use();
 
 	UFUNCTION()
-	void HoverBegin();
+	void Select();
 
 	UFUNCTION()
-	void HoverEnd();
+	void Deselect();
 
 	void SetState(EButtonState::State NewState);
 
@@ -65,9 +65,9 @@ protected:
 private:
 	EButtonState::State CurrentState = EButtonState::VE_Locked;
 
-	SignatureOnHoverBegin OnHoverBeginDelegate;
+	SignatureOnSelect OnSelectDelegate;
 
-	SignatureOnHoverEnd OnHoverEndDelegate;
+	SignatureOnDeselect OnDeselectDelegate;
 
 	SignatureOnUse OnUseDelegate;
 

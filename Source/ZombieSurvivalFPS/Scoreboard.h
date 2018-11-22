@@ -60,10 +60,10 @@ public:
 	void ClearCountdown();
 	
 	UFUNCTION()
-	void HoverBegin();
+	void Select();
 
 	UFUNCTION()
-	void HoverEnd();
+	void Deselect();
 
 	UFUNCTION()
 	void Use();
@@ -73,7 +73,7 @@ protected:
 
 private:
 
-	SignatureOnHoverBegin OnHoverBeginDelegate;
-	SignatureOnHoverEnd OnHoverEndDelegate;
+	SignatureOnSelect OnSelectDelegate;
+	SignatureOnDeselect OnDeselectDelegate;
 	SignatureOnUse OnUseDelegate;
 };

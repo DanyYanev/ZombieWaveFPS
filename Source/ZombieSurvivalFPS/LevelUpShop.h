@@ -21,16 +21,20 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(VisibleDefaultsOnly)
-		UStaticMeshComponent * Mesh;
+	UStaticMeshComponent * Mesh;
+
+	/** Sound to play each time something is bought */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	class USoundBase* PurchaseCue;
 
 	UPROPERTY(EditAnywhere)
-		UTextRenderComponent * TitleText;
+	UTextRenderComponent * TitleText;
 
 	UPROPERTY(EditAnywhere)
-		UTextRenderComponent * Money;
+	UTextRenderComponent * Money;
 
 	UPROPERTY(EditAnywhere)
-		TArray<AInteractableButton *> Buttons;
+	TArray<AInteractableButton *> Buttons;
 
 	UFUNCTION()
 	void UpdateMoney(int Value);

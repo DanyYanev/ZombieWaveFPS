@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LevelUpShop.h"
+#include "Kismet/GameplayStatics.h"
 #include "ZombieSurvivalFPSGameMode.h"
 
 
@@ -78,6 +79,12 @@ void ALevelUpShop::LevelPurchased()
 		CurrentLevel++;
 		CostForNextLevel *= 2;
 		bPurchaseWasAvaiable = false;
+
+		// try and play the sound if specified
+		if (PurchaseCue != NULL)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, PurchaseCue, GetActorLocation());
+		}
 	}
 	else
 		UE_LOG(LogTemp, Error, TEXT("GameMode not found"));

@@ -38,12 +38,12 @@ void AScoreboard::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnHoverBeginDelegate.BindUFunction(this, TEXT("HoverBegin"));
-	OnHoverEndDelegate.BindUFunction(this, TEXT("HoverEnd"));
+	OnSelectDelegate.BindUFunction(this, TEXT("Select"));
+	OnDeselectDelegate.BindUFunction(this, TEXT("Deselect"));
 	OnUseDelegate.BindUFunction(this, TEXT("Use"));
 
 	if (InteractableComponent) {
-		InteractableComponent->InitializeDelegates(&OnHoverBeginDelegate, &OnHoverEndDelegate, &OnUseDelegate);
+		InteractableComponent->InitializeDelegates(&OnSelectDelegate, &OnDeselectDelegate, &OnUseDelegate);
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("Interactable Component is NULL"));
@@ -93,12 +93,12 @@ void AScoreboard::ClearCountdown()
 	Countdown->SetText(FText().FromString(FString("")));
 }
 
-void AScoreboard::HoverBegin()
+void AScoreboard::Select()
 {
 	Mesh->SetRenderCustomDepth(true);
 }
 
-void AScoreboard::HoverEnd()
+void AScoreboard::Deselect()
 {
 	Mesh->SetRenderCustomDepth(false);
 }

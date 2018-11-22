@@ -30,11 +30,11 @@ void AInteractableButton::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnHoverBeginDelegate.BindUFunction(this, TEXT("HoverBegin"));
-	OnHoverEndDelegate.BindUFunction(this, TEXT("HoverEnd"));
+	OnSelectDelegate.BindUFunction(this, TEXT("Select"));
+	OnDeselectDelegate.BindUFunction(this, TEXT("Deselect"));
 	OnUseDelegate.BindUFunction(this, TEXT("Use"));
 
-	InteractableComponent->InitializeDelegates(&OnHoverBeginDelegate, &OnHoverEndDelegate, &OnUseDelegate);
+	InteractableComponent->InitializeDelegates(&OnSelectDelegate, &OnDeselectDelegate, &OnUseDelegate);
 }
 
 void AInteractableButton::Tick(float DeltaTime)
@@ -65,12 +65,12 @@ void AInteractableButton::InitializeButton(SignatureOnLevelPurchased * pOnPurcha
 	OnLevelPurchasedDelegate = pOnPurchasedDelegate;
 }
 
-void AInteractableButton::HoverBegin()
+void AInteractableButton::Select()
 {
 	Mesh->SetRenderCustomDepth(true);
 }
 
-void AInteractableButton::HoverEnd()
+void AInteractableButton::Deselect()
 {
 	Mesh->SetRenderCustomDepth(false);
 }

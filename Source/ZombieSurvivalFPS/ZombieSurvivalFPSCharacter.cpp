@@ -103,23 +103,6 @@ AZombieSurvivalFPSCharacter::AZombieSurvivalFPSCharacter()
 	//bUsingMotionControllers = true;
 }
 
-void AZombieSurvivalFPSCharacter::OverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	if (!InteractableActor) {
-		InteractableActor = OtherActor;
-	}
-}
-
-void AZombieSurvivalFPSCharacter::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
-{
-	//Remove InteractableActor reference
-	if (InteractableActor) {
-		if (InteractableActor == OtherActor) {
-			InteractableActor = nullptr;
-		}
-	}
-}
-
 void AZombieSurvivalFPSCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -142,6 +125,55 @@ void AZombieSurvivalFPSCharacter::BeginPlay()
 
 	UseHand->OnComponentBeginOverlap.AddDynamic(this, &AZombieSurvivalFPSCharacter::OverlapBegin);
 	UseHand->OnComponentEndOverlap.AddDynamic(this, &AZombieSurvivalFPSCharacter::OverlapEnd);
+}
+
+void AZombieSurvivalFPSCharacter::OverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	if (!InteractableActor) {
+		InteractableActor = OtherActor;
+
+		UInteractableComponent * InteractableComponent = InteractableActor->FindComponentByClass<UInteractableComponent>();
+
+		if (InteractableComponent) {
+			InteractableComponent->Select();
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("No InteractableComponent on TargetActor"));
+		}
+	}
+}
+
+void AZombieSurvivalFPSCharacter::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
+	//Remove InteractableActor reference
+	if (InteractableActor) {
+		if (InteractableActor == OtherActor) {
+			UInteractableComponent * InteractableComponent = InteractableActor->FindComponentByClass<UInteractableComponent>();
+
+			if (InteractableComponent) {
+				InteractableComponent->Deselect();
+			}
+			else {
+				UE_LOG(LogTemp, Warning, TEXT("No InteractableComponent on TargetActor"));
+			}
+
+			InteractableActor = NULL;
+		}
+	}
+}
+
+void AZombieSurvivalFPSCharacter::Use()
+{
+	if (InteractableActor) {
+		UInteractableComponent * InteractableComponent = InteractableActor->FindComponentByClass<UInteractableComponent>();
+
+		if (InteractableComponent) {
+			InteractableComponent->Use();
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("No InteractableComponent on TargetActor"));
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -212,20 +244,6 @@ void AZombieSurvivalFPSCharacter::Pause()
 		if (ZombieGameMode) {
 			ZombieGameMode->SetGamePause();
 			// On first tick, Behaviour tree should call SetNewTarget.
-		}
-	}
-}
-
-void AZombieSurvivalFPSCharacter::Use()
-{
-	if (InteractableActor) {
-		UInteractableComponent * InteractableComponent = InteractableActor->FindComponentByClass<UInteractableComponent>();
-
-		if (InteractableComponent) {
-			InteractableComponent->Use();
-		}
-		else {
-			UE_LOG(LogTemp, Warning, TEXT("No InteractableComponent on TargetActor"));
 		}
 	}
 }

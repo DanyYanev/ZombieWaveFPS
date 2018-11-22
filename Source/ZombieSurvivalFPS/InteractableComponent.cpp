@@ -31,8 +31,8 @@ void UInteractableComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Box->OnComponentBeginOverlap.AddDynamic(this, &UInteractableComponent::OnHoverBegin);
-	Box->OnComponentEndOverlap.AddDynamic(this, &UInteractableComponent::OnHoverEnd);
+	//Box->OnComponentBeginOverlap.AddDynamic(this, &UInteractableComponent::OnHoverBegin);
+	//Box->OnComponentEndOverlap.AddDynamic(this, &UInteractableComponent::OnHoverEnd);
 
 }
 
@@ -45,11 +45,14 @@ void UInteractableComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 }
 
 
-void UInteractableComponent::InitializeDelegates(SignatureOnHoverBegin * pOnHoverBegin, SignatureOnHoverEnd * pOnHoverEnd, SignatureOnUse * pOnUse)
+void UInteractableComponent::InitializeDelegates(SignatureOnSelect * pOnSelect, SignatureOnDeselect * pOnDeselect, SignatureOnUse * pOnUse)
 {
-	OnHoverBeginDelegate = pOnHoverBegin;
-	OnHoverEndDelegate = pOnHoverEnd;
-	OnUseDelegate = pOnUse;
+	if(pOnSelect)
+		OnSelectDelegate = pOnSelect;
+	if(pOnDeselect)
+		OnDeselectDelegate = pOnDeselect;
+	if(pOnUse)
+		OnUseDelegate = pOnUse;
 }
 
 void UInteractableComponent::Use()
@@ -64,7 +67,29 @@ void UInteractableComponent::Use()
 	
 }
 
+void UInteractableComponent::Select()
+{
+	if (OnSelectDelegate) {
+		if (!OnSelectDelegate->ExecuteIfBound()) {
+			UE_LOG(LogTemp, Warning, TEXT("OnSelectDelegate Not Bound"));
+		}
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("OnSelectDelegate is null"));
+}
 
+void UInteractableComponent::Deselect()
+{
+	if (OnDeselectDelegate) {
+		if (!OnDeselectDelegate->ExecuteIfBound()) {
+			UE_LOG(LogTemp, Warning, TEXT("OnDeselectDelegate Not Bound"));
+		}
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("OnDeselectDelegate is null"));
+}
+
+/*
 void UInteractableComponent::OnHoverBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	if (OnHoverBeginDelegate) {
@@ -86,3 +111,4 @@ void UInteractableComponent::OnHoverEnd(UPrimitiveComponent* OverlappedComponent
 	else
 		UE_LOG(LogTemp, Error, TEXT("OnHoverEndDelegate is null"));
 }
+*/
