@@ -29,34 +29,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	UBehaviorTree * BehaviorTree;
 
-	UFUNCTION(BlueprintCallable)
-	bool IsDying() const { return bIsDying; }
-
-	UFUNCTION(BlueprintCallable)
-	bool IsCelebrating() const { return bIsCelebrating; }
-
 	UFUNCTION()
 	void DealDamage(AActor * Target);
 
 	UFUNCTION()
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-	//FORCEINLINE class UCapsuleComponent* GetHeadComp() const { return Head; }
-
-	//FORCEINLINE class UCapsuleComponent* GetBodyComp() const { return Body; }
-
 	FORCEINLINE int GetAttackDamage() const { return AttackDamage; }
 
 protected:
 	virtual void BeginPlay() override;
 
-	/*
-	UPROPERTY(Category = Hitboxes, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		UCapsuleComponent * Head;
-
-	UPROPERTY(Category = Hitboxes, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		UCapsuleComponent * Body;
-	*/
 	UPROPERTY(Category = Stats, EditAnywhere)
 	int Health;
 
@@ -66,10 +49,7 @@ protected:
 	UPROPERTY(Category = Stats, EditAnywhere)
 	int AttackDamage;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	bool bIsDying = false;
-
-	UPROPERTY(EditAnywhere)
-	bool bIsCelebrating = false;
 
 };

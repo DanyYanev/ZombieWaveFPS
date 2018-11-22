@@ -119,6 +119,7 @@ float AZombieBarrier::TakeDamage(float DamageAmount, FDamageEvent const & Damage
 			}
 		}
 
+		TextRotation->DestroyComponent();
 		Destroy();
 		UE_LOG(LogTemp, Error, TEXT("Barricade Destroyed"));
 	}

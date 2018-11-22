@@ -52,14 +52,13 @@ void AZombieBase::Attack(AActor * Target)
 void AZombieBase::EndGame(bool Won)
 {
 	if (Won) {
-		if (!GetMesh()) {
+		if (GetMesh()) {
 			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
-			if (!AnimInstance) {
+			if (AnimInstance) {
 				AnimInstance->SetIsCheering(true);
 			}
 			else
 				UE_LOG(LogTemp, Error, TEXT("MeshAnimBlueprint doesn't derive from ZombieBaseAnimationInstance"));
-
 		}
 		else
 			UE_LOG(LogTemp, Error, TEXT("Mesh is NULL"));
@@ -98,7 +97,7 @@ float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEve
 		//Notifies AnimInstance that death has occured.
 		if (GetMesh()) {
 			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
-			if (!AnimInstance) {
+			if (AnimInstance) {
 				AnimInstance->SetIsDying(true);
 			}
 			else
@@ -122,6 +121,8 @@ float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEve
 				ZombieGameMode->ZombieDeath(this);
 			}
 		}
+
+		bIsDying = true;
 	}
 
 	return 0.0f;

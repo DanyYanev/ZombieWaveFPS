@@ -37,9 +37,8 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 	{
 		EndGameWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), EndGameWidgetClass, TEXT("EndGameWidget"));
 
-		if (!EndGameWidgetInstance) {
+		if (!EndGameWidgetInstance)
 			UE_LOG(LogTemp, Error, TEXT("EndGameWidgetInstance instance failed to create"));
-		}	
 	}
 	else
 		UE_LOG(LogTemp, Error, TEXT("EndGameWidgetClass class not set"));
@@ -48,9 +47,8 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 	{
 		PausedWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), PausedWidgetClass, TEXT("PausedWidgetClass"));
 
-		if (!PausedWidgetInstance) {
+		if (!PausedWidgetInstance)
 			UE_LOG(LogTemp, Error, TEXT("PausedWidgetInstance instance failed to create"));
-		}
 	}
 	else
 		UE_LOG(LogTemp, Error, TEXT("PausedWidgetClass class not set"));
@@ -225,25 +223,28 @@ void AZombieSurvivalFPSGameMode::EndGame(bool Won)
 	}
 	else
 		UE_LOG(LogTemp, Error, TEXT("Character cast failed"));
-		
-	AHUD * HUD = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD();
+	
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	
+	if (PC) {
+		AHUD * HUD = PC->GetHUD();
 
-	if (HUD) {
-		HUD->ShowHUD();
-	}
-	else
-		UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
+		if (HUD) {
+			HUD->ShowHUD();
+		}
+		else
+			UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
 
-	EndGameWidgetInstance->AddToViewport();
+		EndGameWidgetInstance->AddToViewport();
 
-	APlayerController* PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-
-	if (PC)
-	{
 		PC->bShowMouseCursor = true;
 		PC->bEnableClickEvents = true;
 		PC->bEnableMouseOverEvents = true;
-	};
+
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("PlayerController is invalid"));
+
 }
 
 void AZombieSurvivalFPSGameMode::TickTimer()

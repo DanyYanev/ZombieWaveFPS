@@ -48,9 +48,9 @@ void AZombieCharacter::BeginPlay()
 void AZombieCharacter::Attack(AActor * Target)
 {
 	if (Target) {
-		if (!GetMesh()) {
+		if (GetMesh()) {
 			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
-			if (!AnimInstance) {
+			if (AnimInstance) {
 				AnimInstance->SetIsAttacking(true);
 				AnimInstance->SetTarget(Target);
 			}
