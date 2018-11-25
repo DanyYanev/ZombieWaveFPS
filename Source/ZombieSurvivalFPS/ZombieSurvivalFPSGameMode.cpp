@@ -175,7 +175,26 @@ void AZombieSurvivalFPSGameMode::NextWave()
 		GetWorld()->GetTimerManager().SetTimer(CountdownTimerHandle, this, &AZombieSurvivalFPSGameMode::TickTimer, 1, true);
 	}
 	else {
-		UKismetSystemLibrary::QuitGame(this, UGameplayStatics::GetPlayerController(this, 0), EQuitPreference::Type::Quit);
+		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+		if (PC) {
+			AHUD * HUD = PC->GetHUD();
+
+			if (HUD) {
+				HUD->ShowHUD();
+			}
+			else
+				UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
+
+			EndGameWidgetInstance->AddToViewport();
+
+			PC->bShowMouseCursor = true;
+			PC->bEnableClickEvents = true;
+			PC->bEnableMouseOverEvents = true;
+
+		}
+		else
+			UE_LOG(LogTemp, Error, TEXT("PlayerController is invalid"));
 	}
 }
 
@@ -297,15 +316,18 @@ void AZombieSurvivalFPSGameMode::ZombieDeath(AZombieBase * Zombie)
 {
 	//UE_LOG(LogTemp, Error, TEXT("Zombie death counted"));
 
+	//Return 0 if no zombies were removed aka an unregistrated zombie died.
+	if (!Zombies.Remove(Zombie)) {
+		AliveZombies--;
+		Zombies.Remove(Zombie);
+
+		if (AliveZombies <= 0) {
+			NextWave();
+		}
+	}
+
 	UpdateCurrentScoreBy(100);
 	UpdateCurrentMoneyBy(100);
-
-	AliveZombies--;
-	Zombies.Remove(Zombie);
-
-	if (AliveZombies <= 0) {
-		NextWave();
-	}
 }
 
 void AZombieSurvivalFPSGameMode::TargetDestroyed(AActor * Target)
@@ -313,11 +335,11 @@ void AZombieSurvivalFPSGameMode::TargetDestroyed(AActor * Target)
 	Targets.Remove(Target);
 
 	if (Target->ActorHasTag(TEXT("Final"))) { //Endgame
-		//UKismetSystemLibrary::QuitGame(this, UGameplayStatics::GetPlayerController(this, 0), EQuitPreference::Type::Quit);
-
+		//Trigger loss
 		EndGame(false);
-
 	}
+
+	Target->Destroy();
 }
 
 void AZombieSurvivalFPSGameMode::UpdateCurrentScoreBy(int Value) {

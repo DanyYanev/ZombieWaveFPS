@@ -115,12 +115,12 @@ float AZombieBarrier::TakeDamage(float DamageAmount, FDamageEvent const & Damage
 		if (GameMode) {
 			AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
 			if (ZombieGameMode) {
+				TextRotation->DestroyComponent();
 				ZombieGameMode->TargetDestroyed(this);
+				//Destroy called from GameMode through Target Destroyed
 			}
 		}
 
-		TextRotation->DestroyComponent();
-		Destroy();
 		UE_LOG(LogTemp, Error, TEXT("Barricade Destroyed"));
 	}
 	return 0.0f;

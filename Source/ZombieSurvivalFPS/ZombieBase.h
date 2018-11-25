@@ -24,13 +24,11 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//ZombieAI Calls this for an attack to be issued
 	virtual void Attack(AActor * Target);
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	UBehaviorTree * BehaviorTree;
-
-	UFUNCTION()
-	void DealDamage(AActor * Target);
 
 	UFUNCTION()
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;

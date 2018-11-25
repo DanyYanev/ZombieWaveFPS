@@ -76,12 +76,6 @@ void AZombieBase::EndGame(bool Won)
 
 }
 
-void AZombieBase::DealDamage(AActor * Target)
-{
-	if (IsValid(Target))
-		UGameplayStatics::ApplyDamage(Target, GetAttackDamage(), GetController(), this, nullptr);
-}
-
 float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	//Already dying dont try to render its killing twice

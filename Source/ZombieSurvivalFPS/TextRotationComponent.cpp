@@ -40,7 +40,7 @@ void UTextRotationComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UTextRotationComponent::SetRotationToTarget(UTextRenderComponent * TextField)
 {
-	if (IsValid(TextField) && IsValid(Target)) {
+	if (IsValid(TextField) && Target) {
 		FVector Direction = Target->GetActorLocation() - TextField->GetOwner()->GetActorLocation();
 
 		TextField->SetRelativeRotation(Direction.Rotation());

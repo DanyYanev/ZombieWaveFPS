@@ -27,15 +27,6 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	uint8 TargetPointKeyId;
 
-	UPROPERTY(EditAnywhere)
-	bool bIsAttacking = false;
-
-	UFUNCTION(BlueprintCallable)
-	bool GetIsAttacking() const { return bIsAttacking; }
-
-	UFUNCTION(BlueprintCallable)
-	void SetIsAttacking(bool Value) { bIsAttacking = Value; }
-
 	void AttackTarget(AActor * Target);
 
 	TArray<AActor *> const * Targets;
@@ -55,10 +46,8 @@ private:
 	UPROPERTY(transient)
 	UBehaviorTreeComponent* BehaviorTreeComp;
 
-	UFUNCTION()
 	AActor * FindClosestTarget();
 
-	UFUNCTION()
 	FVector FindClosestTargetPoint();
 
 };

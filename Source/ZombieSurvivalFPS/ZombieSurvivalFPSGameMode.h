@@ -92,6 +92,10 @@ public:
 	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
 	TSubclassOf<AZombieBase> MorigeshZombieClass;
 
+	/** The class of Zombie to spawn. */
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
+	TSubclassOf<AZombieBase> GruxZombieClass;
+
 	/*The widget to spawn after pause*/
 	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = "Widgets")
 	TSubclassOf<class UUserWidget> PausedWidgetClass;
