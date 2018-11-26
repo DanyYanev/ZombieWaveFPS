@@ -37,6 +37,7 @@ AZombieBarrier::AZombieBarrier()
 
 	HealthText->AttachToComponent(Mesh, rules);
 
+	AddOwnedComponent(TextRotation);
 	TextRotation->AddTextComponent(HealthText);
 }
 

@@ -317,7 +317,7 @@ void AZombieSurvivalFPSGameMode::ZombieDeath(AZombieBase * Zombie)
 	//UE_LOG(LogTemp, Error, TEXT("Zombie death counted"));
 
 	//Return 0 if no zombies were removed aka an unregistrated zombie died.
-	if (!Zombies.Remove(Zombie)) {
+	if (Zombies.Remove(Zombie) > 0) {
 		AliveZombies--;
 		Zombies.Remove(Zombie);
 

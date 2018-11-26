@@ -17,9 +17,12 @@ void UTextRotationComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Target = Cast<AActor>(UGameplayStatics::GetPlayerPawn(this, 0));
+	AActor* PlayerReference = Cast<AActor>(UGameplayStatics::GetPlayerPawn(this, 0));
 
-	if (!Target) {
+	if (PlayerReference) {
+		SetTarget(PlayerReference);
+	}
+	else {
 		UE_LOG(LogTemp, Error, TEXT("Player not found to bind to TextRotationComponent as target"));
 	}
 }
@@ -56,4 +59,3 @@ void UTextRotationComponent::SetTarget(AActor * NewTarget)
 {
 	Target = NewTarget;
 }
-
