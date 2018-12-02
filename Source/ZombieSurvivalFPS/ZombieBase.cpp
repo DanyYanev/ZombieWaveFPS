@@ -6,6 +6,7 @@
 #include "ZombieSurvivalFPSGameMode.h"
 #include "ZombieBarrier.h"
 #include "ZombieBaseAnimationInstance.h"
+#include "HealthBarWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -21,13 +22,25 @@ AZombieBase::AZombieBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
+
+	HealthBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
+
+	HealthBarWidgetComponent->AttachTo(RootComponent);
 }
    
 // Called when the game starts or when spawned
 void AZombieBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	Health = MaxHealth;
+
+	HealthBarInstance = Cast<UHealthBarWidget>(HealthBarWidgetComponent->GetUserWidgetObject());
+
+	if (HealthBarInstance) {
+		HealthBarInstance->UpdateHealth(Health / MaxHealth);
+	} else 
+		UE_LOG(LogTemp, Error, TEXT("HealthBarWidget attached to WidgetComponent not of class UHealthBarWidget"));
 }
 
 // Called every frame
@@ -84,10 +97,17 @@ float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEve
 
 	Health -= Damage;
 
-	//UE_LOG(LogTemp, Warning, TEXT("Dealt: %d, Remaining: %d"), Damage, Health);
-
+	if (HealthBarInstance) {
+		if (Health <= 0) {
+			HealthBarInstance->SetVisibility(ESlateVisibility::Hidden);
+		}else
+			HealthBarInstance->UpdateHealth((float)Health / MaxHealth);
+	}else
+		UE_LOG(LogTemp, Error, TEXT("HealthBarInstance instance is NULL"));
+	
 	if (Health <= 0) {
 
+		bIsDying = true;
 		//Notifies AnimInstance that death has occured.
 		if (GetMesh()) {
 			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
@@ -116,7 +136,6 @@ float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEve
 			}
 		}
 
-		bIsDying = true;
 	}
 
 	return 0.0f;

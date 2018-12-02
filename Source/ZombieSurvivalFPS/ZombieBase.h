@@ -6,7 +6,9 @@
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "HealthBarWidget.h"
 #include "ZombieBase.generated.h"
 
 UCLASS()
@@ -30,6 +32,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	UBehaviorTree * BehaviorTree;
 
+	UPROPERTY(EditAnywhere, Category = Widget)
+	UWidgetComponent* HealthBarWidgetComponent;
+
 	UFUNCTION()
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -39,6 +44,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(Category = Stats, EditDefaultsOnly)
+	int MaxHealth;
+
 	int Health;
 
 	UPROPERTY(Category = Stats, EditDefaultsOnly)
@@ -50,4 +57,6 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	bool bIsDying = false;
 
+private:
+	UHealthBarWidget* HealthBarInstance;
 };
