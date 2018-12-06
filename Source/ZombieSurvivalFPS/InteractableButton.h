@@ -8,16 +8,14 @@
 #include "InteractableComponent.h"
 #include "InteractableButton.generated.h"
 
+//Enum class for Button States
 UENUM()
-namespace EButtonState
+enum class EButtonState : uint8
 {
-	enum State
-	{
-		VE_Locked			UMETA(DisplayName = "Locked"),
-		VE_Unlocked			UMETA(DisplayName = "Unlocked"),
-		VE_Purchasable		UMETA(DisplayName = "Purchasable")
-	};
-}
+	VE_Locked			UMETA(DisplayName = "Locked"),
+	VE_Unlocked			UMETA(DisplayName = "Unlocked"),
+	VE_Purchasable		UMETA(DisplayName = "Purchasable")
+};
 
 DECLARE_DELEGATE(SignatureOnLevelPurchased);
 
@@ -55,7 +53,7 @@ public:
 	UFUNCTION()
 	void Deselect();
 
-	void SetState(EButtonState::State NewState);
+	void SetState(EButtonState NewState);
 
 	void InitializeButton(SignatureOnLevelPurchased * pOnPurchasedDelegate);
 
@@ -63,7 +61,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	EButtonState::State CurrentState = EButtonState::VE_Locked;
+	EButtonState CurrentState = EButtonState::VE_Locked;
 
 	SignatureOnSelect OnSelectDelegate;
 

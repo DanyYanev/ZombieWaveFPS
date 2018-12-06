@@ -13,7 +13,6 @@ AProjectileBase::AProjectileBase()
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(5.0f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
-	//CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AProjectileBase::OnOverlap);
 
 	// Players can't walk on it
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
@@ -29,11 +28,8 @@ AProjectileBase::AProjectileBase()
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
-	//ProjectileMovement->InitialSpeed = 3000.f;
-	//ProjectileMovement->MaxSpeed = 3000.f;
-	//ProjectileMovement->bRotationFollowsVelocity = true;
-	//ProjectileMovement->bShouldBounce = false;
 
+	//Setup base damage
 	Damage = 50.f;
 
 	// Die after 3 seconds by default

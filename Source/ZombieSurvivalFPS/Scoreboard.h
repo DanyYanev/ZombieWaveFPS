@@ -18,8 +18,6 @@ class ZOMBIESURVIVALFPS_API AScoreboard : public AActor
 public:	
 	AScoreboard();
 
-	virtual void Tick(float DeltaTime) override;
-
 	UPROPERTY(VisibleDefaultsOnly)
 	UStaticMeshComponent * Mesh;
 

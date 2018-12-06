@@ -71,7 +71,7 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	void SpawnZombies();
 
 	UFUNCTION()
-	void EndGame(bool Won);
+	void OnGameEnded(bool Won);
 
 	void NextWave();
 

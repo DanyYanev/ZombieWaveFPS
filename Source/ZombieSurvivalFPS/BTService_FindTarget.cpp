@@ -24,14 +24,5 @@ void UBTService_FindTarget::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 *
 		if (!IsValid(Target)) {
 			ZombieAI->SetNewTarget();
 		}
-		/*
-		AZombieSurvivalFPSCharacter * Player = Cast<AZombieSurvivalFPSCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-
-		if (Player) {
-			OwnerComp.GetBlackboardComponent()->SetValue<UBlackboardKeyType_Object>(ZombieAI->TargetKeyId, Player);
-
-			UE_LOG(LogTemp, Warning, TEXT("Found player"));
-		}
-		*/	
 	}
 }

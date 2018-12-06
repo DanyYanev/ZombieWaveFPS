@@ -22,8 +22,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent * Box;
 
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	//Setup function delegates to call on Use, Select, Deselect, HoverBegin, HoverEnd
 	void InitializeDelegates(SignatureOnSelect * pOnSelect, SignatureOnDeselect * pOnDeselect, SignatureOnUse * pOnUse);
 
@@ -32,16 +30,6 @@ public:
 	void Select();
 	
 	void Deselect();
-
-	/*
-	UFUNCTION()
-	void OnHoverBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
-	
-	UFUNCTION()
-	void OnHoverEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	*/
-protected:
-	virtual void BeginPlay() override;
 
 private:
 	SignatureOnSelect * OnSelectDelegate;

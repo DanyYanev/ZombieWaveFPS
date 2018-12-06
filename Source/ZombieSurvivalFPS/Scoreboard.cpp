@@ -42,30 +42,30 @@ void AScoreboard::BeginPlay()
 	OnDeselectDelegate.BindUFunction(this, TEXT("Deselect"));
 	OnUseDelegate.BindUFunction(this, TEXT("Use"));
 
-	if (InteractableComponent) {
+	if (IsValid(InteractableComponent)) {
 		InteractableComponent->InitializeDelegates(&OnSelectDelegate, &OnDeselectDelegate, &OnUseDelegate);
 	}
 	else {
-		UE_LOG(LogTemp, Error, TEXT("Interactable Component is NULL"));
+		UE_LOG(LogTemp, Error, TEXT("Interactable Component is not valid."));
 	}
 
-	AZombieSurvivalFPSGameMode * GameMode = Cast<AZombieSurvivalFPSGameMode>(GetWorld()->GetAuthGameMode());
+	AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
 
-	if (GameMode) {
-		GameMode->AttachScoreboard(this);
-		Wave->SetText(FText().FromString(FString("")));
-		Countdown->SetText(FText().FromString(FString("")));
+	if (IsValid(GameMode)) {
+		AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
+
+		if (IsValid(ZombieGameMode)) {
+			ZombieGameMode->AttachScoreboard(this);
+			Wave->SetText(FText().FromString(FString("")));
+			Countdown->SetText(FText().FromString(FString("")));
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+		}
 	}
 	else {
-		UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+		UE_LOG(LogTemp, Error, TEXT("Couldn't retrieve a valid GameMode."));
 	}
-	
-}
-
-// Called every frame
-void AScoreboard::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void AScoreboard::UpdateScore(int Value)
@@ -103,16 +103,21 @@ void AScoreboard::Deselect()
 	Mesh->SetRenderCustomDepth(false);
 }
 
-
 void AScoreboard::Use()
 {
-	AZombieSurvivalFPSGameMode * GameMode = Cast<AZombieSurvivalFPSGameMode>(GetWorld()->GetAuthGameMode());
+	AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
 
-	if (GameMode) {
-		GameMode->QuickStartWave();
+	if (IsValid(GameMode)) {
+		AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
+			if (IsValid(ZombieGameMode)) {
+				ZombieGameMode->QuickStartWave();
+			}
+			else {
+				UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+			}
 	}
 	else {
-		UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+		UE_LOG(LogTemp, Error, TEXT("Couldn't retrieve a valid GameMode."));
 	}
 }
 

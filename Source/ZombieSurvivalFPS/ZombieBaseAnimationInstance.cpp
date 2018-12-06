@@ -13,19 +13,24 @@ UZombieBaseAnimationInstance::UZombieBaseAnimationInstance() {
 void UZombieBaseAnimationInstance::NativeBeginPlay(){
 	//Seed owning Pawn as ZombieBase
 	OwningPawn = Cast<AZombieBase>(GetOwningActor());
-	if (!OwningPawn)
+	if (!IsValid(OwningPawn)) {
 		UE_LOG(LogTemp, Error, TEXT("Owning pawn does not derive ZombieBase class!"));
+	}
 }
 
 void UZombieBaseAnimationInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	if (IsValid(OwningPawn)) {
-		if (OwningPawn->GetVelocity().Size() > 0)
+		if (OwningPawn->GetVelocity().Size() > 0) {
 			bIsRunning = true;
-		else
+		}
+		else {
 			bIsRunning = false;
-	}else
+		}
+	}
+	else {
 		UE_LOG(LogTemp, Error, TEXT("OwningPawn not valid while AnimInstance keeps updating!"));
+	}
 }
 
 void UZombieBaseAnimationInstance::SetIsAttacking(bool IsAttacking) {

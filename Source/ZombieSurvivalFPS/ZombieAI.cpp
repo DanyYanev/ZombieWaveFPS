@@ -22,12 +22,18 @@ void AZombieAI::BeginPlay()
 
 	AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
 
-	if (GameMode) {
+	if (IsValid(GameMode)) {
 		AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
-		if (ZombieGameMode) {
+		if (IsValid(ZombieGameMode)) {
 			Targets = ZombieGameMode->GetTargets();
-			// On first tick, Behaviour tree should call SetNewTarget.
+			// On first tick, Behaviour tree calls SetNewTarget.
 		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("Game mode cast failed."))
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Unable to retrieve GameMode."))
 	}
 }
 
@@ -40,31 +46,32 @@ void AZombieAI::AttackTarget(AActor * Target)
 	if (IsValid(Zombie)) {
 		Zombie->Attack(Target);
 	}
-	else
-		UE_LOG(LogTemp, Error, TEXT("Pawn isn't deriving from ZombieBase!"));
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Pawn isn't deriving from ZombieBase."));
+	}
 }
 
 void AZombieAI::SetNewTarget()
 {
 	AActor * Target = FindClosestTarget();
-	BehaviorTreeComp->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Object>(TargetKeyId, Target);
 
-	AZombieBarrier * Barrier = Cast<AZombieBarrier>(Target);
+	if (IsValid(Target)) {
+		BehaviorTreeComp->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Object>(TargetKeyId, Target);
 
-	if (Barrier) {
-		FVector TargetPoint = FindClosestTargetPoint();
-		BehaviorTreeComp->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Vector>(TargetPointKeyId, TargetPoint);
-	/*
-		DrawDebugPoint(
-			GetWorld(),
-			TargetPoint,
-			50,
-			FColor::Red,
-			false,
-			20
-		);
-	*/
+		AZombieBarrier * Barrier = Cast<AZombieBarrier>(Target);
+
+		if (IsValid(Barrier)) {
+			FVector TargetPoint = FindClosestTargetPoint();
+			BehaviorTreeComp->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Vector>(TargetPointKeyId, TargetPoint);
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("Target Actor isn't Barrier."));
+		}
 	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Closest target actor is not valid."));
+	}
+	
 }
 
 AActor * AZombieAI::FindClosestTarget()
@@ -74,7 +81,7 @@ AActor * AZombieAI::FindClosestTarget()
 	if (Targets->Num() != 0) {
 		float MinDistance = TNumericLimits< float >::Max();	
 		APawn * Character = GetPawn();
-		if (Character) {
+		if (IsValid(Character)) {
 			for (int i = 0; i < Targets->Num(); i++) {
 				FVector Distance = Character->GetActorLocation() - (*Targets)[i]->GetActorLocation();
 
@@ -84,7 +91,9 @@ AActor * AZombieAI::FindClosestTarget()
 				}
 			}
 		}
-		
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("Unable to retrieve a valid Character."));
+		}
 	}
 
 	return NewTarget;
@@ -96,11 +105,11 @@ FVector AZombieAI::FindClosestTargetPoint()
 
 	AZombieBarrier * Barrier = Cast<AZombieBarrier>(BehaviorTreeComp->GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(TargetKeyId));
 
-	if (Barrier) {
+	if (IsValid(Barrier)) {
 		float MinDistance = TNumericLimits< float >::Max();
 		APawn * Character = GetPawn();
 		TArray<FVector> * const TargetPoints = &Barrier->TargetPoints;
-		if (Character) {
+		if (IsValid(Character)) {
 			for (int i = 0; i < TargetPoints->Num(); i++) {
 				FVector Distance = Character->GetActorLocation() - (*TargetPoints)[i];
 
@@ -110,7 +119,13 @@ FVector AZombieAI::FindClosestTargetPoint()
 				}
 			}
 		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("Character reference isn't valid."));
+		}
 
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Barrier isn't valid during choosing targetpoint."));
 	}
 
 	return NewTarget;
@@ -122,15 +137,21 @@ void AZombieAI::Possess(APawn * InPawn)
 
 	AZombieBase * Zombie = Cast<AZombieBase>(InPawn);
 
-	if (Zombie && Zombie->BehaviorTree) {
-		BlackboardComp->InitializeBlackboard(*Zombie->BehaviorTree->BlackboardAsset);
+	if (IsValid(Zombie)){
+		if (IsValid(Zombie->BehaviorTree)) {
+			BlackboardComp->InitializeBlackboard(*Zombie->BehaviorTree->BlackboardAsset);
 
-		TargetKeyId = BlackboardComp->GetKeyID("Target");
-		TargetPointKeyId = BlackboardComp->GetKeyID("TargetPoint");
+			TargetKeyId = BlackboardComp->GetKeyID("Target");
+			TargetPointKeyId = BlackboardComp->GetKeyID("TargetPoint");
 
-		//SetNewTarget();
-
-		BehaviorTreeComp->StartTree(*Zombie->BehaviorTree);
+			BehaviorTreeComp->StartTree(*Zombie->BehaviorTree);
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Zombies BehaviorTree is not valid."));
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Trying to possess a pawn thats not deriving from ZombieBase."));
 	}
 }
 
@@ -139,6 +160,9 @@ FVector AZombieAI::GetTargetPoint()
 	if (IsValid(BehaviorTreeComp)) {
 		FVector TargetPoint = BehaviorTreeComp->GetBlackboardComponent()->GetValue<UBlackboardKeyType_Vector>(TargetPointKeyId);
 		return TargetPoint;
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Zombies BehaviorTreeComp is not valid."));
 	}
 
 	return FVector(-1, -1, -1);

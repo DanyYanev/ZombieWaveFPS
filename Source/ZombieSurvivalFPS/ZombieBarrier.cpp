@@ -10,15 +10,14 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 
-//#define DEBUG_
-
 void AZombieBarrier::UpdateHealthText()
 {
-	if (HealthText) {
+	if (IsValid(HealthText)) {
 		HealthText->SetText(FText().FromString(FString::FromInt(CurrentHealth) + FString("/") + FString::FromInt(Health)));
 	}
-	else
+	else {
 		UE_LOG(LogTemp, Warning, TEXT("HealthText not initialized!"));
+	}
 }
 
 // Sets default values
@@ -47,9 +46,9 @@ void AZombieBarrier::BeginPlay()
 	Super::BeginPlay();
 
 	FVector Scale3D = GetActorScale3D();
-	float length;
+	float Length;
 	//Offset of end points before end of actor
-	float offset = 40;
+	float Offset = 40;
 	//Which way the barrier is scaled
 	bool bScaleX = Scale3D.X > Scale3D.Y;
 
@@ -60,43 +59,25 @@ void AZombieBarrier::BeginPlay()
 
 	//GetActor Length to calculate number of targets needed
 	if (bScaleX) {
-		length = (FVector(Origin.X + BoxExtent.X, Origin.Y, Origin.Z) - FVector(Origin.X - BoxExtent.X, Origin.Y, Origin.Z)).Size();
+		Length = (FVector(Origin.X + BoxExtent.X, Origin.Y, Origin.Z) - FVector(Origin.X - BoxExtent.X, Origin.Y, Origin.Z)).Size();
 	}
 	else {
-		length = (FVector(Origin.X, Origin.Y + BoxExtent.Y, Origin.Z) - FVector(Origin.X, Origin.Y - BoxExtent.Y, Origin.Z)).Size();
+		Length = (FVector(Origin.X, Origin.Y + BoxExtent.Y, Origin.Z) - FVector(Origin.X, Origin.Y - BoxExtent.Y, Origin.Z)).Size();
 	}
 
-	length -= 2 * offset;
-	TargetNumber = length / 150;
-
-#ifdef DEBUG_
-	UE_LOG(LogTemp, Warning, TEXT("Target Numbers: %d, Every %f, TotalLength %f"), TargetNumber, length / (float)TargetNumber, length);
-#endif
+	Length -= 2 * Offset;
+	TargetNumber = Length / 150;
 
 	for (int i = 0; i < TargetNumber + 1; i++) { //Add last point at the end of actor
 		if (bScaleX) {
-			TargetPoints.Add(FVector(Origin.X - BoxExtent.X + (i * (length / (float)TargetNumber)) + offset, Origin.Y, Origin.Z));
+			TargetPoints.Add(FVector(Origin.X - BoxExtent.X + (i * (Length / (float)TargetNumber)) + Offset, Origin.Y, Origin.Z));
 		}
 		else {
-			TargetPoints.Add(FVector(Origin.X, Origin.Y - BoxExtent.Y + (i * (length / (float)TargetNumber)) + offset, Origin.Z));
+			TargetPoints.Add(FVector(Origin.X, Origin.Y - BoxExtent.Y + (i * (Length / (float)TargetNumber)) + Offset, Origin.Z));
 		}
 	}
 
-#ifdef DEBUG_
-	for (int i = 0; i < TargetPoints.Num(); i++) {
-		DrawDebugPoint(
-			GetWorld(),
-			FVector(TargetPoints[i].X, TargetPoints[i].Y, TargetPoints[i].Z + 100.f),
-			30,
-			FColor::Red,
-			false,
-			20
-		);
-	}
-#endif
-
 	CurrentHealth = Health;
-
 	UpdateHealthText();
 }
 
@@ -104,25 +85,27 @@ float AZombieBarrier::TakeDamage(float DamageAmount, FDamageEvent const & Damage
 {
 
 	CurrentHealth -= DamageAmount;
-
 	UpdateHealthText();
-
-	UE_LOG(LogTemp, Warning, TEXT("Dealt to barricade: %d, Remaining: %d"), DamageAmount, CurrentHealth);
 
 	if (CurrentHealth <= 0) {
 
 		AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
 
-		if (GameMode) {
+		if (IsValid(GameMode)) {
 			AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
-			if (ZombieGameMode) {
+			if (IsValid(ZombieGameMode)) {
 				TextRotation->DestroyComponent();
 				ZombieGameMode->TargetDestroyed(this);
 				//Destroy called from GameMode through Target Destroyed
 			}
+			else {
+				UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+			}
 		}
-
-		UE_LOG(LogTemp, Error, TEXT("Barricade Destroyed"));
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Couldn't retrieve a valid GameMode."));
+		}
 	}
+
 	return 0.0f;
 }

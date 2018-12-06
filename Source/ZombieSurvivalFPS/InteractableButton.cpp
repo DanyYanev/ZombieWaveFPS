@@ -42,7 +42,7 @@ void AInteractableButton::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AInteractableButton::SetState(EButtonState::State NewState)
+void AInteractableButton::SetState(EButtonState NewState)
 {
 	CurrentState = NewState;
 	
@@ -82,12 +82,12 @@ void AInteractableButton::Use()
 			if (!OnLevelPurchasedDelegate->ExecuteIfBound()) {
 				UE_LOG(LogTemp, Error, TEXT("OnLevelPurchasedDelegate not bound"));
 			}
-		} else
+		}
+		else {
 			UE_LOG(LogTemp, Error, TEXT("OnLevelPurchasedDelegate is null"));
+		}
 	}
 
-	//Play Sound
-
-	UE_LOG(LogTemp, Warning, TEXT("Useed button :)"));
+	UE_LOG(LogTemp, Display, TEXT("Useed button :)"));
 
 }

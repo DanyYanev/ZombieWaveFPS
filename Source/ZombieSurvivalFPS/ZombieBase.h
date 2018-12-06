@@ -20,11 +20,7 @@ public:
 	// Sets default values for this character's properties
 	AZombieBase();
 
-	void EndGame(bool Won);
-
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void OnGameEnded(bool Won);
 
 	//ZombieAI Calls this for an attack to be issued
 	virtual void Attack(AActor * Target);

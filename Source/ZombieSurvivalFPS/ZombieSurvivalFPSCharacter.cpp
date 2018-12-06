@@ -129,12 +129,12 @@ void AZombieSurvivalFPSCharacter::BeginPlay()
 
 void AZombieSurvivalFPSCharacter::OverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (!InteractableActor) {
+	if (!IsValid(InteractableActor)) {
 		InteractableActor = OtherActor;
 
 		UInteractableComponent * InteractableComponent = InteractableActor->FindComponentByClass<UInteractableComponent>();
 
-		if (InteractableComponent) {
+		if (IsValid(InteractableComponent)) {
 			InteractableComponent->Select();
 		}
 		else {
@@ -146,28 +146,33 @@ void AZombieSurvivalFPSCharacter::OverlapBegin(UPrimitiveComponent * OverlappedC
 void AZombieSurvivalFPSCharacter::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
 {
 	//Remove InteractableActor reference
-	if (InteractableActor) {
-		if (InteractableActor == OtherActor) {
-			UInteractableComponent * InteractableComponent = InteractableActor->FindComponentByClass<UInteractableComponent>();
+	if (IsValid(InteractableActor)) {
+		if (IsValid(OtherActor)) {
+			if (InteractableActor == OtherActor) {
+				UInteractableComponent * InteractableComponent = InteractableActor->FindComponentByClass<UInteractableComponent>();
 
-			if (InteractableComponent) {
-				InteractableComponent->Deselect();
-			}
-			else {
-				UE_LOG(LogTemp, Warning, TEXT("No InteractableComponent on TargetActor"));
-			}
+				if (IsValid(InteractableComponent)) {
+					InteractableComponent->Deselect();
+				}
+				else {
+					UE_LOG(LogTemp, Warning, TEXT("No InteractableComponent on TargetActor"));
+				}
 
-			InteractableActor = NULL;
+				InteractableActor = NULL;
+			}
 		}
+	}
+	else {
+		InteractableActor = NULL;
 	}
 }
 
 void AZombieSurvivalFPSCharacter::Use()
 {
-	if (InteractableActor) {
+	if (IsValid(InteractableActor)) {
 		UInteractableComponent * InteractableComponent = InteractableActor->FindComponentByClass<UInteractableComponent>();
 
-		if (InteractableComponent) {
+		if (IsValid(InteractableComponent)) {
 			InteractableComponent->Use();
 		}
 		else {
@@ -212,7 +217,7 @@ void AZombieSurvivalFPSCharacter::SetupPlayerInputComponent(class UInputComponen
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AZombieSurvivalFPSCharacter::LookUpAtRate);
 }
 
-void AZombieSurvivalFPSCharacter::EndGame(bool Won)
+void AZombieSurvivalFPSCharacter::OnGameEnded(bool Won)
 {
 	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(DeathCameraComponent);
 	Mesh1P->SetVisibility(false);
@@ -239,9 +244,9 @@ void AZombieSurvivalFPSCharacter::Pause()
 {
 	AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
 
-	if (GameMode) {
+	if (IsValid(GameMode)) {
 		AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
-		if (ZombieGameMode) {
+		if (IsValid(ZombieGameMode)) {
 			ZombieGameMode->SetGamePause();
 			// On first tick, Behaviour tree should call SetNewTarget.
 		}
@@ -276,7 +281,14 @@ void AZombieSurvivalFPSCharacter::OnFire()
 				World->SpawnActor<AZombieSurvivalFPSProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
 			}
 		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Couldn't retrieve a valid World."));
+		}
 	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("ProjectileClass not set."));
+	}
+
 
 	// try and play the sound if specified
 	if (FireSound != NULL)

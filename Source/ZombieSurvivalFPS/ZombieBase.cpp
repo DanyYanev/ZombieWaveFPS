@@ -21,11 +21,14 @@ AZombieBase::AZombieBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//"This is the preferred method when initializing a component in a class constructor" The values are later overridden in Blueprints. 
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
 	HealthBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
 
-	HealthBarWidgetComponent->AttachTo(RootComponent);
+	FAttachmentTransformRules Rules = FAttachmentTransformRules(FAttachmentTransformRules::KeepRelativeTransform);
+
+	HealthBarWidgetComponent->AttachToComponent(RootComponent, Rules);
 }
    
 // Called when the game starts or when spawned
@@ -37,24 +40,12 @@ void AZombieBase::BeginPlay()
 
 	HealthBarInstance = Cast<UHealthBarWidget>(HealthBarWidgetComponent->GetUserWidgetObject());
 
-	if (HealthBarInstance) {
-		HealthBarInstance->UpdateHealth(Health / MaxHealth);
-	} else 
+	if (IsValid(HealthBarInstance)) {
+		HealthBarInstance->UpdateHealth((float)Health / MaxHealth);
+	}
+	else {
 		UE_LOG(LogTemp, Error, TEXT("HealthBarWidget attached to WidgetComponent not of class UHealthBarWidget"));
-}
-
-// Called every frame
-void AZombieBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void AZombieBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	}
 }
 
 void AZombieBase::Attack(AActor * Target)
@@ -62,31 +53,35 @@ void AZombieBase::Attack(AActor * Target)
 	UE_LOG(LogTemp, Error, TEXT("If this calls something went terribly wrong. ***ZombieBase Attack***"));
 }
 
-void AZombieBase::EndGame(bool Won)
+void AZombieBase::OnGameEnded(bool Won)
 {
 	if (Won) {
-		if (GetMesh()) {
-			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
-			if (AnimInstance) {
+		USkeletalMeshComponent * Mesh = GetMesh();
+		if (IsValid(Mesh)) {
+			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(Mesh->GetAnimInstance());
+			if (IsValid(AnimInstance)) {
 				AnimInstance->SetIsCheering(true);
 			}
-			else
+			else {
 				UE_LOG(LogTemp, Error, TEXT("MeshAnimBlueprint doesn't derive from ZombieBaseAnimationInstance"));
+			}
 		}
-		else
-			UE_LOG(LogTemp, Error, TEXT("Mesh is NULL"));
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Mesh is not valid."));
+		}
 	}
-	else
+	else {
 		UE_LOG(LogTemp, Error, TEXT("ZOMBIE ALIVE AND GAME WON"));
+	}
 
 	AAIController * AIController = Cast<AAIController>(GetController());
 
-	if (AIController) {
+	if (IsValid(AIController)) {
 		AIController->BrainComponent->StopLogic(TEXT("Game Over"));
 	}
-	else
+	else {
 		UE_LOG(LogTemp, Error, TEXT("AIController not found"));
-
+	}
 }
 
 float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -97,45 +92,56 @@ float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEve
 
 	Health -= Damage;
 
-	if (HealthBarInstance) {
+	if (IsValid(HealthBarInstance)) {
 		if (Health <= 0) {
 			HealthBarInstance->SetVisibility(ESlateVisibility::Hidden);
-		}else
+		}
+		else {
 			HealthBarInstance->UpdateHealth((float)Health / MaxHealth);
-	}else
-		UE_LOG(LogTemp, Error, TEXT("HealthBarInstance instance is NULL"));
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("HealthBarInstance instance is not valid."));
+	}
 	
 	if (Health <= 0) {
 
 		bIsDying = true;
 		//Notifies AnimInstance that death has occured.
-		if (GetMesh()) {
-			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
-			if (AnimInstance) {
+		USkeletalMeshComponent * Mesh = GetMesh();
+		if (IsValid(Mesh)) {
+			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(Mesh->GetAnimInstance());
+			if (IsValid(AnimInstance)) {
 				AnimInstance->SetIsDying(true);
 			}
-			else
+			else {
 				UE_LOG(LogTemp, Error, TEXT("MeshAnimBlueprint doesn't derive from ZombieBaseAnimationInstance"));
-
+			}
 		}
-		else
-			UE_LOG(LogTemp, Error, TEXT("Mesh is NULL"));
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Mesh is not valid."));
+		}
 
 		//Disables character movement
 		GetCharacterMovement()->DisableMovement();
 
-		UE_LOG(LogTemp, Warning, TEXT("ZombieDeath"));
+		UE_LOG(LogTemp, Display, TEXT("ZombieDeath"));
 
 		//Notifies Game mode of Zombie's death
 		AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
 
-		if (GameMode) {
+		if (IsValid(GameMode)) {
 			AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
-			if (ZombieGameMode) {
+			if (IsValid(ZombieGameMode)) {
 				ZombieGameMode->ZombieDeath(this);
 			}
+			else {
+				UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+			}
 		}
-
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Couldn't retrieve a valid GameMode."));
+		}
 	}
 
 	return 0.0f;

@@ -36,13 +36,13 @@ AZombieMorigeshProjectile::AZombieMorigeshProjectile()
 
 	ProjectileMesh->SetupAttachment(CollisionComp);
 
-	Damage = 50.f;
+	Damage = 70.f;
 
 	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AZombieMorigeshProjectile::OnOverlap);
 }
 
 void AZombieMorigeshProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Morigesh projectile OnOverlap"));
+	UE_LOG(LogTemp, Display, TEXT("Morigesh projectile OnOverlap"));
 	Destroy();
 }

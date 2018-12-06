@@ -33,25 +33,29 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 {
 	Super::InitGameState();
 
-	if (EndGameWidgetClass)
+	if (IsValid(EndGameWidgetClass))
 	{
 		EndGameWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), EndGameWidgetClass, TEXT("EndGameWidget"));
 
-		if (!EndGameWidgetInstance)
+		if (!IsValid(EndGameWidgetInstance)) {
 			UE_LOG(LogTemp, Error, TEXT("EndGameWidgetInstance instance failed to create"));
+		}
 	}
-	else
+	else {
 		UE_LOG(LogTemp, Error, TEXT("EndGameWidgetClass class not set"));
+	}
 
-	if (PausedWidgetClass)
+	if (IsValid(PausedWidgetClass))
 	{
 		PausedWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), PausedWidgetClass, TEXT("PausedWidgetClass"));
 
-		if (!PausedWidgetInstance)
+		if (!IsValid(PausedWidgetInstance)) {
 			UE_LOG(LogTemp, Error, TEXT("PausedWidgetInstance instance failed to create"));
+		}
 	}
-	else
+	else {
 		UE_LOG(LogTemp, Error, TEXT("PausedWidgetClass class not set"));
+	}
 
 
 	TArray<AActor*> SpawnResult;
@@ -66,7 +70,7 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 
 		APlayerStart * PlayerStart = Cast<APlayerStart>(SpawnResult[i]);
 
-		if (PlayerStart) {
+		if (IsValid(PlayerStart)) {
 			Result.Add(PlayerStart);
 		}
 
@@ -89,33 +93,37 @@ void AZombieSurvivalFPSGameMode::SetGamePause()
 	if (!bIsPaused) {
 
 		if (!UGameplayStatics::SetGamePaused(this, true)) {
-			UE_LOG(LogTemp, Error, TEXT("Pause failed!"));
+			UE_LOG(LogTemp, Warning, TEXT("Pause failed!"));
 		}
 		else {
 			bIsPaused = true;
 
 			AHUD * HUD = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD();
 
-			if (HUD) {
+			if (IsValid(HUD)) {
 				HUD->ShowHUD();
 			}
-			else
+			else {
 				UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
+			}
 
-			if (PausedWidgetInstance) {
+			if (IsValid(PausedWidgetInstance)) {
 				PausedWidgetInstance->AddToViewport();
-			} else
-				UE_LOG(LogTemp, Error, TEXT("PauseGameWidgetInstance not craeted"));
+			}
+			else {
+				UE_LOG(LogTemp, Error, TEXT("PauseGameWidgetInstance not valid."));
+			}
 
+			APlayerController* PlayerControler = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-			APlayerController* PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-
-			if (PC)
-			{
-				PC->bShowMouseCursor = true;
-				PC->bEnableClickEvents = true;
-				PC->bEnableMouseOverEvents = true;
-			};
+			if (IsValid(PlayerControler)){
+				PlayerControler->bShowMouseCursor = true;
+				PlayerControler->bEnableClickEvents = true;
+				PlayerControler->bEnableMouseOverEvents = true;
+			}
+			else{
+				UE_LOG(LogTemp, Error, TEXT("Couldn't retrieve a valid PlayerControler."));
+			}
 		}
 
 	}
@@ -128,34 +136,36 @@ void AZombieSurvivalFPSGameMode::SetGamePause()
 
 			AHUD * HUD = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD();
 
-			if (HUD) {
+			if (IsValid(HUD)) {
 				HUD->ShowHUD();
 			}
-			else
+			else {
 				UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
+			}
 
-			if (PausedWidgetInstance) {
+			if (IsValid(PausedWidgetInstance)) {
 				PausedWidgetInstance->RemoveFromViewport();
 			}
-			else
+			else {
 				UE_LOG(LogTemp, Error, TEXT("PauseGameWidgetInstance not craeted"));
+			}
 
-			APlayerController* PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+			APlayerController* PlayerControler = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-			if (PC)
-			{
-				PC->bShowMouseCursor = false;
-				PC->bEnableClickEvents = false;
-				PC->bEnableMouseOverEvents = false;
-			};
+			if (IsValid(PlayerControler)){
+				PlayerControler->bShowMouseCursor = false;
+				PlayerControler->bEnableClickEvents = false;
+				PlayerControler->bEnableMouseOverEvents = false;
+			}
 		}
 	}
 }
 
 void AZombieSurvivalFPSGameMode::QuickStartWave()
 {
-	if (Countdown > 0)
+	if (Countdown > 0) {
 		Countdown = 0;
+	}
 }
 
 void AZombieSurvivalFPSGameMode::NextWave()
@@ -163,7 +173,7 @@ void AZombieSurvivalFPSGameMode::NextWave()
 
 	Wave++;
 
-	if (Scoreboard) {
+	if (IsValid(Scoreboard)) {
 		Scoreboard->UpdateWave(Wave);
 	}
 	else {
@@ -175,26 +185,28 @@ void AZombieSurvivalFPSGameMode::NextWave()
 		GetWorld()->GetTimerManager().SetTimer(CountdownTimerHandle, this, &AZombieSurvivalFPSGameMode::TickTimer, 1, true);
 	}
 	else {
-		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 
-		if (PC) {
-			AHUD * HUD = PC->GetHUD();
+		if (IsValid(PlayerController)) {
+			AHUD * HUD = PlayerController->GetHUD();
 
-			if (HUD) {
+			if (IsValid(HUD)) {
 				HUD->ShowHUD();
 			}
-			else
+			else {
 				UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
+			}
 
 			EndGameWidgetInstance->AddToViewport();
 
-			PC->bShowMouseCursor = true;
-			PC->bEnableClickEvents = true;
-			PC->bEnableMouseOverEvents = true;
+			PlayerController->bShowMouseCursor = true;
+			PlayerController->bEnableClickEvents = true;
+			PlayerController->bEnableMouseOverEvents = true;
 
 		}
-		else
+		else {
 			UE_LOG(LogTemp, Error, TEXT("PlayerController is invalid"));
+		}
 	}
 }
 
@@ -213,57 +225,64 @@ void AZombieSurvivalFPSGameMode::SpawnZombies()
 
 	for (int i = 0; AliveZombies < InitialZombies && i < SpawnArray.Num(); i++) {
 		FTransform SpawnTransform = SpawnArray[i];
-		//UE_LOG(LogTemp, Error, TEXT("Zombie Spawn Location: %s"), *SpawnTransform.GetLocation().ToString());
 		UWorld* World = GetWorld();
-		AZombieCharacter* Zombie = World->SpawnActor<AZombieCharacter>(BasicZombieClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator());
-		if (IsValid(Zombie)) {
-			AliveZombies++;
-			Zombies.Add(Zombie);
+		if (IsValid(World)) {
+			AZombieCharacter* Zombie = World->SpawnActor<AZombieCharacter>(BasicZombieClass, SpawnTransform.GetLocation(), SpawnTransform.Rotator());
+			if (IsValid(Zombie)) {
+				AliveZombies++;
+				Zombies.Add(Zombie);
+			}
+			else {
+				UE_LOG(LogTemp, Error, TEXT("Zombie Spawn Failed"));
+			}
 		}
 		else {
-			UE_LOG(LogTemp, Error, TEXT("Zombie Spawn Failed"));
+			UE_LOG(LogTemp, Error, TEXT("Couldnt retrive a valid World reference."));
 		}
+		
 	}
 }
 
-void AZombieSurvivalFPSGameMode::EndGame(bool Won)
+void AZombieSurvivalFPSGameMode::OnGameEnded(bool Won)
 {
 	bGameEndStatus = true;
 	bGameWon = Won;
 
 	for (int i = 0; i < Zombies.Num(); i++) {
-		Zombies[i]->EndGame(!Won);
+		Zombies[i]->OnGameEnded(!Won);
 	}
 
 	AZombieSurvivalFPSCharacter * Character = Cast<AZombieSurvivalFPSCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
-	if (Character) {
-		Character->EndGame(Won);
+	if (IsValid(Character)) {
+		Character->OnGameEnded(Won);
 	}
-	else
+	else {
 		UE_LOG(LogTemp, Error, TEXT("Character cast failed"));
+	}
 	
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	
-	if (PC) {
-		AHUD * HUD = PC->GetHUD();
+	if (IsValid(PlayerController)) {
+		AHUD * HUD = PlayerController->GetHUD();
 
-		if (HUD) {
+		if (IsValid(HUD)) {
 			HUD->ShowHUD();
 		}
-		else
+		else {
 			UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
+		}
 
 		EndGameWidgetInstance->AddToViewport();
 
-		PC->bShowMouseCursor = true;
-		PC->bEnableClickEvents = true;
-		PC->bEnableMouseOverEvents = true;
+		PlayerController->bShowMouseCursor = true;
+		PlayerController->bEnableClickEvents = true;
+		PlayerController->bEnableMouseOverEvents = true;
 
 	}
-	else
+	else {
 		UE_LOG(LogTemp, Error, TEXT("PlayerController is invalid"));
-
+	}
 }
 
 void AZombieSurvivalFPSGameMode::TickTimer()
@@ -271,8 +290,8 @@ void AZombieSurvivalFPSGameMode::TickTimer()
 	if (Countdown <= 0) {
 		SpawnZombies();
 		GetWorld()->GetTimerManager().ClearTimer(CountdownTimerHandle);
-		Countdown = TimeBetweenWaves;
-		if (Scoreboard) {
+
+		if (IsValid(Scoreboard)) {
 			Scoreboard->ClearCountdown();
 		}
 		else {
@@ -281,7 +300,7 @@ void AZombieSurvivalFPSGameMode::TickTimer()
 	}
 	else {
 		Countdown--;
-		if (Scoreboard) {
+		if (IsValid(Scoreboard)) {
 			Scoreboard->UpdateCountdown(Countdown);
 		}
 		else {
@@ -314,32 +333,42 @@ void AZombieSurvivalFPSGameMode::AttachLevelUpShop(ALevelUpShop * LevelUpShopIns
 
 void AZombieSurvivalFPSGameMode::ZombieDeath(AZombieBase * Zombie)
 {
-	//UE_LOG(LogTemp, Error, TEXT("Zombie death counted"));
+	//Zombie is still valid because Destroy() is called after completing death animation.
+	if (IsValid(Zombie)) {
+		//Return 0 if no zombies were removed aka an unregistrated zombie died.
+		if (Zombies.Remove(Zombie) > 0) {
+			AliveZombies--;
+			Zombies.Remove(Zombie);
 
-	//Return 0 if no zombies were removed aka an unregistrated zombie died.
-	if (Zombies.Remove(Zombie) > 0) {
-		AliveZombies--;
-		Zombies.Remove(Zombie);
-
-		if (AliveZombies <= 0) {
-			NextWave();
+			if (AliveZombies <= 0) {
+				Countdown = TimeBetweenWaves;
+				NextWave();
+			}
 		}
-	}
 
-	UpdateCurrentScoreBy(100);
-	UpdateCurrentMoneyBy(100);
+		UpdateCurrentScoreBy(100);
+		UpdateCurrentMoneyBy(100);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("An invalid pointer to \"dead\" zombie was registrated."));
+	}
 }
 
 void AZombieSurvivalFPSGameMode::TargetDestroyed(AActor * Target)
 {
-	Targets.Remove(Target);
+	if (IsValid(Target)) {
+		Targets.Remove(Target);
 
-	if (Target->ActorHasTag(TEXT("Final"))) { //Endgame
-		//Trigger loss
-		EndGame(false);
+		if (Target->ActorHasTag(TEXT("Final"))) { //Endgame
+			//Trigger loss
+			OnGameEnded(false);
+		}
+
+		Target->Destroy();
 	}
-
-	Target->Destroy();
+	else {
+		UE_LOG(LogTemp, Error, TEXT("An invalid pointer to a destroyed target was registrated."));
+	}
 }
 
 void AZombieSurvivalFPSGameMode::UpdateCurrentScoreBy(int Value) {

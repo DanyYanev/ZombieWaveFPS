@@ -63,7 +63,7 @@ public:
 
 	float DeathCameraSpeed = 10;
 
-	void EndGame(bool Won);
+	void OnGameEnded(bool Won);
 
 	void Tick(float DeltaSeconds) override;
 

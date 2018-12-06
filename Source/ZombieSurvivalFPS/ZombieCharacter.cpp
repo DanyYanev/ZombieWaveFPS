@@ -23,15 +23,10 @@ AZombieCharacter::AZombieCharacter()
 
 	FAttachmentTransformRules rules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, false);
 
-	//GetMesh()->SetupAttachment(Head, FName("headSocket"));
 	Head->SetupAttachment(GetMesh(), FName("headSocket"));
 	Body->SetupAttachment(GetMesh(), FName("bodySocket"));
-	//GetMesh()->SetupAttachment(Body, FName("bodySocket"));
 
-	if (!(Body && Head))
-		UE_LOG(LogTemp, Error, TEXT("SOMETHING WENT HORRIBLY WRONG"));
-
-	Health = 100;
+	Health = 200;
 	Speed = 1;
 	AttackDamage = 100;
 }
@@ -47,18 +42,21 @@ void AZombieCharacter::BeginPlay()
 
 void AZombieCharacter::Attack(AActor * Target)
 {
-	if (Target) {
-		if (GetMesh()) {
-			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
-			if (AnimInstance) {
+	if (IsValid(Target)) {
+		USkeletalMeshComponent * Mesh = GetMesh();
+		if (IsValid(Mesh)) {
+			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(Mesh->GetAnimInstance());
+			if (IsValid(AnimInstance)) {
 				AnimInstance->SetIsAttacking(true);
 				AnimInstance->SetTarget(Target);
 			}
-			else
+			else {
 				UE_LOG(LogTemp, Error, TEXT("MeshAnimBlueprint doesn't derive from ZombieBaseAnimationInstance"));
+			}
 		}
-		else
-			UE_LOG(LogTemp, Error, TEXT("Mesh is NULL"));
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Mesh is not valid."));
+		}
 	}
 }
 
@@ -71,21 +69,26 @@ void AZombieCharacter::DealDamageToTargetActor(AActor * DamagedActor)
 
 void AZombieCharacter::OnHeadshot(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	AZombieSurvivalFPSProjectile* projectile = Cast<AZombieSurvivalFPSProjectile>(OtherActor);
+	AZombieSurvivalFPSProjectile* Projectile = Cast<AZombieSurvivalFPSProjectile>(OtherActor);
 
-	if (projectile != nullptr) {
+	if (IsValid(Projectile)) {
 
 		AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
 
-		if (GameMode) {
-			AZombieSurvivalFPSGameMode * ZombieGameMode =  Cast<AZombieSurvivalFPSGameMode>(GameMode);
-			if (ZombieGameMode) {
+		if (IsValid(GameMode)) {
+			AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
+			if (IsValid(ZombieGameMode)) {
 				ZombieGameMode->UpdateCurrentScoreBy(20);
 			}
+			else {
+				UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+			}
 		}
-		
-		//UE_LOG(LogTemp, Warning, TEXT("Headshot attempting to deal: %d"), projectile->GetDamage() * 2);
-		UGameplayStatics::ApplyPointDamage(this, projectile->GetDamage() * 2, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Couldn't retrieve a valid GameMode."));
+		}
+
+		UGameplayStatics::ApplyPointDamage(this, Projectile->GetDamage() * 2, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
 
 		//Somehow calls TakeDamage of OtherActor
 		OtherActor->Destroy();
@@ -94,15 +97,14 @@ void AZombieCharacter::OnHeadshot(UPrimitiveComponent * OverlappedComponent, AAc
 
 void AZombieCharacter::OnBodyshot(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	AZombieSurvivalFPSProjectile* projectile = Cast<AZombieSurvivalFPSProjectile>(OtherActor);
+	AZombieSurvivalFPSProjectile* Projectile = Cast<AZombieSurvivalFPSProjectile>(OtherActor);
 
-	if (projectile) {
+	if (IsValid(Projectile)) {
 
-		//UE_LOG(LogTemp, Warning, TEXT("Body shot attempting to deal: %d"), projectile->GetDamage() * 1);
-		UGameplayStatics::ApplyPointDamage(this, projectile->GetDamage() * 1, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
-		
+		UGameplayStatics::ApplyPointDamage(this, Projectile->GetDamage() * 1, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
+
 		//Somehow calls TakeDamage of OtherActor
 		OtherActor->Destroy();
 	}
-	
+
 }

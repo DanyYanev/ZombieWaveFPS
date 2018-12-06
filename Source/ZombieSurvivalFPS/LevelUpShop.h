@@ -18,13 +18,11 @@ class ZOMBIESURVIVALFPS_API ALevelUpShop : public AActor
 public:	
 	ALevelUpShop();
 
-	virtual void Tick(float DeltaTime) override;
-
 	UPROPERTY(VisibleDefaultsOnly)
 	UStaticMeshComponent * Mesh;
 
 	/** Sound to play each time something is bought */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadWrite, Category = Gameplay)
 	class USoundBase* PurchaseCue;
 
 	UPROPERTY(EditAnywhere)
@@ -54,7 +52,7 @@ private:
 
 	int MaxLevel;
 
-	AZombieSurvivalFPSGameMode * GameMode;
+	AZombieSurvivalFPSGameMode * ZombieGameMode;
 
 	SignatureOnLevelPurchased OnLevelPurchasedDelegate;
 };

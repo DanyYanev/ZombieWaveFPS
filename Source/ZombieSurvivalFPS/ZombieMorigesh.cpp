@@ -30,9 +30,11 @@ AZombieMorigesh::AZombieMorigesh()
 	Head->SetupAttachment(GetMesh(), FName("headSocket"));
 	Body->SetupAttachment(GetMesh(), FName("bodySocket"));
 
-	Health = 100;
+	//Set default values (could be edited in editor later)
+	Health = 150;
 	Speed = 2;
-	AttackDamage = 150;
+	//Never issues a melee attack.
+	AttackDamage = 0;
 }
 
 // Called when the game starts or when spawned
@@ -40,56 +42,53 @@ void AZombieMorigesh::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (Head) {
-		Head->OnComponentBeginOverlap.AddDynamic(this, &AZombieMorigesh::OnHeadshot);
-	}
-	else
-		UE_LOG(LogTemp, Error, TEXT("HeadHitbox is NULL"));
+	Head->OnComponentBeginOverlap.AddDynamic(this, &AZombieMorigesh::OnHeadshot);
+	Body->OnComponentBeginOverlap.AddDynamic(this, &AZombieMorigesh::OnBodyshot);
 
-
-	if (Body) {
-		Body->OnComponentBeginOverlap.AddDynamic(this, &AZombieMorigesh::OnBodyshot);
-	}
-	else
-		UE_LOG(LogTemp, Error, TEXT("BodyHitbox is NULL"));
 }
 
 void AZombieMorigesh::Attack(AActor * Target)
 {
-	if (Target) {
-		USkeletalMeshComponent* Mesh = GetMesh();
-		if (Mesh) {
-			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(GetMesh()->GetAnimInstance());
-			if (AnimInstance) {
+	if (IsValid(Target)) {
+		USkeletalMeshComponent * Mesh = GetMesh();
+		if (IsValid(Mesh)) {
+			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(Mesh->GetAnimInstance());
+			if (IsValid(AnimInstance)) {
 				AnimInstance->SetIsAttacking(true);
 				AnimInstance->SetTarget(Target);
 			}
-			else
+			else {
 				UE_LOG(LogTemp, Error, TEXT("MeshAnimBlueprint doesn't derive from ZombieBaseAnimationInstance"));
-
+			}
 		}
-		else
-			UE_LOG(LogTemp, Error, TEXT("Mesh is NULL"));
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Mesh is not valid."));
+		}
 	}
 }
 
 void AZombieMorigesh::OnHeadshot(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	AZombieSurvivalFPSProjectile* projectile = Cast<AZombieSurvivalFPSProjectile>(OtherActor);
+	AZombieSurvivalFPSProjectile* Projectile = Cast<AZombieSurvivalFPSProjectile>(OtherActor);
 
-	if (projectile != nullptr) {
+	if (IsValid(Projectile)) {
 
 		AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
 
-		if (GameMode) {
+		if (IsValid(GameMode)) {
 			AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
-			if (ZombieGameMode) {
+			if (IsValid(ZombieGameMode)) {
 				ZombieGameMode->UpdateCurrentScoreBy(20);
 			}
+			else {
+				UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+			}
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Couldn't retrieve a valid GameMode."));
 		}
 
-		//UE_LOG(LogTemp, Warning, TEXT("Headshot attempting to deal: %d"), projectile->GetDamage() * 2);
-		UGameplayStatics::ApplyPointDamage(this, projectile->GetDamage() * 2, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
+		UGameplayStatics::ApplyPointDamage(this, Projectile->GetDamage() * 2, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
 
 		//Somehow calls TakeDamage of OtherActor
 		OtherActor->Destroy();
@@ -98,12 +97,11 @@ void AZombieMorigesh::OnHeadshot(UPrimitiveComponent * OverlappedComponent, AAct
 
 void AZombieMorigesh::OnBodyshot(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	AZombieSurvivalFPSProjectile* projectile = Cast<AZombieSurvivalFPSProjectile>(OtherActor);
+	AZombieSurvivalFPSProjectile* Projectile = Cast<AZombieSurvivalFPSProjectile>(OtherActor);
 
-	if (projectile) {
+	if (IsValid(Projectile)) {
 
-		//UE_LOG(LogTemp, Warning, TEXT("Body shot attempting to deal: %d"), projectile->GetDamage() * 1);
-		UGameplayStatics::ApplyPointDamage(this, projectile->GetDamage() * 1, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
+		UGameplayStatics::ApplyPointDamage(this, Projectile->GetDamage() * 1, GetActorLocation(), SweepResult, nullptr, OtherActor, nullptr);
 
 		//Somehow calls TakeDamage of OtherActor
 		OtherActor->Destroy();
@@ -113,19 +111,16 @@ void AZombieMorigesh::OnBodyshot(UPrimitiveComponent * OverlappedComponent, AAct
 
 void AZombieMorigesh::LaunchProjectile()
 {
-	if (ProjectileClass) {
+	if (IsValid(ProjectileClass)) {
 		UWorld* const World = GetWorld();
-		if (World != NULL)
+		if (IsValid(World))
 		{
 			AZombieAI* Controller = Cast<AZombieAI>(GetController());
-			if (Controller) {
+			if (IsValid(Controller)) {
 				FVector TargetPoint = Controller->GetTargetPoint();
 				FVector Location = ProjectileOffSet->GetComponentLocation();
 				FVector Direction = ProjectileOffSet->GetComponentLocation() - TargetPoint;
 				FRotator Rotation = Direction.Rotation();
-
-				//UE_LOG(LogTemp, Error, TEXT(FName(Rotation.X));
-				//UE_LOG(LogTemp, Warning, TEXT(GetActorRotation().ToString()));
 
 				//Set Spawn Collision Handling Override
 				FActorSpawnParameters ActorSpawnParams;
@@ -135,7 +130,16 @@ void AZombieMorigesh::LaunchProjectile()
 				World->SpawnActor<AZombieMorigeshProjectile>(ProjectileClass, Location, GetActorRotation(), ActorSpawnParams);
 				DrawDebugPoint(GetWorld(), Location, 20, FColor(255, 0, 255), true, 3);
 			}
+			else {
+				UE_LOG(LogTemp, Error, TEXT("Controller not of type ZombieAI."));
+			}
 		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Couldn't retrieve a valid World."));
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("ProjectileClass not set."));
 	}
 }
 

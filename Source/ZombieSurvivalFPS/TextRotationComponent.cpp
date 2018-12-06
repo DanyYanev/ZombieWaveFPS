@@ -19,7 +19,7 @@ void UTextRotationComponent::BeginPlay()
 
 	AActor* PlayerReference = Cast<AActor>(UGameplayStatics::GetPlayerPawn(this, 0));
 
-	if (PlayerReference) {
+	if (IsValid(PlayerReference)) {
 		SetTarget(PlayerReference);
 	}
 	else {
@@ -43,10 +43,17 @@ void UTextRotationComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UTextRotationComponent::SetRotationToTarget(UTextRenderComponent * TextField)
 {
-	if (IsValid(TextField) && IsValid(Target)) {
-		FVector Direction = Target->GetActorLocation() - TextField->GetOwner()->GetActorLocation();
-
-		TextField->SetRelativeRotation(Direction.Rotation());
+	if (IsValid(Target)) {
+		if (IsValid(TextField)) {
+			FVector Direction = Target->GetActorLocation() - TextField->GetOwner()->GetActorLocation();
+			TextField->SetRelativeRotation(Direction.Rotation());
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("TextField of TextRotationComponent isn't valid."));
+		}
+	} 
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Target isn't valid."));
 	}
 }
 
@@ -57,5 +64,10 @@ void UTextRotationComponent::AddTextComponent(UTextRenderComponent * TextCompone
 
 void UTextRotationComponent::SetTarget(AActor * NewTarget)
 {
-	Target = NewTarget;
+	if (IsValid(NewTarget)) {
+		Target = NewTarget;
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Trying to set Target of TextRotationComponent to an invalid one."));
+	}
 }

@@ -14,13 +14,12 @@
 EBTNodeResult::Type UBTTask_AttackTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) {
 
 	AZombieAI * ZombieAI = Cast<AZombieAI>(OwnerComp.GetAIOwner());
-	if(!ZombieAI)
+	if (!IsValid(ZombieAI))
 		return EBTNodeResult::Failed;
 
 	AActor * Target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(ZombieAI->TargetKeyId));
 
-	if (Target) {
-
+	if (IsValid(Target)) {
 		ZombieAI->AttackTarget(Target);
 
 		return EBTNodeResult::Succeeded;

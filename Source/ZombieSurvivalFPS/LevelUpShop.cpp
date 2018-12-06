@@ -27,30 +27,31 @@ void ALevelUpShop::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GameMode = Cast<AZombieSurvivalFPSGameMode>(GetWorld()->GetAuthGameMode());
-
 	OnLevelPurchasedDelegate.BindUFunction(this, TEXT("LevelPurchased"));
 
-	if (GameMode) {
-		GameMode->AttachLevelUpShop(this);
-		UpdateMoney(0);
+	AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
+
+	if (IsValid(GameMode)) {
+		ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
+
+		if (IsValid(ZombieGameMode)) {
+			ZombieGameMode->AttachLevelUpShop(this);
+			UpdateMoney(0);
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+		}
 	}
 	else {
-		UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
+		UE_LOG(LogTemp, Error, TEXT("Couldn't retrieve a valid GameMode."));
 	}
 
 	MaxLevel = Buttons.Num();
 
-	for (int i = 0; i < MaxLevel; i++)
+	for (int i = 0; i < MaxLevel; i++) {
 		Buttons[i]->InitializeButton(&OnLevelPurchasedDelegate);
-}
-
-// Called every frame
-void ALevelUpShop::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
+	}
+}		
 
 void ALevelUpShop::UpdateMoney(int Value)
 {
@@ -61,19 +62,20 @@ void ALevelUpShop::UpdateMoney(int Value)
 			Buttons[CurrentLevel]->SetState(EButtonState::VE_Purchasable);
 			bPurchaseWasAvaiable = true;
 		}
-		else if(bPurchaseWasAvaiable)
+		else if (bPurchaseWasAvaiable) {
 			Buttons[CurrentLevel]->SetState(EButtonState::VE_Locked);
+		}
 	}
 	
 }
 
 void ALevelUpShop::LevelPurchased()
 {
-	if (GameMode) {
+	if (IsValid(ZombieGameMode)) {
 
-		UE_LOG(LogTemp, Warning, TEXT("Level Purchased!"));
+		UE_LOG(LogTemp, Display, TEXT("Level Purchased!"));
 
-		GameMode->UpdateCurrentMoneyBy(-(CostForNextLevel));
+		ZombieGameMode->UpdateCurrentMoneyBy(-(CostForNextLevel));
 		Buttons[CurrentLevel]->SetState(EButtonState::VE_Unlocked);
 
 		CurrentLevel++;
@@ -81,12 +83,12 @@ void ALevelUpShop::LevelPurchased()
 		bPurchaseWasAvaiable = false;
 
 		// try and play the sound if specified
-		if (PurchaseCue != NULL)
-		{
+		if (PurchaseCue != NULL){
 			UGameplayStatics::PlaySoundAtLocation(this, PurchaseCue, GetActorLocation());
 		}
 	}
-	else
-		UE_LOG(LogTemp, Error, TEXT("GameMode not found"));
+	else {
+		UE_LOG(LogTemp, Error, TEXT("ZombieGameMode reference is not vlaid."));
+	}
 }
 
