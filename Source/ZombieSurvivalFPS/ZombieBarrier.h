@@ -10,6 +10,7 @@
 #include "TextRotationComponent.h"
 #include "ZombieBarrier.generated.h"
 
+
 UCLASS()
 class ZOMBIESURVIVALFPS_API AZombieBarrier : public AActor
 {
@@ -47,4 +48,9 @@ protected:
 private:	
 	void UpdateHealthText();
 
+	//The distance from the end of the barrier to the most outter point.
+	static const float Offset;
+
+	//The distance between two generated target points.
+	static const float Distance;
 };

@@ -10,6 +10,9 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 
+const float AZombieBarrier::Offset = 40;
+const float AZombieBarrier::Distance = 150;
+
 void AZombieBarrier::UpdateHealthText()
 {
 	if (IsValid(HealthText)) {
@@ -45,11 +48,11 @@ void AZombieBarrier::BeginPlay()
 {
 	Super::BeginPlay();
 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Dynamicly determine and generate points on the barrier for zombies to evenly spread on the barrier.
 	FVector Scale3D = GetActorScale3D();
 	float Length;
-	//Offset of end points before end of actor
-	float Offset = 40;
-	//Which way the barrier is scaled
+	//Determine which way the barrier is scaled
 	bool bScaleX = Scale3D.X > Scale3D.Y;
 
 	
@@ -66,7 +69,7 @@ void AZombieBarrier::BeginPlay()
 	}
 
 	Length -= 2 * Offset;
-	TargetNumber = Length / 150;
+	TargetNumber = Length / Distance;
 
 	for (int i = 0; i < TargetNumber + 1; i++) { //Add last point at the end of actor
 		if (bScaleX) {

@@ -26,6 +26,7 @@ AZombieMorigeshProjectile::AZombieMorigeshProjectile()
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
 
+	//Projectile looks okay with the following values
  	PrimaryActorTick.bCanEverTick = true;
 	ProjectileMovement->InitialSpeed = 3000.f;
 	ProjectileMovement->MaxSpeed = 3000.f;
