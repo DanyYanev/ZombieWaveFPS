@@ -78,22 +78,27 @@ AActor * AZombieAI::FindClosestTarget()
 {
 	AActor * NewTarget = nullptr;
 
-	if (Targets->Num() != 0) {
-		float MinDistance = TNumericLimits< float >::Max();	
-		APawn * Character = GetPawn();
-		if (IsValid(Character)) {
-			for (int i = 0; i < Targets->Num(); i++) {
-				FVector Distance = Character->GetActorLocation() - (*Targets)[i]->GetActorLocation();
+	if (Targets != NULL) {
+		if (Targets->Num() != 0) {
+			float MinDistance = TNumericLimits< float >::Max();
+			APawn * Character = GetPawn();
+			if (IsValid(Character)) {
+				for (int i = 0; i < Targets->Num(); i++) {
+					FVector Distance = Character->GetActorLocation() - (*Targets)[i]->GetActorLocation();
 
-				if (Distance.Size() < MinDistance) {
-					NewTarget = (*Targets)[i];
-					MinDistance = Distance.Size();
+					if (Distance.Size() < MinDistance) {
+						NewTarget = (*Targets)[i];
+						MinDistance = Distance.Size();
+					}
 				}
 			}
+			else {
+				UE_LOG(LogTemp, Warning, TEXT("Unable to retrieve a valid Character."));
+			}
 		}
-		else {
-			UE_LOG(LogTemp, Warning, TEXT("Unable to retrieve a valid Character."));
-		}
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Targets array is NULL."))
 	}
 
 	return NewTarget;
