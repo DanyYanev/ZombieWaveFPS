@@ -6,7 +6,10 @@
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/ArrowComponent.h"
+#include "Components/SplineComponent.h"
 #include "GameFramework/InputSettings.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -56,7 +59,7 @@ AZombieSurvivalFPSCharacter::AZombieSurvivalFPSCharacter()
 
 	Mesh3P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh3P"));
 	Mesh3P->SetOwnerNoSee(true);
-	Mesh3P->SetupAttachment(FirstPersonCameraComponent);
+	Mesh3P->SetupAttachment(RootComponent);
 	Mesh3P->bCastDynamicShadow = true;
 	Mesh3P->CastShadow = true;
 
@@ -65,7 +68,6 @@ AZombieSurvivalFPSCharacter::AZombieSurvivalFPSCharacter()
 	FP_Gun->SetOnlyOwnerSee(true);			// only the owning player will see this mesh
 	FP_Gun->bCastDynamicShadow = false;
 	FP_Gun->CastShadow = false;
-	// FP_Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
 	FP_Gun->SetupAttachment(RootComponent);
 
 	FP_MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
@@ -78,15 +80,11 @@ AZombieSurvivalFPSCharacter::AZombieSurvivalFPSCharacter()
 	// Note: The ProjectileClass and the skeletal mesh/anim blueprints for Mesh1P, FP_Gun, and VR_Gun 
 	// are set in the derived blueprint asset named MyCharacter to avoid direct content references in C++.
 
-	// Create VR Controllers.
-	R_MotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("R_MotionController"));
-	R_MotionController->MotionSource = FXRMotionControllerBase::RightHandSourceId;
-	R_MotionController->SetupAttachment(RootComponent);
-	L_MotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("L_MotionController"));
-	L_MotionController->SetupAttachment(RootComponent);
-
+	
 	// Create a gun and attach it to the right-hand VR controller.
 	// Create a gun mesh component
+	
+	/*
 	VR_Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("VR_Gun"));
 	VR_Gun->SetOnlyOwnerSee(true);			// only the owning player will see this mesh
 	VR_Gun->bCastDynamicShadow = false;
@@ -98,9 +96,9 @@ AZombieSurvivalFPSCharacter::AZombieSurvivalFPSCharacter()
 	VR_MuzzleLocation->SetupAttachment(VR_Gun);
 	VR_MuzzleLocation->SetRelativeLocation(FVector(0.000004, 53.999992, 10.000000));
 	VR_MuzzleLocation->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));		// Counteract the rotation of the VR gun model.
-
+	*/
 	// Uncomment the following line to turn motion controllers on by default:
-	//bUsingMotionControllers = true;
+	bUsingMotionControllers = true;
 }
 
 void AZombieSurvivalFPSCharacter::BeginPlay()
@@ -108,21 +106,22 @@ void AZombieSurvivalFPSCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	/*
 	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
 	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 
 	// Show or hide the two versions of the gun based on whether or not we're using motion controllers.
 	if (bUsingMotionControllers)
 	{
-		VR_Gun->SetHiddenInGame(false, true);
-		Mesh1P->SetHiddenInGame(true, true);
+		//VR_Gun->SetHiddenInGame(false, true);
+		//Mesh1P->SetHiddenInGame(true, true);
 	}
 	else
 	{
 		VR_Gun->SetHiddenInGame(true, true);
 		Mesh1P->SetHiddenInGame(false, true);
 	}
-
+	*/
 	UseHand->OnComponentBeginOverlap.AddDynamic(this, &AZombieSurvivalFPSCharacter::OverlapBegin);
 	UseHand->OnComponentEndOverlap.AddDynamic(this, &AZombieSurvivalFPSCharacter::OverlapEnd);
 }
@@ -220,9 +219,9 @@ void AZombieSurvivalFPSCharacter::SetupPlayerInputComponent(class UInputComponen
 void AZombieSurvivalFPSCharacter::OnGameEnded(bool Won)
 {
 	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(DeathCameraComponent);
-	Mesh1P->SetVisibility(false);
-	FP_Gun->SetVisibility(false);
-	VR_Gun->SetVisibility(false);
+	//Mesh1P->SetVisibility(false);
+	//FP_Gun->SetVisibility(false);
+	//VR_Gun->SetVisibility(false);
 	Mesh3P->bOwnerNoSee = false;
 	Mesh3P->MarkRenderStateDirty();
 	FirstPersonCameraComponent->Deactivate();
@@ -255,6 +254,7 @@ void AZombieSurvivalFPSCharacter::Pause()
 
 void AZombieSurvivalFPSCharacter::OnFire()
 {
+	/*
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
 	{
@@ -306,6 +306,7 @@ void AZombieSurvivalFPSCharacter::OnFire()
 			AnimInstance->Montage_Play(FireAnimation, 1.f);
 		}
 	}
+	*/
 }
 
 void AZombieSurvivalFPSCharacter::OnResetVR()
@@ -341,46 +342,45 @@ void AZombieSurvivalFPSCharacter::EndTouch(const ETouchIndex::Type FingerIndex, 
 //Commenting this section out to be consistent with FPS BP template.
 //This allows the user to turn without using the right virtual joystick
 
-//void AZombieSurvivalFPSCharacter::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location)
-//{
-//	if ((TouchItem.bIsPressed == true) && (TouchItem.FingerIndex == FingerIndex))
-//	{
-//		if (TouchItem.bIsPressed)
-//		{
-//			if (GetWorld() != nullptr)
-//			{
-//				UGameViewportClient* ViewportClient = GetWorld()->GetGameViewport();
-//				if (ViewportClient != nullptr)
-//				{
-//					FVector MoveDelta = Location - TouchItem.Location;
-//					FVector2D ScreenSize;
-//					ViewportClient->GetViewportSize(ScreenSize);
-//					FVector2D ScaledDelta = FVector2D(MoveDelta.X, MoveDelta.Y) / ScreenSize;
-//					if (FMath::Abs(ScaledDelta.X) >= 4.0 / ScreenSize.X)
-//					{
-//						TouchItem.bMoved = true;
-//						float Value = ScaledDelta.X * BaseTurnRate;
-//						AddControllerYawInput(Value);
-//					}
-//					if (FMath::Abs(ScaledDelta.Y) >= 4.0 / ScreenSize.Y)
-//					{
-//						TouchItem.bMoved = true;
-//						float Value = ScaledDelta.Y * BaseTurnRate;
-//						AddControllerPitchInput(Value);
-//					}
-//					TouchItem.Location = Location;
-//				}
-//				TouchItem.Location = Location;
-//			}
-//		}
-//	}
-//}
+void AZombieSurvivalFPSCharacter::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location)
+{
+	if ((TouchItem.bIsPressed == true) && (TouchItem.FingerIndex == FingerIndex))
+	{
+		if (TouchItem.bIsPressed)
+		{
+			if (GetWorld() != nullptr)
+			{
+				UGameViewportClient* ViewportClient = GetWorld()->GetGameViewport();
+				if (ViewportClient != nullptr)
+				{
+					FVector MoveDelta = Location - TouchItem.Location;
+					FVector2D ScreenSize;
+					ViewportClient->GetViewportSize(ScreenSize);
+					FVector2D ScaledDelta = FVector2D(MoveDelta.X, MoveDelta.Y) / ScreenSize;
+					if (FMath::Abs(ScaledDelta.X) >= 4.0 / ScreenSize.X)
+					{
+						TouchItem.bMoved = true;
+						float Value = ScaledDelta.X * BaseTurnRate;
+						AddControllerYawInput(Value);
+					}
+					if (FMath::Abs(ScaledDelta.Y) >= 4.0 / ScreenSize.Y)
+					{
+						TouchItem.bMoved = true;
+						float Value = ScaledDelta.Y * BaseTurnRate;
+						AddControllerPitchInput(Value);
+					}
+					TouchItem.Location = Location;
+				}
+				TouchItem.Location = Location;
+			}
+		}
+	}
+}
 
 void AZombieSurvivalFPSCharacter::MoveForward(float Value)
 {
 	if (Value != 0.0f)
 	{
-		// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), Value);
 	}
 }
@@ -414,7 +414,7 @@ bool AZombieSurvivalFPSCharacter::EnableTouchscreenMovement(class UInputComponen
 		PlayerInputComponent->BindTouch(EInputEvent::IE_Released, this, &AZombieSurvivalFPSCharacter::EndTouch);
 
 		//Commenting this out to be more consistent with FPS BP template.
-		//PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AZombieSurvivalFPSCharacter::TouchUpdate);
+		PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AZombieSurvivalFPSCharacter::TouchUpdate);
 		return true;
 	}
 	

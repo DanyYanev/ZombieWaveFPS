@@ -50,14 +50,6 @@ class AZombieSurvivalFPSCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* DeathCameraSpring;
 
-	/** Motion controller (right hand) */
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	class UMotionControllerComponent* R_MotionController;
-
-	/** Motion controller (left hand) */
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	class UMotionControllerComponent* L_MotionController;
-
 public:
 	AZombieSurvivalFPSCharacter();
 
