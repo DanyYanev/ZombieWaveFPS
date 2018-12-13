@@ -16,13 +16,17 @@ public:
 	AZombieSurivalFPSVRPawn();
 
 	/** Origin scene component */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Mesh)
 	class USceneComponent* VROrigin;
 
 	/** Player Camera */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Mesh)
 	class UCameraComponent* Camera;
-	
+
+	/** Floating Pawn Movement Component*/
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	class UFloatingPawnMovement* MovementComponent;
+
 	/** Motion controller (right hand) */
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	class UMotionControllerComponent* R_MotionController;
@@ -47,6 +51,10 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class USphereComponent* L_GrabSphere;
 
+	/** Intervals at which to rotate Camera when turning (In degreese) */
+	UPROPERTY(VisibleDefaultsOnly, Category = Gameplay)
+	float TurnInterval = 45.f;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -59,6 +67,14 @@ protected:
 
 	/** Handles stafing movement, left and right */
 	void MoveRight(float Val);
+
+	/** Handles turning */
+	void Turn(float Val);
+
+private:
+
+	/**Allows one call of turn without releasing the joystick to default position*/
+	bool bCanTurn = true;
 
 public:	
 	// Called every frame

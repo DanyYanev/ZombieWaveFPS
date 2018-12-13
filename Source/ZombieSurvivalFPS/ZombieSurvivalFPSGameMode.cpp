@@ -252,8 +252,10 @@ void AZombieSurvivalFPSGameMode::OnGameEnded(bool Won)
 		Zombies[i]->OnGameEnded(!Won);
 	}
 
+	/*
 	AZombieSurvivalFPSCharacter * Character = Cast<AZombieSurvivalFPSCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
+	
 	if (IsValid(Character)) {
 		Character->OnGameEnded(Won);
 	}
@@ -283,6 +285,7 @@ void AZombieSurvivalFPSGameMode::OnGameEnded(bool Won)
 	else {
 		UE_LOG(LogTemp, Error, TEXT("PlayerController is invalid"));
 	}
+	*/
 }
 
 void AZombieSurvivalFPSGameMode::TickTimer()

@@ -4,6 +4,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/InputComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
@@ -17,13 +18,14 @@ AZombieSurivalFPSVRPawn::AZombieSurivalFPSVRPawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
-
 	VROrigin = CreateDefaultSubobject<USceneComponent>(TEXT("VROrigin"));
 	VROrigin->SetupAttachment(RootComponent);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(VROrigin);
+
+	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
+	MovementComponent->SetUpdatedComponent(RootComponent);
 
 	// Create VR Controllers.
 	R_MotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("R_MotionController"));
@@ -52,6 +54,7 @@ AZombieSurivalFPSVRPawn::AZombieSurivalFPSVRPawn()
 
 	L_GrabSphere = CreateDefaultSubobject<USphereComponent>(TEXT("L_GrabSphere"));
 	L_GrabSphere->SetupAttachment(L_MotionController);
+
 }
 
 // Called when the game starts or when spawned
@@ -64,30 +67,6 @@ void AZombieSurivalFPSVRPawn::BeginPlay()
 
 	//Set tracking origin for Vive/Oculus
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
-	
-}
-
-void AZombieSurivalFPSVRPawn::OnResetVR()
-{
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
-
-void AZombieSurivalFPSVRPawn::MoveForward(float Val)
-{
-	if (Val != 0.0f)
-	{
-		// Move correspondingly to camera (HMD)
-		AddMovementInput(Camera->GetForwardVector(), Val);
-	}
-}
-
-void AZombieSurivalFPSVRPawn::MoveRight(float Val)
-{
-	if (Val != 0.0f)
-	{
-		//  Move correspondingly to camera (HMD)
-		AddMovementInput(Camera->GetForwardVector(), Val);
-	}
 }
 
 // Called every frame
@@ -110,5 +89,58 @@ void AZombieSurivalFPSVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerI
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &AZombieSurivalFPSVRPawn::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AZombieSurivalFPSVRPawn::MoveRight);
+	PlayerInputComponent->BindAxis("Turn", this, &AZombieSurivalFPSVRPawn::Turn);
+}
+
+void AZombieSurivalFPSVRPawn::OnResetVR()
+{
+	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
+}
+
+void AZombieSurivalFPSVRPawn::MoveForward(float Val)
+{
+	if (Val != 0.0f)
+	{
+		// Move correspondingly to camera (HMD)
+		FVector Direction = Camera->GetForwardVector();
+		Direction.Z = 0.f;
+
+		AddMovementInput(Direction, Val * 0.15);
+	}
+}
+
+void AZombieSurivalFPSVRPawn::MoveRight(float Val)
+{
+	if (Val != 0.0f)
+	{
+		//  Move correspondingly to camera (HMD)
+		FVector Direction = Camera->GetRightVector();
+		Direction.Z = 0.f;
+
+		AddMovementInput(Direction, Val * 0.15);
+	}
+}
+
+void AZombieSurivalFPSVRPawn::Turn(float Val)
+{
+	UE_LOG(LogTemp, Error, TEXT("%d"), Val);
+
+	if (Val != 0.0f) {
+		if (bCanTurn) {
+			FRotator Rotation = VROrigin->GetComponentRotation();
+			if (Val < 0) {
+				Rotation.Yaw += -TurnInterval;
+			}
+			else {
+				Rotation.Yaw += TurnInterval;
+			}
+
+			VROrigin->SetWorldRotation(Rotation);
+			bCanTurn = false;
+		}
+	}
+	else {
+		bCanTurn = true;
+	}
 }
 
