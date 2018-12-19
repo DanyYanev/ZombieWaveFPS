@@ -165,21 +165,21 @@ void AZombieSurvivalFPSCharacter::OverlapEnd(UPrimitiveComponent* OverlappedComp
 		InteractableActor = NULL;
 	}
 }
-
+/*
 void AZombieSurvivalFPSCharacter::Use()
 {
 	if (IsValid(InteractableActor)) {
 		UInteractableComponent * InteractableComponent = InteractableActor->FindComponentByClass<UInteractableComponent>();
 
 		if (IsValid(InteractableComponent)) {
-			InteractableComponent->Use();
+			InteractableComponent->BeginUse();
 		}
 		else {
 			UE_LOG(LogTemp, Warning, TEXT("No InteractableComponent on TargetActor"));
 		}
 	}
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -193,7 +193,7 @@ void AZombieSurvivalFPSCharacter::SetupPlayerInputComponent(class UInputComponen
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AZombieSurvivalFPSCharacter::Pause).bExecuteWhenPaused = true;
 
-	PlayerInputComponent->BindAction("Use", IE_Pressed, this, &AZombieSurvivalFPSCharacter::Use);
+	//PlayerInputComponent->BindAction("Use", IE_Pressed, this, &AZombieSurvivalFPSCharacter::Use);
 
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AZombieSurvivalFPSCharacter::OnFire);

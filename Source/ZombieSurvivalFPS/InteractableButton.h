@@ -63,11 +63,11 @@ protected:
 private:
 	EButtonState CurrentState = EButtonState::VE_Locked;
 
-	SignatureOnSelect OnSelectDelegate;
+	SignatureOnFunction OnUseDelegate;
 
-	SignatureOnDeselect OnDeselectDelegate;
+	SignatureOnFunction OnSelectDelegate;
 
-	SignatureOnUse OnUseDelegate;
+	SignatureOnFunction OnDeselectDelegate;
 
 	SignatureOnLevelPurchased * OnLevelPurchasedDelegate;	
 };

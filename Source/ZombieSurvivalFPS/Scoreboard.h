@@ -71,7 +71,7 @@ protected:
 
 private:
 
-	SignatureOnSelect OnSelectDelegate;
-	SignatureOnDeselect OnDeselectDelegate;
-	SignatureOnUse OnUseDelegate;
+	SignatureOnFunction OnUseDelegate;
+	SignatureOnFunction OnSelectDelegate;
+	SignatureOnFunction OnDeselectDelegate;
 };

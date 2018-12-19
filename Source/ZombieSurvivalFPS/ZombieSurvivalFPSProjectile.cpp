@@ -19,7 +19,7 @@ AZombieSurvivalFPSProjectile::AZombieSurvivalFPSProjectile()
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
 
 	// Set as root component
-	RootComponent = CollisionComp;
+	SetRootComponent(CollisionComp);
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
 

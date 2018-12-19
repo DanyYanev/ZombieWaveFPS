@@ -7,9 +7,8 @@
 #include "Components/BoxComponent.h"
 #include "InteractableComponent.generated.h"
 
-DECLARE_DELEGATE(SignatureOnSelect);
-DECLARE_DELEGATE(SignatureOnDeselect);
-DECLARE_DELEGATE(SignatureOnUse);
+DECLARE_DELEGATE(SignatureOnFunction);
+DECLARE_DELEGATE_OneParam(SignatureOnBeginGrab, USceneComponent*)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ZOMBIESURVIVALFPS_API UInteractableComponent : public USceneComponent
@@ -22,17 +21,26 @@ public:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent * Box;
 
-	//Setup function delegates to call on Use, Select, Deselect, HoverBegin, HoverEnd
-	void InitializeDelegates(SignatureOnSelect * pOnSelect, SignatureOnDeselect * pOnDeselect, SignatureOnUse * pOnUse);
+	//Setup function delegates to call on BeginUse, EndUse, Select, Deselect, HoverBegin, HoverEnd
+	void InitializeDelegates(SignatureOnFunction * pOnBeginUse, SignatureOnFunction * pOnEndUse = NULL, SignatureOnFunction * pOnSelect = NULL, SignatureOnFunction * pOnDeselect = NULL, SignatureOnBeginGrab * pOnBeginGrab = NULL, SignatureOnFunction * pOnEndGrab = NULL);
 
-	void Use();
+	void BeginUse();
+
+	void EndUse();
+
+	void BeginGrab(USceneComponent * AttachActor);
+
+	void EndGrab();
 
 	void Select();
 	
 	void Deselect();
 
 private:
-	SignatureOnSelect * OnSelectDelegate;
-	SignatureOnDeselect * OnDeselectDelegate;
-	SignatureOnUse * OnUseDelegate;
+	SignatureOnFunction * OnBeginUseDelegate;
+	SignatureOnFunction * OnEndUseDelegate;
+	SignatureOnBeginGrab * OnBeginGrabDelegate;
+	SignatureOnFunction * OnEndGrabDelegate;
+	SignatureOnFunction * OnSelectDelegate;
+	SignatureOnFunction * OnDeselectDelegate;
 };

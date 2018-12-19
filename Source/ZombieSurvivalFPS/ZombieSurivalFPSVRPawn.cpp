@@ -4,9 +4,10 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Camera/CameraComponent.h"
-#include "Components/SkeletalMeshComponent.h"
+#include "InteractableComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
@@ -67,6 +68,12 @@ void AZombieSurivalFPSVRPawn::BeginPlay()
 
 	//Set tracking origin for Vive/Oculus
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
+
+	R_GrabSphere->OnComponentBeginOverlap.AddDynamic(this, &AZombieSurivalFPSVRPawn::R_OverlapBegin);
+	R_GrabSphere->OnComponentEndOverlap.AddDynamic(this, &AZombieSurivalFPSVRPawn::R_OverlapEnd);
+
+	L_GrabSphere->OnComponentBeginOverlap.AddDynamic(this, &AZombieSurivalFPSVRPawn::L_OverlapBegin);
+	L_GrabSphere->OnComponentEndOverlap.AddDynamic(this, &AZombieSurivalFPSVRPawn::L_OverlapEnd);
 }
 
 // Called every frame
@@ -85,6 +92,17 @@ void AZombieSurivalFPSVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerI
 	check(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AZombieSurivalFPSVRPawn::OnResetVR);
+	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AZombieSurivalFPSVRPawn::Pause).bExecuteWhenPaused = true;
+
+	PlayerInputComponent->BindAction("R_Grab", IE_Pressed, this, &AZombieSurivalFPSVRPawn::R_BeginGrab);
+	PlayerInputComponent->BindAction("R_Grab", IE_Released, this, &AZombieSurivalFPSVRPawn::R_EndGrab);
+	PlayerInputComponent->BindAction("R_Use", IE_Pressed, this, &AZombieSurivalFPSVRPawn::R_BeginUse);
+	PlayerInputComponent->BindAction("R_Use", IE_Released, this, &AZombieSurivalFPSVRPawn::R_EndUse);
+
+	PlayerInputComponent->BindAction("L_Grab", IE_Pressed, this, &AZombieSurivalFPSVRPawn::L_BeginGrab);
+	PlayerInputComponent->BindAction("L_Grab", IE_Released, this, &AZombieSurivalFPSVRPawn::L_EndGrab);
+	PlayerInputComponent->BindAction("L_Use", IE_Pressed, this, &AZombieSurivalFPSVRPawn::L_BeginUse);
+	PlayerInputComponent->BindAction("L_Use", IE_Released, this, &AZombieSurivalFPSVRPawn::L_EndUse);
 
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &AZombieSurivalFPSVRPawn::MoveForward);
@@ -144,3 +162,137 @@ void AZombieSurivalFPSVRPawn::Turn(float Val)
 	}
 }
 
+
+void AZombieSurivalFPSVRPawn::R_OverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	//Select New InteractableComponent if current is invalid 
+	if (!IsValid(R_InteractableComponent)) {
+
+		UInteractableComponent * InteractableComponent = OtherActor->FindComponentByClass<UInteractableComponent>();
+
+		if (IsValid(InteractableComponent)) {
+			R_InteractableComponent = InteractableComponent;
+			R_InteractableComponent->Select();
+		}
+	}
+}
+
+void AZombieSurivalFPSVRPawn::R_OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
+	//Remove InteractableActor reference
+	if (IsValid(R_InteractableComponent)) {
+		if (IsValid(OtherActor)) {
+			if (R_InteractableComponent->GetOwner() == OtherActor) {
+
+				R_InteractableComponent->Deselect();
+				R_InteractableComponent = NULL;
+			}
+		}
+	}
+	else {
+		R_InteractableComponent = NULL;
+	}
+}
+
+
+void AZombieSurivalFPSVRPawn::L_OverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	//Select New InteractableComponent if current is invalid 
+	if (!IsValid(L_InteractableComponent)) {
+
+		UInteractableComponent * InteractableComponent = OtherActor->FindComponentByClass<UInteractableComponent>();
+
+		if (IsValid(InteractableComponent)) {
+			L_InteractableComponent = InteractableComponent;
+			L_InteractableComponent->Select();
+		}
+	}
+}
+
+void AZombieSurivalFPSVRPawn::L_OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
+	//Remove InteractableActor reference
+	if (IsValid(L_InteractableComponent)) {
+		if (IsValid(OtherActor)) {
+			if (L_InteractableComponent->GetOwner() == OtherActor) {
+
+				L_InteractableComponent->Deselect();
+				L_InteractableComponent = NULL;
+			}
+		}
+	}
+	else {
+		L_InteractableComponent = NULL;
+	}
+}
+
+void AZombieSurivalFPSVRPawn::R_BeginUse()
+{
+	if (R_InteractableComponent) {
+		R_InteractableComponent->BeginUse();
+	}
+}
+
+void AZombieSurivalFPSVRPawn::R_EndUse()
+{
+	if (R_InteractableComponent) {
+		R_InteractableComponent->EndUse();
+	}
+}
+
+void AZombieSurivalFPSVRPawn::R_BeginGrab()
+{
+	if (R_InteractableComponent) {
+		R_InteractableComponent->BeginGrab(R_HandMesh);
+	}
+}
+
+void AZombieSurivalFPSVRPawn::R_EndGrab()
+{
+	if (R_InteractableComponent) {
+		R_InteractableComponent->EndGrab();
+	}
+}
+
+void AZombieSurivalFPSVRPawn::L_BeginUse()
+{
+	if (L_InteractableComponent) {
+		L_InteractableComponent->BeginUse();
+	}
+}
+
+void AZombieSurivalFPSVRPawn::L_EndUse()
+{
+	if (L_InteractableComponent) {
+		L_InteractableComponent->EndUse();
+	}
+}
+
+void AZombieSurivalFPSVRPawn::L_BeginGrab()
+{
+	if (L_InteractableComponent) {
+		L_InteractableComponent->BeginGrab(L_HandMesh);
+	}
+}
+
+void AZombieSurivalFPSVRPawn::L_EndGrab()
+{
+	if (L_InteractableComponent) {
+		L_InteractableComponent->EndGrab();
+	}
+}
+
+void AZombieSurivalFPSVRPawn::Pause()
+{
+	/*
+	AGameModeBase * GameMode = GetWorld()->GetAuthGameMode();
+
+	if (IsValid(GameMode)) {
+		AZombieSurvivalFPSGameMode * ZombieGameMode = Cast<AZombieSurvivalFPSGameMode>(GameMode);
+		if (IsValid(ZombieGameMode)) {
+			ZombieGameMode->SetGamePause();
+			// On first tick, Behaviour tree should call SetNewTarget.
+		}
+	}
+	*/
+}

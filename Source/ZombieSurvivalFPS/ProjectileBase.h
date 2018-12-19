@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ProjectileBase.generated.h"
 
-UCLASS()
+UCLASS(abstract)
 class ZOMBIESURVIVALFPS_API AProjectileBase : public AActor
 {
 	GENERATED_BODY()

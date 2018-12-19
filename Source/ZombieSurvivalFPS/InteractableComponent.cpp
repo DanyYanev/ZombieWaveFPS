@@ -22,25 +22,51 @@ UInteractableComponent::UInteractableComponent()
 	Box->UpdateCollisionProfile();
 }
 
-void UInteractableComponent::InitializeDelegates(SignatureOnSelect * pOnSelect, SignatureOnDeselect * pOnDeselect, SignatureOnUse * pOnUse)
+void UInteractableComponent::InitializeDelegates(SignatureOnFunction * pOnBeginUse, SignatureOnFunction * pOnEndUse,
+													SignatureOnFunction * pOnSelect, SignatureOnFunction * pOnDeselect,
+													SignatureOnBeginGrab * pOnBeginGrab, SignatureOnFunction * pOnEndGrab)
 {
-	if(pOnSelect)
+	if (pOnBeginUse) {
+		OnBeginUseDelegate = pOnBeginUse;
+	}
+	if (pOnEndUse) {
+		OnEndUseDelegate = pOnEndUse;
+	}
+	if (pOnSelect) {
 		OnSelectDelegate = pOnSelect;
-	if(pOnDeselect)
+	}
+	if (pOnDeselect) {
 		OnDeselectDelegate = pOnDeselect;
-	if(pOnUse)
-		OnUseDelegate = pOnUse;
+	}
+	if (pOnBeginGrab) {
+		OnBeginGrabDelegate = pOnBeginGrab;
+	}
+	if (pOnEndGrab) {
+		OnEndGrabDelegate = pOnEndGrab;
+	}
 }
 
-void UInteractableComponent::Use()
+void UInteractableComponent::BeginUse()
 {
-	if (OnUseDelegate) {
-		if (!OnUseDelegate->ExecuteIfBound()) {
-			UE_LOG(LogTemp, Warning, TEXT("OnUseDelegate Not Bound"));
+	if (OnBeginUseDelegate) {
+		if (!OnBeginUseDelegate->ExecuteIfBound()) {
+			UE_LOG(LogTemp, Warning, TEXT("OnBeginUseDelegate Not Bound"));
 		}
 	}
 	else {
-		UE_LOG(LogTemp, Error, TEXT("OnUseDelegate is null"));
+		UE_LOG(LogTemp, Error, TEXT("OnBeginUseDelegate is null"));
+	}
+}
+
+void UInteractableComponent::EndUse()
+{
+	if (OnEndUseDelegate) {
+		if (!OnEndUseDelegate->ExecuteIfBound()) {
+			//UE_LOG(LogTemp, Warning, TEXT("OnEndUseDelegate Not Bound"));
+		}
+	}
+	else {
+		//UE_LOG(LogTemp, Error, TEXT("OnEndUseDelegate is null"));
 	}
 }
 
@@ -65,5 +91,29 @@ void UInteractableComponent::Deselect()
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("OnDeselectDelegate is null"));
+	}
+}
+
+void UInteractableComponent::BeginGrab(USceneComponent * AttachActor)
+{
+	if (OnBeginGrabDelegate) {
+		if (!OnBeginGrabDelegate->ExecuteIfBound(AttachActor)) {
+			//UE_LOG(LogTemp, Warning, TEXT("OnEndUseDelegate Not Bound"));
+		}
+	}
+	else {
+		//UE_LOG(LogTemp, Warning, TEXT("OnEndUseDelegate is null"));
+	}
+}
+
+void UInteractableComponent::EndGrab()
+{
+	if (OnEndGrabDelegate) {
+		if (!OnEndGrabDelegate->ExecuteIfBound()) {
+			//UE_LOG(LogTemp, Warning, TEXT("OnEndUseDelegate Not Bound"));
+		}
+	}
+	else {
+		//UE_LOG(LogTemp, Warning, TEXT("OnEndUseDelegate is null"));
 	}
 }

@@ -19,7 +19,7 @@ AProjectileBase::AProjectileBase()
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
 
 	// Set as root component
-	RootComponent = CollisionComp;
+	SetRootComponent(CollisionComp);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 

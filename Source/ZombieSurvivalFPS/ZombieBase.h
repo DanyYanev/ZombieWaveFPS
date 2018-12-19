@@ -11,7 +11,7 @@
 #include "HealthBarWidget.h"
 #include "ZombieBase.generated.h"
 
-UCLASS()
+UCLASS(abstract)
 class ZOMBIESURVIVALFPS_API AZombieBase : public ACharacter
 {
 	GENERATED_BODY()
