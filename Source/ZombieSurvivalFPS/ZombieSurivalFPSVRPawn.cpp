@@ -228,56 +228,56 @@ void AZombieSurivalFPSVRPawn::L_OverlapEnd(UPrimitiveComponent* OverlappedCompon
 
 void AZombieSurivalFPSVRPawn::R_BeginUse()
 {
-	if (R_InteractableComponent) {
+	if (IsValid(R_InteractableComponent)) {
 		R_InteractableComponent->BeginUse();
 	}
 }
 
 void AZombieSurivalFPSVRPawn::R_EndUse()
 {
-	if (R_InteractableComponent) {
+	if (IsValid(R_InteractableComponent)) {
 		R_InteractableComponent->EndUse();
 	}
 }
 
 void AZombieSurivalFPSVRPawn::R_BeginGrab()
 {
-	if (R_InteractableComponent) {
+	if (IsValid(R_InteractableComponent)) {
 		R_InteractableComponent->BeginGrab(R_HandMesh);
 	}
 }
 
 void AZombieSurivalFPSVRPawn::R_EndGrab()
 {
-	if (R_InteractableComponent) {
+	if (IsValid(R_InteractableComponent)) {
 		R_InteractableComponent->EndGrab();
 	}
 }
 
 void AZombieSurivalFPSVRPawn::L_BeginUse()
 {
-	if (L_InteractableComponent) {
+	if (IsValid(L_InteractableComponent)) {
 		L_InteractableComponent->BeginUse();
 	}
 }
 
 void AZombieSurivalFPSVRPawn::L_EndUse()
 {
-	if (L_InteractableComponent) {
+	if (IsValid(L_InteractableComponent)) {
 		L_InteractableComponent->EndUse();
 	}
 }
 
 void AZombieSurivalFPSVRPawn::L_BeginGrab()
 {
-	if (L_InteractableComponent) {
+	if (IsValid(L_InteractableComponent)) {
 		L_InteractableComponent->BeginGrab(L_HandMesh);
 	}
 }
 
 void AZombieSurivalFPSVRPawn::L_EndGrab()
 {
-	if (L_InteractableComponent) {
+	if (IsValid(L_InteractableComponent)) {
 		L_InteractableComponent->EndGrab();
 	}
 }

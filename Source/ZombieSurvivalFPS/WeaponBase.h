@@ -16,12 +16,6 @@ public:
 	// Sets default values for this actor's properties
 	AWeaponBase();
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* Mesh;
-
-	UPROPERTY(EditAnywhere)
-	class UArrowComponent* MuzzleOffset;
-
 	UPROPERTY(EditDefaultsOnly, Category = Statistic)
 	float Damage = 0;
 
@@ -32,8 +26,24 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Statistic)
 	bool bIsAutomatic = false;
 
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere)
+	class UArrowComponent* MuzzleOffset;
+
 	UPROPERTY(EditDefaultsOnly)
 	class UInteractableComponent* InteractableComponent;
+
+	void Fire();
 
 	UFUNCTION()
 	void BeginUse();
@@ -53,15 +63,10 @@ public:
 	UFUNCTION()
 	void Deselect();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 private:
+
+	FTimerHandle AutomaticFireTimerHandle;
+	FTimerHandle ReloadTimerHandle;
 
 	SignatureOnFunction OnBeginUseDelegate;
 	SignatureOnFunction OnEndUseDelegate;

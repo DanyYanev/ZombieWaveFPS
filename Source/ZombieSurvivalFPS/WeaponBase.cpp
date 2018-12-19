@@ -49,25 +49,39 @@ void AWeaponBase::Tick(float DeltaTime)
 
 }
 
+void AWeaponBase::Fire()
+{
+}
+
 void AWeaponBase::BeginUse()
 {
 	if (bIsAutomatic) {
-
+		if (FireRate != 0) {
+			//Trigger shoot FireRate times a minute.
+			GetWorld()->GetTimerManager().SetTimer(AutomaticFireTimerHandle, this, &AWeaponBase::Fire, (float)60 / FireRate, true);
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("Firerate is 0"));
+		}
+		
+	}
+	else {
+		Fire();
 	}
 }
 
 void AWeaponBase::EndUse()
 {
 	if (bIsAutomatic) {
-
+		GetWorld()->GetTimerManager().ClearTimer(AutomaticFireTimerHandle);
 	}
 }
 
 void AWeaponBase::BeginGrab(USceneComponent * AttachActor)
 {
 	Mesh->SetSimulatePhysics(false);
-	FAttachmentTransformRules rules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, false);
-	AttachToComponent(AttachActor, rules, FName("weaponSocket"));
+	FAttachmentTransformRules rules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, false);
+	AttachToComponent(AttachActor, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weaponSocket"));
 }
 
 void AWeaponBase::EndGrab()
