@@ -34,15 +34,19 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class USceneComponent* Root;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* Mesh;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UArrowComponent* MuzzleOffset;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UInteractableComponent* InteractableComponent;
 
+	UFUNCTION(BlueprintImplementableEvent)
 	void Fire();
 
 	UFUNCTION()

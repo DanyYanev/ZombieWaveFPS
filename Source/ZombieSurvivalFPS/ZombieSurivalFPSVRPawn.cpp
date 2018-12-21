@@ -141,7 +141,7 @@ void AZombieSurivalFPSVRPawn::MoveRight(float Val)
 
 void AZombieSurivalFPSVRPawn::Turn(float Val)
 {
-	UE_LOG(LogTemp, Error, TEXT("%d"), Val);
+	//UE_LOG(LogTemp, Error, TEXT("%d"), Val);
 
 	if (Val != 0.0f) {
 		if (bCanTurn) {
