@@ -2,9 +2,11 @@
 
 #include "WeaponBase.h"
 #include "InteractableComponent.h"
+#include "Engine/World.h"
+#include "ZombieBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/ArrowComponent.h"
-#include "InteractableComponent.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -44,6 +46,8 @@ void AWeaponBase::BeginPlay()
 	else {
 		UE_LOG(LogTemp, Error, TEXT("Interactable Component is not valid."));
 	}
+
+	BulletsInMagazine = MagazineSize;
 }
 
 // Called every frame
@@ -53,10 +57,65 @@ void AWeaponBase::Tick(float DeltaTime)
 
 }
 
+void AWeaponBase::Fire()
+{
+	if (BulletsInMagazine <= 0) {
+		Reload();
+	} else if (!bIsReloading) {
+		FVector Start = MuzzleOffset->GetComponentLocation();
+		FVector Forward = MuzzleOffset->GetForwardVector();
+		//Multiply forward vector by X moves it "forward" x units
+		FVector End = Start + (Forward * 3000);
+
+		FCollisionQueryParams Params = FCollisionQueryParams(FName("FireTrace"));
+
+		FHitResult RV_Hit(ForceInit);
+
+		//call GetWorld() from within an actor extending class
+		GetWorld()->LineTraceSingleByChannel(
+			RV_Hit,
+			Start,
+			End,
+			ECollisionChannel::ECC_Visibility,
+			Params
+		);
+
+		UGameplayStatics::PlaySoundAtLocation(this, FireCue, GetActorLocation());
+		BulletsInMagazine--;
+
+		if (RV_Hit.IsValidBlockingHit()) {
+			if (IsValid(RV_Hit.GetActor())) {
+				AZombieBase* Target = Cast<AZombieBase>(RV_Hit.GetActor());
+				if (IsValid(Target)) {
+					UGameplayStatics::ApplyPointDamage(Target, Damage, GetActorLocation(), RV_Hit, NULL, this, NULL);
+				}
+			}
+		}
+	}
+}
+
+void AWeaponBase::Reload()
+{
+	if(!bIsReloading && BulletsInMagazine < MagazineSize){
+		bIsReloading = true;
+		UGameplayStatics::PlaySoundAtLocation(this, ReloadCue, GetActorLocation());
+		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AWeaponBase::FinishReload, ReloadTime, false);
+	}
+	
+}
+
+void AWeaponBase::FinishReload()
+{
+	bIsReloading = false;
+	BulletsInMagazine = MagazineSize;
+}
+
 void AWeaponBase::BeginUse()
 {
 	if (bIsAutomatic) {
 		if (FireRate != 0) {
+			//Shoot first bullet manually as timer fires after set time.
+			Fire();
 			//Trigger shoot FireRate times a minute.
 			GetWorld()->GetTimerManager().SetTimer(AutomaticFireTimerHandle, this, &AWeaponBase::Fire, (float)60 / FireRate, true);
 		}

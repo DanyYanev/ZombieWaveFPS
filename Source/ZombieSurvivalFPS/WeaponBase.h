@@ -13,22 +13,42 @@ class ZOMBIESURVIVALFPS_API AWeaponBase : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AWeaponBase();
 
-	UPROPERTY(EditDefaultsOnly, Category = Statistic)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Statistic)
 	float Damage = 0;
 
-	//Firerate in rounds per minute
-	UPROPERTY(EditDefaultsOnly, Category = Statistic)
+	/** Firerate in rounds per minute */
+	UPROPERTY(EditAnywhere, Category = Statistic)
 	float FireRate = 100;
 
-	UPROPERTY(EditDefaultsOnly, Category = Statistic)
+	UPROPERTY(EditAnywhere, Category = Statistic)
+	float MagazineSize = 0;
+
+	/** In seconds */
+	UPROPERTY(EditAnywhere, Category = Statistic)
+	float ReloadTime = 0;
+
+	UPROPERTY(EditAnywhere, Category = Statistic)
 	bool bIsAutomatic = false;
+
+	/** Sound to play each time gun is fired */
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadWrite, Category = Gameplay)
+	class USoundBase* FireCue;
+
+	/** Sound to play each time gun is reloaded */
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadWrite, Category = Gameplay)
+	class USoundBase* ReloadCue;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	bool bIsReloading = false;
+
+	int BulletsInMagazine;
+
+	void FinishReload();
 
 public:	
 	// Called every frame
@@ -46,8 +66,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UInteractableComponent* InteractableComponent;
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION()
 	void Fire();
+
+	UFUNCTION()
+	void Reload();
 
 	UFUNCTION()
 	void BeginUse();
