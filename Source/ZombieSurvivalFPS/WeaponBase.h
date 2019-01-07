@@ -7,6 +7,10 @@
 #include "InteractableComponent.h"
 #include "WeaponBase.generated.h"
 
+
+//Amount of times reload widget is updated
+#define UPDATE_TICKS 50
+
 UCLASS(abstract)
 class ZOMBIESURVIVALFPS_API AWeaponBase : public AActor
 {
@@ -50,6 +54,12 @@ protected:
 
 	void FinishReload();
 
+	void UpdateReloadBar();
+
+	void UpdateAmmoBar();
+
+	void UpdateWidgetInstanceVisibility(UUserWidget* Target, bool isVisible);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -59,6 +69,12 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere, Category = Widget)
+	class UWidgetComponent* ReloadBarWidgetComponent;
+
+	UPROPERTY(EditAnywhere, Category = Widget)
+	class UWidgetComponent* AmmoBarWidgetComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UArrowComponent* MuzzleOffset;
@@ -71,6 +87,9 @@ public:
 
 	UFUNCTION()
 	void Reload();
+
+	UFUNCTION()
+	void TickReload();
 
 	UFUNCTION()
 	void BeginUse();
@@ -91,6 +110,11 @@ public:
 	void Deselect();
 
 private:
+
+	uint8_t UpdateTickCounter = 0;
+
+	class UOneParamWidget* ReloadBarInstance;
+	class UOneParamWidget* AmmoBarInstance;
 
 	FTimerHandle AutomaticFireTimerHandle;
 	FTimerHandle ReloadTimerHandle;

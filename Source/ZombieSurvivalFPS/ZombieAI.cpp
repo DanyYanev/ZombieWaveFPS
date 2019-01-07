@@ -69,7 +69,7 @@ void AZombieAI::SetNewTarget()
 		}
 	}
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("Closest target actor is not valid."));
+		//UE_LOG(LogTemp, Warning, TEXT("Closest target actor is not valid."));
 	}
 	
 }

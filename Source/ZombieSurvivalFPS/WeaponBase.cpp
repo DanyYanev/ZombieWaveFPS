@@ -15,11 +15,15 @@ AWeaponBase::AWeaponBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	//SetRootComponent(Root);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	//Mesh->SetupAttachment(Root);
 	SetRootComponent(Mesh);
+
+	ReloadBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ReloadBarWidget"));
+	ReloadBarWidgetComponent->SetupAttachment(Mesh);
+	
+	AmmoBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("AmmoBarWidget"));
+	AmmoBarWidgetComponent->SetupAttachment(Mesh);
 
 	MuzzleOffset = CreateDefaultSubobject<UArrowComponent>(TEXT("MuzzleOffset"));
 	MuzzleOffset->SetupAttachment(Mesh);
@@ -32,7 +36,41 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BulletsInMagazine = MagazineSize;
 	
+	if (IsValid(ReloadBarWidgetComponent)) {
+		ReloadBarInstance = Cast<UOneParamWidget>(ReloadBarWidgetComponent->GetUserWidgetObject());
+
+		//UI for weapon hidden until picked up.
+		if (IsValid(ReloadBarInstance)) {
+			//UpdateWidgetInstanceVisibility already checks if ReloadBarInstance is valid but doesnt throw a warning.
+			UpdateWidgetInstanceVisibility(ReloadBarInstance, false);
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("Reload Widget parent not of class UOneParamWidget"));
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Reload Widget class is invalid"));
+	}
+
+	if (IsValid(ReloadBarWidgetComponent)) {
+		AmmoBarInstance = Cast<UOneParamWidget>(AmmoBarWidgetComponent->GetUserWidgetObject());
+
+		if (IsValid(AmmoBarInstance)) {
+			//Both UpdateWidgetInstanceVisibility and UpdateAmmo Bar check if ReloadBarInstance is valid but don't throw a Warning.
+			UpdateAmmoBar();
+			UpdateWidgetInstanceVisibility(AmmoBarInstance, false);
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("Ammo Widget parent not of class UOneParamWidget"));
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Ammo Widget class is invalid"));
+	}
+
 	OnBeginUseDelegate.BindUFunction(this, TEXT("BeginUse"));
 	OnEndUseDelegate.BindUFunction(this, TEXT("EndUse"));
 	OnSelectDelegate.BindUFunction(this, TEXT("Select"));
@@ -50,8 +88,6 @@ void AWeaponBase::BeginPlay()
 	else {
 		UE_LOG(LogTemp, Error, TEXT("Interactable Component is not valid."));
 	}
-
-	BulletsInMagazine = MagazineSize;
 }
 
 // Called every frame
@@ -86,6 +122,7 @@ void AWeaponBase::Fire()
 
 		UGameplayStatics::PlaySoundAtLocation(this, FireCue, GetActorLocation());
 		BulletsInMagazine--;
+		UpdateAmmoBar();
 
 		if (RV_Hit.IsValidBlockingHit()) {
 			if (IsValid(RV_Hit.GetActor())) {
@@ -103,15 +140,60 @@ void AWeaponBase::Reload()
 	if(!bIsReloading && BulletsInMagazine < MagazineSize){
 		bIsReloading = true;
 		UGameplayStatics::PlaySoundAtLocation(this, ReloadCue, GetActorLocation());
-		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AWeaponBase::FinishReload, ReloadTime, false);
+		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AWeaponBase::TickReload, ReloadTime/ UPDATE_TICKS, true);
+		UpdateWidgetInstanceVisibility(ReloadBarInstance, true);
 	}
 	
+}
+
+void AWeaponBase::TickReload()
+{
+	//Check for final tick
+	if (UpdateTickCounter != UPDATE_TICKS) {
+		UpdateTickCounter++;
+		UpdateReloadBar();
+	}
+	else {
+		UpdateTickCounter = 0;
+		FinishReload();
+	}
+
 }
 
 void AWeaponBase::FinishReload()
 {
 	bIsReloading = false;
 	BulletsInMagazine = MagazineSize;
+	UpdateAmmoBar();
+	GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
+	UpdateWidgetInstanceVisibility(ReloadBarInstance, false);
+}
+
+void AWeaponBase::UpdateReloadBar()
+{
+	if (IsValid(ReloadBarInstance)) {
+		//Convert UpdateTickCounter to 0-1 value
+		ReloadBarInstance->UpdateParam((1.f / UPDATE_TICKS) * UpdateTickCounter);
+	}
+}
+
+void AWeaponBase::UpdateAmmoBar()
+{
+	if (IsValid(AmmoBarInstance)) {
+		AmmoBarInstance->UpdateParam(BulletsInMagazine);
+	}
+}
+
+void AWeaponBase::UpdateWidgetInstanceVisibility(UUserWidget * Target, bool isVisible)
+{
+	if (IsValid(Target)) {
+		if (isVisible) {
+			Target->SetVisibility(ESlateVisibility::Visible);
+		}
+		else {
+			Target->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
 }
 
 void AWeaponBase::BeginUse()
@@ -145,6 +227,8 @@ void AWeaponBase::BeginGrab(USceneComponent * AttachActor)
 	Mesh->SetSimulatePhysics(false);
 	FAttachmentTransformRules rules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, false);
 	AttachToComponent(AttachActor, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weaponSocket"));
+
+	UpdateWidgetInstanceVisibility(AmmoBarInstance, true);
 }
 
 void AWeaponBase::EndGrab()
@@ -152,6 +236,9 @@ void AWeaponBase::EndGrab()
 	Mesh->SetSimulatePhysics(true);
 	FDetachmentTransformRules rules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, false);
 	DetachFromActor(rules);
+
+	UpdateWidgetInstanceVisibility(ReloadBarInstance, false);
+	UpdateWidgetInstanceVisibility(AmmoBarInstance, false);
 }
 
 void AWeaponBase::Select()
