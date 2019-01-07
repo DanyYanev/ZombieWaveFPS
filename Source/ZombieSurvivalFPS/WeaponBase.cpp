@@ -39,9 +39,13 @@ void AWeaponBase::BeginPlay()
 	OnDeselectDelegate.BindUFunction(this, TEXT("Deselect"));
 	OnBeginGrabDelegate.BindUFunction(this, TEXT("BeginGrab"));
 	OnEndGrabDelegate.BindUFunction(this, TEXT("EndGrab"));
+	OnReloadDelegate.BindUFunction(this, TEXT("Reload"));
 
 	if (IsValid(InteractableComponent)) {
-		InteractableComponent->InitializeDelegates(&OnBeginUseDelegate, &OnEndUseDelegate, &OnSelectDelegate, &OnDeselectDelegate, &OnBeginGrabDelegate, &OnEndGrabDelegate);
+		InteractableComponent->InitializeUseDelegates(&OnBeginUseDelegate, &OnEndUseDelegate);
+		InteractableComponent->InitializeSelectDelegates(&OnSelectDelegate, &OnDeselectDelegate);
+		InteractableComponent->InitializeGrabDelegates(&OnBeginGrabDelegate, &OnEndGrabDelegate);
+		InteractableComponent->InitializeActionDelegates(&OnReloadDelegate);
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("Interactable Component is not valid."));

@@ -98,11 +98,16 @@ void AZombieSurivalFPSVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerI
 	PlayerInputComponent->BindAction("R_Grab", IE_Released, this, &AZombieSurivalFPSVRPawn::R_EndGrab);
 	PlayerInputComponent->BindAction("R_Use", IE_Pressed, this, &AZombieSurivalFPSVRPawn::R_BeginUse);
 	PlayerInputComponent->BindAction("R_Use", IE_Released, this, &AZombieSurivalFPSVRPawn::R_EndUse);
+	PlayerInputComponent->BindAction("R_Action", IE_Pressed, this, &AZombieSurivalFPSVRPawn::R_BeginAction);
+	PlayerInputComponent->BindAction("R_Action", IE_Released, this, &AZombieSurivalFPSVRPawn::R_EndAction);
 
 	PlayerInputComponent->BindAction("L_Grab", IE_Pressed, this, &AZombieSurivalFPSVRPawn::L_BeginGrab);
 	PlayerInputComponent->BindAction("L_Grab", IE_Released, this, &AZombieSurivalFPSVRPawn::L_EndGrab);
 	PlayerInputComponent->BindAction("L_Use", IE_Pressed, this, &AZombieSurivalFPSVRPawn::L_BeginUse);
 	PlayerInputComponent->BindAction("L_Use", IE_Released, this, &AZombieSurivalFPSVRPawn::L_EndUse);
+	PlayerInputComponent->BindAction("L_Action", IE_Pressed, this, &AZombieSurivalFPSVRPawn::L_BeginAction);
+	PlayerInputComponent->BindAction("L_Action", IE_Released, this, &AZombieSurivalFPSVRPawn::L_EndAction);
+
 
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &AZombieSurivalFPSVRPawn::MoveForward);
@@ -254,6 +259,20 @@ void AZombieSurivalFPSVRPawn::R_EndGrab()
 	}
 }
 
+void AZombieSurivalFPSVRPawn::R_BeginAction()
+{
+	if (IsValid(R_InteractableComponent)) {
+		R_InteractableComponent->BeginAction();
+	}
+}
+
+void AZombieSurivalFPSVRPawn::R_EndAction()
+{
+	if (IsValid(R_InteractableComponent)) {
+		R_InteractableComponent->EndAction();
+	}
+}
+
 void AZombieSurivalFPSVRPawn::L_BeginUse()
 {
 	if (IsValid(L_InteractableComponent)) {
@@ -279,6 +298,20 @@ void AZombieSurivalFPSVRPawn::L_EndGrab()
 {
 	if (IsValid(L_InteractableComponent)) {
 		L_InteractableComponent->EndGrab();
+	}
+}
+
+void AZombieSurivalFPSVRPawn::L_BeginAction()
+{
+	if (IsValid(L_InteractableComponent)) {
+		L_InteractableComponent->BeginAction();
+	}
+}
+
+void AZombieSurivalFPSVRPawn::L_EndAction()
+{
+	if (IsValid(L_InteractableComponent)) {
+		L_InteractableComponent->EndAction();
 	}
 }
 

@@ -73,20 +73,22 @@ protected:
 	void Turn(float Val);
 
 	void R_BeginUse();
-
 	void R_EndUse();
 
 	void R_BeginGrab();
-
 	void R_EndGrab();
 
-	void L_BeginUse();
+	void R_BeginAction();
+	void R_EndAction();
 
+	void L_BeginUse();
 	void L_EndUse();
 
 	void L_BeginGrab();
-
 	void L_EndGrab();
+
+	void L_BeginAction();
+	void L_EndAction();
 
 	void Pause();
 

@@ -22,9 +22,7 @@ UInteractableComponent::UInteractableComponent()
 	Box->UpdateCollisionProfile();
 }
 
-void UInteractableComponent::InitializeDelegates(SignatureOnFunction * pOnBeginUse, SignatureOnFunction * pOnEndUse,
-													SignatureOnFunction * pOnSelect, SignatureOnFunction * pOnDeselect,
-													SignatureOnBeginGrab * pOnBeginGrab, SignatureOnFunction * pOnEndGrab)
+void UInteractableComponent::InitializeUseDelegates(SignatureOnFunction * pOnBeginUse, SignatureOnFunction * pOnEndUse)
 {
 	if (pOnBeginUse) {
 		OnBeginUseDelegate = pOnBeginUse;
@@ -32,12 +30,20 @@ void UInteractableComponent::InitializeDelegates(SignatureOnFunction * pOnBeginU
 	if (pOnEndUse) {
 		OnEndUseDelegate = pOnEndUse;
 	}
+}
+
+void UInteractableComponent::InitializeSelectDelegates(SignatureOnFunction * pOnSelect, SignatureOnFunction * pOnDeselect)
+{
 	if (pOnSelect) {
 		OnSelectDelegate = pOnSelect;
 	}
 	if (pOnDeselect) {
 		OnDeselectDelegate = pOnDeselect;
 	}
+}
+
+void UInteractableComponent::InitializeGrabDelegates(SignatureOnBeginGrab * pOnBeginGrab, SignatureOnFunction * pOnEndGrab)
+{
 	if (pOnBeginGrab) {
 		OnBeginGrabDelegate = pOnBeginGrab;
 	}
@@ -46,74 +52,68 @@ void UInteractableComponent::InitializeDelegates(SignatureOnFunction * pOnBeginU
 	}
 }
 
+void UInteractableComponent::InitializeActionDelegates(SignatureOnFunction * pOnBeginAction, SignatureOnFunction * pOnEndAction)
+{
+	if (pOnBeginAction) {
+		OnBeginActionDelegate = pOnBeginAction;
+	}
+	if (pOnEndAction) {
+		OnEndActionDelegate = pOnEndAction;
+	}
+}
+
 void UInteractableComponent::BeginUse()
 {
 	if (OnBeginUseDelegate) {
-		if (!OnBeginUseDelegate->ExecuteIfBound()) {
-			UE_LOG(LogTemp, Warning, TEXT("OnBeginUseDelegate Not Bound"));
-		}
-	}
-	else {
-		UE_LOG(LogTemp, Error, TEXT("OnBeginUseDelegate is null"));
+		OnBeginUseDelegate->ExecuteIfBound();
 	}
 }
 
 void UInteractableComponent::EndUse()
 {
 	if (OnEndUseDelegate) {
-		if (!OnEndUseDelegate->ExecuteIfBound()) {
-			//UE_LOG(LogTemp, Warning, TEXT("OnEndUseDelegate Not Bound"));
-		}
+		OnEndUseDelegate->ExecuteIfBound();
 	}
-	else {
-		//UE_LOG(LogTemp, Error, TEXT("OnEndUseDelegate is null"));
+}
+
+void UInteractableComponent::BeginAction()
+{
+	if (OnBeginActionDelegate) {
+		OnBeginActionDelegate->ExecuteIfBound();
+	}
+}
+
+void UInteractableComponent::EndAction()
+{
+	if (OnEndActionDelegate) {
+		OnEndActionDelegate->ExecuteIfBound();
 	}
 }
 
 void UInteractableComponent::Select()
 {
 	if (OnSelectDelegate) {
-		if (!OnSelectDelegate->ExecuteIfBound()) {
-			UE_LOG(LogTemp, Warning, TEXT("OnSelectDelegate Not Bound"));
-		}
-	} 
-	else {
-		UE_LOG(LogTemp, Error, TEXT("OnSelectDelegate is null"));
+		OnSelectDelegate->ExecuteIfBound();
 	}
 }
 
 void UInteractableComponent::Deselect()
 {
 	if (OnDeselectDelegate) {
-		if (!OnDeselectDelegate->ExecuteIfBound()) {
-			UE_LOG(LogTemp, Warning, TEXT("OnDeselectDelegate Not Bound"));
-		}
-	}
-	else {
-		UE_LOG(LogTemp, Error, TEXT("OnDeselectDelegate is null"));
+		OnDeselectDelegate->ExecuteIfBound();
 	}
 }
 
 void UInteractableComponent::BeginGrab(USceneComponent * AttachActor)
 {
 	if (OnBeginGrabDelegate) {
-		if (!OnBeginGrabDelegate->ExecuteIfBound(AttachActor)) {
-			//UE_LOG(LogTemp, Warning, TEXT("OnEndUseDelegate Not Bound"));
-		}
-	}
-	else {
-		//UE_LOG(LogTemp, Warning, TEXT("OnEndUseDelegate is null"));
+		OnBeginGrabDelegate->ExecuteIfBound(AttachActor);
 	}
 }
 
 void UInteractableComponent::EndGrab()
 {
 	if (OnEndGrabDelegate) {
-		if (!OnEndGrabDelegate->ExecuteIfBound()) {
-			//UE_LOG(LogTemp, Warning, TEXT("OnEndUseDelegate Not Bound"));
-		}
-	}
-	else {
-		//UE_LOG(LogTemp, Warning, TEXT("OnEndUseDelegate is null"));
+		OnEndGrabDelegate->ExecuteIfBound();
 	}
 }

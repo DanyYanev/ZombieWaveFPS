@@ -38,13 +38,13 @@ void AZombieBase::BeginPlay()
 
 	Health = MaxHealth;
 
-	HealthBarInstance = Cast<UHealthBarWidget>(HealthBarWidgetComponent->GetUserWidgetObject());
+	HealthBarInstance = Cast<UOneParamWidget>(HealthBarWidgetComponent->GetUserWidgetObject());
 
 	if (IsValid(HealthBarInstance)) {
-		HealthBarInstance->UpdateHealth((float)Health / MaxHealth);
+		HealthBarInstance->UpdateParam((float)Health / MaxHealth);
 	}
 	else {
-		UE_LOG(LogTemp, Error, TEXT("HealthBarWidget attached to WidgetComponent not of class UHealthBarWidget"));
+		UE_LOG(LogTemp, Error, TEXT("HealthBarWidget attached to WidgetComponent not of class UOneParamWidget"));
 	}
 }
 
@@ -97,7 +97,7 @@ float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEve
 			HealthBarInstance->SetVisibility(ESlateVisibility::Hidden);
 		}
 		else {
-			HealthBarInstance->UpdateHealth((float)Health / MaxHealth);
+			HealthBarInstance->UpdateParam((float)Health / MaxHealth);
 		}
 	}
 	else {

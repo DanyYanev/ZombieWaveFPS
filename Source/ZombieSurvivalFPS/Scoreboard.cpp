@@ -43,7 +43,8 @@ void AScoreboard::BeginPlay()
 	OnDeselectDelegate.BindUFunction(this, TEXT("Deselect"));
 
 	if (IsValid(InteractableComponent)) {
-		InteractableComponent->InitializeDelegates(&OnUseDelegate, NULL, &OnSelectDelegate, &OnDeselectDelegate);
+		InteractableComponent->InitializeUseDelegates(&OnUseDelegate);
+		InteractableComponent->InitializeSelectDelegates(&OnSelectDelegate, &OnDeselectDelegate);
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("Interactable Component is not valid."));

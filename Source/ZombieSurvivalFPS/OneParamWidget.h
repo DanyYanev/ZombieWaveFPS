@@ -1,0 +1,21 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
+#include "OneParamWidget.generated.h"
+
+/**
+ *  Class created for UpdateHealth to be called from code.
+ */
+UCLASS()
+class ZOMBIESURVIVALFPS_API UOneParamWidget : public UUserWidget
+{
+	GENERATED_BODY()
+	
+public:
+	//Value ranges from 0-1
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateParam(float Value);
+};

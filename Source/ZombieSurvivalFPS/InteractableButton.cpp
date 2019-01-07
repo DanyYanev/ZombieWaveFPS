@@ -35,7 +35,8 @@ void AInteractableButton::BeginPlay()
 	OnUseDelegate.BindUFunction(this, TEXT("Use"));
 	
 	if (IsValid(InteractableComponent)) {
-		InteractableComponent->InitializeDelegates(&OnUseDelegate, NULL, &OnDeselectDelegate, &OnSelectDelegate);
+		InteractableComponent->InitializeUseDelegates(&OnUseDelegate);
+		InteractableComponent->InitializeSelectDelegates(&OnSelectDelegate, &OnDeselectDelegate);
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("Interactable Component is not valid."));

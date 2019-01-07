@@ -101,5 +101,6 @@ private:
 	SignatureOnFunction OnDeselectDelegate;
 	SignatureOnBeginGrab OnBeginGrabDelegate;
 	SignatureOnFunction OnEndGrabDelegate;
+	SignatureOnFunction OnReloadDelegate;
 
 };

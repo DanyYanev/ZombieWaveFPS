@@ -8,7 +8,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "HealthBarWidget.h"
+#include "OneParamWidget.h"
 #include "ZombieBase.generated.h"
 
 UCLASS(abstract)
@@ -54,5 +54,5 @@ protected:
 	bool bIsDying = false;
 
 private:
-	UHealthBarWidget* HealthBarInstance;
+	UOneParamWidget* HealthBarInstance;
 };
