@@ -146,9 +146,8 @@ void AZombieSurivalFPSVRPawn::MoveRight(float Val)
 
 void AZombieSurivalFPSVRPawn::Turn(float Val)
 {
-	//UE_LOG(LogTemp, Error, TEXT("%d"), Val);
 
-	if (Val != 0.0f) {
+	if (Val > 0.15 || Val < -0.15) {
 		if (bCanTurn) {
 			FRotator Rotation = VROrigin->GetComponentRotation();
 			if (Val < 0) {
@@ -158,7 +157,7 @@ void AZombieSurivalFPSVRPawn::Turn(float Val)
 				Rotation.Yaw += TurnInterval;
 			}
 
-			VROrigin->SetWorldRotation(Rotation);
+			GetController()->SetControlRotation(Rotation);
 			bCanTurn = false;
 		}
 	}
