@@ -6,6 +6,7 @@
 #include "ZombieBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "Components/ArrowComponent.h"
 
 // Sets default values
@@ -14,10 +15,14 @@ AWeaponBase::AWeaponBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(Mesh);
+
+	LaserMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LaserMesh"));
+	LaserMesh->SetupAttachment(Mesh);
+
+	LaserBeam = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("LaserBeamParticle"));
+	LaserBeam->SetupAttachment(LaserMesh);
 
 	ReloadBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ReloadBarWidget"));
 	ReloadBarWidgetComponent->SetupAttachment(Mesh);
@@ -95,6 +100,9 @@ void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	float Distance = CalculateLaserBeamDistance();
+
+	LaserBeam->SetFloatParameter(FName("BeamLength"), Distance);
 }
 
 void AWeaponBase::Fire()
@@ -182,6 +190,37 @@ void AWeaponBase::UpdateAmmoBar()
 	if (IsValid(AmmoBarInstance)) {
 		AmmoBarInstance->UpdateParam(BulletsInMagazine);
 	}
+}
+
+float AWeaponBase::CalculateLaserBeamDistance()
+{
+	FVector Start = LaserBeam->GetComponentLocation();
+	FVector Forward = LaserBeam->GetForwardVector();
+	//Multiply forward vector by X moves it "forward" x units
+	FVector End = Start + (Forward * 3000);
+
+	FCollisionQueryParams Params = FCollisionQueryParams(FName("LaserBeamTrace"));
+
+	FHitResult RV_Hit(ForceInit);
+
+	//call GetWorld() from within an actor extending class
+	GetWorld()->LineTraceSingleByChannel(
+		RV_Hit,
+		Start,
+		End,
+		ECollisionChannel::ECC_Visibility,
+		Params
+	);
+
+	if (RV_Hit.IsValidBlockingHit()) {
+		
+		return RV_Hit.Distance;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("DISTANCE: %f"), RV_Hit.Distance));
+
+	//Hit nothing
+	return 3000.f;
 }
 
 void AWeaponBase::UpdateWidgetInstanceVisibility(UUserWidget * Target, bool isVisible)

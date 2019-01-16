@@ -58,17 +58,22 @@ protected:
 
 	void UpdateAmmoBar();
 
+	float CalculateLaserBeamDistance();
+
 	void UpdateWidgetInstanceVisibility(UUserWidget* Target, bool isVisible);
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	class USceneComponent* Root;
-
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* Mesh;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* LaserMesh;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
+	class UParticleSystemComponent* LaserBeam;
 
 	UPROPERTY(EditAnywhere, Category = Widget)
 	class UWidgetComponent* ReloadBarWidgetComponent;
