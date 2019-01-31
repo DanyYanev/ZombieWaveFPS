@@ -40,8 +40,8 @@ void AZombieAI::BeginPlay()
 void AZombieAI::AttackTarget(AActor * Target)
 {
 
-	APawn* pawn = GetPawn();
-	AZombieBase* Zombie = Cast<AZombieBase>(pawn);
+	APawn* Pawn = GetPawn();
+	AZombieBase* Zombie = Cast<AZombieBase>(Pawn);
 
 	if (IsValid(Zombie)) {
 		Zombie->Attack(Target);

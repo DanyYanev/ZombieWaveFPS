@@ -17,7 +17,7 @@ void UBTService_FindTarget::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 *
 {
 	AZombieAI * ZombieAI = Cast<AZombieAI>(OwnerComp.GetAIOwner());
 
-	if (ZombieAI) {
+	if (IsValid(ZombieAI)) {
 
 		AActor * Target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(ZombieAI->TargetKeyId));
 		

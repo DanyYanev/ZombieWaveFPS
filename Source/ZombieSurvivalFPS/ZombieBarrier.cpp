@@ -68,7 +68,9 @@ void AZombieBarrier::BeginPlay()
 		Length = (FVector(Origin.X, Origin.Y + BoxExtent.Y, Origin.Z) - FVector(Origin.X, Origin.Y - BoxExtent.Y, Origin.Z)).Size();
 	}
 
+	//Shortens length by one offset for each side so the first/last point appears Offset distance from each end.
 	Length -= 2 * Offset;
+
 	TargetNumber = Length / Distance;
 
 	for (int i = 0; i < TargetNumber + 1; i++) { //Add last point at the end of actor

@@ -15,7 +15,7 @@ EBTNodeResult::Type UBTTask_MoveToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	AZombieAI * ZombieAI = Cast<AZombieAI>(OwnerComp.GetAIOwner());
 
-	if (ZombieAI) {
+	if (IsValid(ZombieAI)) {
 		FVector TargetPoint = OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Vector>(ZombieAI->TargetPointKeyId);
 
 		ZombieAI->MoveToLocation(TargetPoint, 5.f, true, true, true, true);
