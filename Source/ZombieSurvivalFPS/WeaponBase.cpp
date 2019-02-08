@@ -217,7 +217,7 @@ float AWeaponBase::CalculateLaserBeamDistance()
 		return RV_Hit.Distance;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("DISTANCE: %f"), RV_Hit.Distance));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("DISTANCE: %f"), RV_Hit.Distance));
 
 	//Hit nothing
 	return 3000.f;
