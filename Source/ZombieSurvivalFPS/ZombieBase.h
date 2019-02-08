@@ -11,7 +11,7 @@
 #include "OneParamWidget.h"
 #include "ZombieBase.generated.h"
 
-UCLASS(abstract)
+UCLASS(Abstract)
 class ZOMBIESURVIVALFPS_API AZombieBase : public ACharacter
 {
 	GENERATED_BODY()

@@ -15,7 +15,7 @@ class ZOMBIESURVIVALFPS_API UOneParamWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	//Value ranges from 0-1
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateParam(float Value);
 };
