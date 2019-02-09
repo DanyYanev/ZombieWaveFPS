@@ -56,11 +56,14 @@ void AZombieAI::SetNewTarget()
 	AActor * Target = FindClosestTarget();
 
 	if (IsValid(Target)) {
-		BehaviorTreeComp->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Object>(TargetKeyId, Target);
+		
 
 		AZombieBarrier * Barrier = Cast<AZombieBarrier>(Target);
 
 		if (IsValid(Barrier)) {
+
+			BehaviorTreeComp->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Object>(TargetKeyId, Target);
+
 			FVector TargetPoint = FindClosestTargetPoint();
 			BehaviorTreeComp->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Vector>(TargetPointKeyId, TargetPoint);
 		}
@@ -69,7 +72,7 @@ void AZombieAI::SetNewTarget()
 		}
 	}
 	else {
-		//UE_LOG(LogTemp, Warning, TEXT("Closest target actor is not valid."));
+		UE_LOG(LogTemp, Warning, TEXT("Closest target actor is not valid."));
 	}
 	
 }

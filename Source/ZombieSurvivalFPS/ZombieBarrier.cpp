@@ -13,16 +13,6 @@
 const float AZombieBarrier::Offset = 40;
 const float AZombieBarrier::Distance = 150;
 
-void AZombieBarrier::UpdateHealthText()
-{
-	if (IsValid(HealthText)) {
-		HealthText->SetText(FText().FromString(FString::FromInt(CurrentHealth) + FString("/") + FString::FromInt(Health)));
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("HealthText not initialized!"));
-	}
-}
-
 // Sets default values
 AZombieBarrier::AZombieBarrier()
 {
@@ -48,41 +38,9 @@ void AZombieBarrier::BeginPlay()
 {
 	Super::BeginPlay();
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Dynamicly determine and generate points on the barrier for zombies to evenly spread on the barrier.
-	FVector Scale3D = GetActorScale3D();
-	float Length;
-	//Determine which way the barrier is scaled
-	bool bScaleX = Scale3D.X > Scale3D.Y;
+	GenerateTargetPoints();
 
-	
-	FVector Origin;
-	FVector BoxExtent;
-	GetActorBounds(true, Origin, BoxExtent);
-
-	//GetActor Length to calculate number of targets needed
-	if (bScaleX) {
-		Length = (FVector(Origin.X + BoxExtent.X, Origin.Y, Origin.Z) - FVector(Origin.X - BoxExtent.X, Origin.Y, Origin.Z)).Size();
-	}
-	else {
-		Length = (FVector(Origin.X, Origin.Y + BoxExtent.Y, Origin.Z) - FVector(Origin.X, Origin.Y - BoxExtent.Y, Origin.Z)).Size();
-	}
-
-	//Shortens length by one offset for each side so the first/last point appears Offset distance from each end.
-	Length -= 2 * Offset;
-
-	TargetNumber = Length / Distance;
-
-	for (int i = 0; i < TargetNumber + 1; i++) { //Add last point at the end of actor
-		if (bScaleX) {
-			TargetPoints.Add(FVector(Origin.X - BoxExtent.X + (i * (Length / (float)TargetNumber)) + Offset, Origin.Y, Origin.Z));
-		}
-		else {
-			TargetPoints.Add(FVector(Origin.X, Origin.Y - BoxExtent.Y + (i * (Length / (float)TargetNumber)) + Offset, Origin.Z));
-		}
-	}
-
-	CurrentHealth = Health;
+	CurrentHealth = MaxHealth;
 	UpdateHealthText();
 }
 
@@ -113,4 +71,63 @@ float AZombieBarrier::TakeDamage(float DamageAmount, FDamageEvent const & Damage
 	}
 
 	return 0.0f;
+}
+
+
+void AZombieBarrier::UpdateHealthText()
+{
+	if (IsValid(HealthText)) {
+		HealthText->SetText(FText().FromString(FString::FromInt(CurrentHealth) + FString("/") + FString::FromInt(MaxHealth)));
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("HealthText not initialized!"));
+	}
+}
+
+void AZombieBarrier::GenerateTargetPoints()
+{
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Dynamicly determine and generate points on the barrier for zombies to evenly spread on the barrier.
+	FVector Scale3D = GetActorScale3D();
+	float Length;
+	//Determine which way the barrier is scaled
+	bool bScaleX = Scale3D.X > Scale3D.Y;
+
+
+	FVector Origin;
+	FVector BoxExtent;
+	GetActorBounds(true, Origin, BoxExtent);
+
+	//GetActor Length to calculate number of targets needed
+	if (bScaleX) {
+		Length = (FVector(Origin.X + BoxExtent.X, Origin.Y, Origin.Z) - FVector(Origin.X - BoxExtent.X, Origin.Y, Origin.Z)).Size();
+	}
+	else {
+		Length = (FVector(Origin.X, Origin.Y + BoxExtent.Y, Origin.Z) - FVector(Origin.X, Origin.Y - BoxExtent.Y, Origin.Z)).Size();
+	}
+
+	//Shortens length by one offset for each side so the first/last point appears Offset distance from each end.
+	Length -= 2 * Offset;
+
+	TargetNumber = Length / Distance;
+
+	for (int i = 0; i < TargetNumber + 1; i++) { //Add last point at the end of actor
+		if (bScaleX) {
+			TargetPoints.Add(FVector(Origin.X - BoxExtent.X + (i * (Length / (float)TargetNumber)) + Offset, Origin.Y, Origin.Z));
+		}
+		else {
+			TargetPoints.Add(FVector(Origin.X, Origin.Y - BoxExtent.Y + (i * (Length / (float)TargetNumber)) + Offset, Origin.Z));
+		}
+	}
+
+	for (int i = 0; i < TargetPoints.Num(); i++) {
+		DrawDebugPoint(
+			GetWorld(),
+			FVector(TargetPoints[i].X, TargetPoints[i].Y, TargetPoints[i].Z), 60,
+			FColor::Red,
+			false,
+			40
+		);
+	}
+
 }

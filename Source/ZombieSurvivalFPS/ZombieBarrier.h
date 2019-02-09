@@ -19,8 +19,8 @@ class ZOMBIESURVIVALFPS_API AZombieBarrier : public AActor
 public:
 	AZombieBarrier();
 
-	UPROPERTY(EditAnywhere)
-	int Health;
+	UPROPERTY(Category = Stats, EditAnywhere)
+	int MaxHealth;
 
 	UPROPERTY(VisibleAnywhere)
 	int TargetNumber = 0;
@@ -47,6 +47,8 @@ protected:
 
 private:	
 	void UpdateHealthText();
+
+	void GenerateTargetPoints();
 
 	//The distance from the end of the barrier to the most outter point.
 	static const float Offset;

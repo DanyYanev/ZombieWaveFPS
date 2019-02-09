@@ -60,6 +60,13 @@ void AZombieBase::Attack(AActor * Target)
 	UE_LOG(LogTemp, Error, TEXT("If this calls something went terribly wrong. ***ZombieBase Attack***"));
 }
 
+void AZombieBase::DealDamageToTargetActor(AActor * DamagedActor)
+{
+	if (IsValid(DamagedActor)) {
+		UGameplayStatics::ApplyDamage(DamagedActor, AttackDamage, GetController(), this, NULL);
+	}
+}
+
 void AZombieBase::OnGameEnded(bool Won)
 {
 	if (Won) {

@@ -20,16 +20,19 @@ public:
 	// Sets default values for this character's properties
 	AZombieBase();
 
-	void OnGameEnded(bool Won);
-
-	//ZombieAI Calls this for an attack to be issued
-	virtual void Attack(AActor * Target);
-
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	UBehaviorTree * BehaviorTree;
 
 	UPROPERTY(EditAnywhere, Category = Widget)
 	UWidgetComponent* HealthBarWidgetComponent;
+
+	void OnGameEnded(bool Won);
+
+	//ZombieAI Calls this for an attack to be issued
+	virtual void Attack(AActor * Target);
+
+	UFUNCTION(BlueprintCallable)
+	void DealDamageToTargetActor(AActor * DamagedActor);
 
 	UFUNCTION()
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;

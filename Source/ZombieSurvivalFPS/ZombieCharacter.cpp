@@ -60,13 +60,6 @@ void AZombieCharacter::Attack(AActor * Target)
 	}
 }
 
-void AZombieCharacter::DealDamageToTargetActor(AActor * DamagedActor)
-{
-	if (IsValid(DamagedActor)) {
-		UGameplayStatics::ApplyDamage(DamagedActor, AttackDamage, GetController(), this, NULL);
-	}
-}
-
 void AZombieCharacter::OnHeadshot(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	AZombieSurvivalFPSProjectile* Projectile = Cast<AZombieSurvivalFPSProjectile>(OtherActor);
