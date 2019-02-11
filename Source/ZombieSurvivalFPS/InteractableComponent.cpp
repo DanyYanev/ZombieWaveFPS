@@ -19,7 +19,7 @@ UInteractableComponent::UInteractableComponent()
 	Box->SetCollisionObjectType(INTERACTABLE_CHANNEL);
 	Box->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	Box->SetCollisionResponseToChannel(INTERACTABLE_CHANNEL, ECollisionResponse::ECR_Overlap);
-	Box->UpdateCollisionProfile();
+	//Box->UpdateCollisionProfile();
 }
 
 void UInteractableComponent::InitializeUseDelegates(SignatureOnFunction * pOnBeginUse, SignatureOnFunction * pOnEndUse)
