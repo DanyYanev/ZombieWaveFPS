@@ -93,6 +93,8 @@ void AWeaponBase::BeginPlay()
 	else {
 		UE_LOG(LogTemp, Error, TEXT("Interactable Component is not valid."));
 	}
+
+	SetLaserBeamDistance(0.f);
 }
 
 // Called every frame
@@ -100,9 +102,10 @@ void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	float Distance = CalculateLaserBeamDistance();
-
-	LaserBeam->SetFloatParameter(FName("BeamLength"), Distance);
+	if (bIsGrabbed) {
+		SetLaserBeamDistance(CalculateLaserBeamDistance());
+	}
+	
 }
 
 void AWeaponBase::Fire()
@@ -223,6 +226,11 @@ float AWeaponBase::CalculateLaserBeamDistance()
 	return 3000.f;
 }
 
+void AWeaponBase::SetLaserBeamDistance(float Distance)
+{
+	LaserBeam->SetFloatParameter(FName("BeamLength"), Distance);
+}
+
 void AWeaponBase::UpdateWidgetInstanceVisibility(UUserWidget * Target, bool isVisible)
 {
 	if (IsValid(Target)) {
@@ -263,10 +271,24 @@ void AWeaponBase::EndUse()
 
 void AWeaponBase::BeginGrab(USceneComponent * AttachActor)
 {
+	bool IsLeftHand = AttachActor->ComponentHasTag(FName("LEFT"));
+
 	Mesh->SetSimulatePhysics(false);
 	FAttachmentTransformRules rules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, false);
 	AttachToComponent(AttachActor, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weaponSocket"));
 
+
+	if (IsLeftHand) {
+		AddActorLocalRotation(FRotator(0.f, 0.f, 180.f));
+		FVector newScale = GetActorRelativeScale3D();
+		newScale.Y *= -1;
+
+		SetActorRelativeScale3D(newScale);
+		UE_LOG(LogTemp, Display, TEXT("LEFT HAND"));
+	}
+	
+
+	bIsGrabbed = true;
 	UpdateWidgetInstanceVisibility(AmmoBarInstance, true);
 }
 
@@ -276,6 +298,8 @@ void AWeaponBase::EndGrab()
 	FDetachmentTransformRules rules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, false);
 	DetachFromActor(rules);
 
+	bIsGrabbed = false;
+	SetLaserBeamDistance(0.f);
 	UpdateWidgetInstanceVisibility(ReloadBarInstance, false);
 	UpdateWidgetInstanceVisibility(AmmoBarInstance, false);
 }

@@ -50,6 +50,8 @@ protected:
 
 	bool bIsReloading = false;
 
+	bool bIsGrabbed = false;
+
 	int BulletsInMagazine;
 
 	void FinishReload();
@@ -59,6 +61,8 @@ protected:
 	void UpdateAmmoBar();
 
 	float CalculateLaserBeamDistance();
+
+	void SetLaserBeamDistance(float Distance);
 
 	void UpdateWidgetInstanceVisibility(UUserWidget* Target, bool isVisible);
 

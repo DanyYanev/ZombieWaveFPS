@@ -32,6 +32,7 @@ AZombieSurivalFPSVRPawn::AZombieSurivalFPSVRPawn()
 	R_MotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("R_MotionController"));
 	R_MotionController->MotionSource = FXRMotionControllerBase::RightHandSourceId;
 	R_MotionController->SetupAttachment(RootComponent);
+
 	L_MotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("L_MotionController"));
 	L_MotionController->MotionSource = FXRMotionControllerBase::LeftHandSourceId;
 	L_MotionController->SetupAttachment(RootComponent);
@@ -40,12 +41,14 @@ AZombieSurivalFPSVRPawn::AZombieSurivalFPSVRPawn()
 	R_HandMesh->SetOnlyOwnerSee(true);
 	R_HandMesh->bCastDynamicShadow = false;
 	R_HandMesh->CastShadow = false;
+	R_HandMesh->ComponentTags.Add(FName("RIGHT"));
 	R_HandMesh->SetupAttachment(R_MotionController);
 
 	L_HandMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("L_HandMesh"));
 	L_HandMesh->SetOnlyOwnerSee(true);
 	L_HandMesh->bCastDynamicShadow = false;
 	L_HandMesh->CastShadow = false;
+	L_HandMesh->ComponentTags.Add(FName("LEFT"));
 	L_HandMesh->SetupAttachment(L_MotionController);
 	//Inverse right hand to become left hand.
 	L_HandMesh->SetWorldScale3D(FVector(1.0f, 1.0f, -1.0f));

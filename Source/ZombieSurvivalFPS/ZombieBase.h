@@ -42,15 +42,15 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(Category = Stats, EditDefaultsOnly)
+	UPROPERTY(Category = Stats, EditAnywhere)
 	int MaxHealth;
 
 	int Health;
 
-	UPROPERTY(Category = Stats, EditDefaultsOnly)
+	UPROPERTY(Category = Stats, EditAnywhere)
 	int Speed;
 
-	UPROPERTY(Category = Stats, EditDefaultsOnly)
+	UPROPERTY(Category = Stats, EditAnywhere)
 	int AttackDamage;
 
 	UPROPERTY(VisibleAnywhere)
