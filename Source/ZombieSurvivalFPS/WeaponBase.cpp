@@ -276,7 +276,7 @@ void AWeaponBase::BeginGrab(USceneComponent * AttachActor)
 	Mesh->SetSimulatePhysics(false);
 	FAttachmentTransformRules rules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, false);
 	AttachToComponent(AttachActor, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weaponSocket"));
-
+	AddActorLocalOffset(AttachmentOffset);
 
 	if (IsLeftHand) {
 		AddActorLocalRotation(FRotator(0.f, 0.f, 180.f));

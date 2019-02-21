@@ -62,58 +62,90 @@ void UInteractableComponent::InitializeActionDelegates(SignatureOnFunction * pOn
 	}
 }
 
-void UInteractableComponent::BeginUse()
+bool UInteractableComponent::BeginUse()
 {
 	if (OnBeginUseDelegate) {
-		OnBeginUseDelegate->ExecuteIfBound();
+		if (OnBeginUseDelegate->ExecuteIfBound()) {
+			return true;
+		}
 	}
+
+	return false;
 }
 
-void UInteractableComponent::EndUse()
+bool UInteractableComponent::EndUse()
 {
 	if (OnEndUseDelegate) {
-		OnEndUseDelegate->ExecuteIfBound();
+		if (OnEndUseDelegate->ExecuteIfBound()) {
+			return true;
+		}
 	}
+
+	return false;
 }
 
-void UInteractableComponent::BeginAction()
+bool UInteractableComponent::BeginAction()
 {
 	if (OnBeginActionDelegate) {
-		OnBeginActionDelegate->ExecuteIfBound();
+		if (OnBeginActionDelegate->ExecuteIfBound()) {
+			return true;
+		}
 	}
+
+	return false;
 }
 
-void UInteractableComponent::EndAction()
+bool UInteractableComponent::EndAction()
 {
 	if (OnEndActionDelegate) {
-		OnEndActionDelegate->ExecuteIfBound();
+		if (OnEndActionDelegate->ExecuteIfBound()) {
+			return true;
+		}
 	}
+
+	return false;
 }
 
-void UInteractableComponent::Select()
+bool UInteractableComponent::Select()
 {
 	if (OnSelectDelegate) {
-		OnSelectDelegate->ExecuteIfBound();
+		if (OnSelectDelegate->ExecuteIfBound()) {
+			return true;
+		}
 	}
+
+	return false;
 }
 
-void UInteractableComponent::Deselect()
+bool UInteractableComponent::Deselect()
 {
 	if (OnDeselectDelegate) {
-		OnDeselectDelegate->ExecuteIfBound();
+		if (OnDeselectDelegate->ExecuteIfBound()) {
+			return true;
+		}
 	}
+
+	return false;
 }
 
-void UInteractableComponent::BeginGrab(USceneComponent * AttachActor)
+bool UInteractableComponent::BeginGrab(USceneComponent * AttachActor)
 {
 	if (OnBeginGrabDelegate) {
-		OnBeginGrabDelegate->ExecuteIfBound(AttachActor);
+		if (OnBeginGrabDelegate->ExecuteIfBound(AttachActor)) {
+			return true;
+		}
 	}
+
+	return false;
 }
 
-void UInteractableComponent::EndGrab()
+bool UInteractableComponent::EndGrab()
 {
 	if (OnEndGrabDelegate) {
-		OnEndGrabDelegate->ExecuteIfBound();
+		if (OnEndGrabDelegate->ExecuteIfBound()) {
+			return true;
+		}
 	}
+
+	return false;
 }

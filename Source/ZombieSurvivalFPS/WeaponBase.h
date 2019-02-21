@@ -70,6 +70,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//When attached the object moves according to this vector. Used to adjust positioning better due to static meshes having different pivot points.
+	UPROPERTY(EditAnywhere)
+	FVector AttachmentOffset = FVector::ZeroVector;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* Mesh;
 

@@ -250,7 +250,9 @@ void AZombieSurivalFPSVRPawn::R_EndUse()
 void AZombieSurivalFPSVRPawn::R_BeginGrab()
 {
 	if (IsValid(R_InteractableComponent)) {
-		R_InteractableComponent->BeginGrab(R_HandMesh);
+		if (R_InteractableComponent->BeginGrab(R_HandMesh)) {
+			R_HandMesh->SetVisibility(false);
+		}
 	}
 }
 
@@ -258,6 +260,7 @@ void AZombieSurivalFPSVRPawn::R_EndGrab()
 {
 	if (IsValid(R_InteractableComponent)) {
 		R_InteractableComponent->EndGrab();
+		R_HandMesh->SetVisibility(true);
 	}
 }
 
@@ -292,7 +295,9 @@ void AZombieSurivalFPSVRPawn::L_EndUse()
 void AZombieSurivalFPSVRPawn::L_BeginGrab()
 {
 	if (IsValid(L_InteractableComponent)) {
-		L_InteractableComponent->BeginGrab(L_HandMesh);
+		if (L_InteractableComponent->BeginGrab(L_HandMesh)) {
+			L_HandMesh->SetVisibility(false);
+		}
 	}
 }
 
@@ -300,6 +305,7 @@ void AZombieSurivalFPSVRPawn::L_EndGrab()
 {
 	if (IsValid(L_InteractableComponent)) {
 		L_InteractableComponent->EndGrab();
+		L_HandMesh->SetVisibility(true);
 	}
 }
 

@@ -28,21 +28,21 @@ public:
 	void InitializeGrabDelegates(SignatureOnBeginGrab * pOnBeginGrab, SignatureOnFunction * pOnEndGrab = NULL);
 	void InitializeActionDelegates(SignatureOnFunction * pOnBeginAction, SignatureOnFunction * pOnEndAction = NULL);
 
-	void BeginUse();
+	bool BeginUse();
 
-	void EndUse();
+	bool EndUse();
 
-	void BeginAction();
+	bool BeginAction();
 
-	void EndAction();
+	bool EndAction();
 
-	void BeginGrab(USceneComponent * AttachActor);
+	bool BeginGrab(USceneComponent * AttachActor);
 
-	void EndGrab();
+	bool EndGrab();
 
-	void Select();
+	bool Select();
 	
-	void Deselect();
+	bool Deselect();
 
 private:
 	SignatureOnFunction * OnBeginUseDelegate;
