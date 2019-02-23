@@ -4,7 +4,7 @@ Graduation Thesis at ELSYS
 
 
 
-## Instalation
+## Installation
 
 All assets are handled by <b> Git LFS </b>
 
