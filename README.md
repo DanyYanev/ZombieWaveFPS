@@ -10,7 +10,7 @@ All assets are handled by <b> Git LFS </b>
 
 
 
-## [Documentation](Documentation/)
+## [Documentation](Documentation/Documentation.pdf)
 
 The whole documentation is in <b>Bulgarian</b>
 
