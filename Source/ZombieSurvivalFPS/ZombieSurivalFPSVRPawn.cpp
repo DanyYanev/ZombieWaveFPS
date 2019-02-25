@@ -19,8 +19,9 @@ AZombieSurivalFPSVRPawn::AZombieSurivalFPSVRPawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	VROrigin = CreateDefaultSubobject<USceneComponent>(TEXT("VROrigin"));
-	VROrigin->SetupAttachment(RootComponent);
+	VROrigin = CreateDefaultSubobject<UCapsuleComponent>(TEXT("VROrigin"));
+	//SetRoot VROrigin->SetupAttachment(RootComponent);
+	SetRootComponent(VROrigin);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(VROrigin);

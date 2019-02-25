@@ -17,7 +17,7 @@ public:
 
 	/** Origin scene component */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Mesh)
-	class USceneComponent* VROrigin;
+	class UCapsuleComponent* VROrigin;
 
 	/** Player Camera */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Mesh)
