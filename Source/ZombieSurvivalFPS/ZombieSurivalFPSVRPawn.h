@@ -52,8 +52,11 @@ public:
 	class USphereComponent* L_GrabSphere;
 
 	/** Intervals at which to rotate Camera when turning (In degreese) */
-	UPROPERTY(VisibleDefaultsOnly, Category = Gameplay)
+	UPROPERTY(EditAnywhere, Category = Gameplay)
 	float TurnInterval = 45.f;
+
+	UPROPERTY(EditAnywhere, Category = Gameplay)
+	float SpeedMultiplier = 0.5f;
 
 
 protected:

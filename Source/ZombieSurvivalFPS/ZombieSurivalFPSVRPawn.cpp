@@ -131,7 +131,7 @@ void AZombieSurivalFPSVRPawn::MoveForward(float Val)
 		FVector Direction = Camera->GetForwardVector();
 		Direction.Z = 0.f;
 
-		AddMovementInput(Direction, Val * 0.15);
+		AddMovementInput(Direction, Val * SpeedMultiplier);
 	}
 }
 
@@ -143,7 +143,7 @@ void AZombieSurivalFPSVRPawn::MoveRight(float Val)
 		FVector Direction = Camera->GetRightVector();
 		Direction.Z = 0.f;
 
-		AddMovementInput(Direction, Val * 0.15);
+		AddMovementInput(Direction, Val * SpeedMultiplier);
 	}
 }
 
