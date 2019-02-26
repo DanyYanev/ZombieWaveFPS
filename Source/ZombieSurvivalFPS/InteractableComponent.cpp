@@ -64,9 +64,11 @@ void UInteractableComponent::InitializeActionDelegates(SignatureOnFunction * pOn
 
 bool UInteractableComponent::BeginUse()
 {
-	if (OnBeginUseDelegate) {
-		if (OnBeginUseDelegate->ExecuteIfBound()) {
-			return true;
+	if (bIsActive) {
+		if (OnBeginUseDelegate) {
+			if (OnBeginUseDelegate->ExecuteIfBound()) {
+				return true;
+			}
 		}
 	}
 
@@ -75,9 +77,11 @@ bool UInteractableComponent::BeginUse()
 
 bool UInteractableComponent::EndUse()
 {
-	if (OnEndUseDelegate) {
-		if (OnEndUseDelegate->ExecuteIfBound()) {
-			return true;
+	if (bIsActive) {
+		if (OnEndUseDelegate) {
+			if (OnEndUseDelegate->ExecuteIfBound()) {
+				return true;
+			}
 		}
 	}
 
@@ -86,66 +90,72 @@ bool UInteractableComponent::EndUse()
 
 bool UInteractableComponent::BeginAction()
 {
-	if (OnBeginActionDelegate) {
-		if (OnBeginActionDelegate->ExecuteIfBound()) {
-			return true;
+	if (bIsActive) {
+		if (OnBeginActionDelegate) {
+			if (OnBeginActionDelegate->ExecuteIfBound()) {
+				return true;
+			}
 		}
 	}
-
 	return false;
 }
 
 bool UInteractableComponent::EndAction()
 {
-	if (OnEndActionDelegate) {
-		if (OnEndActionDelegate->ExecuteIfBound()) {
-			return true;
+	if (bIsActive) {
+		if (OnEndActionDelegate) {
+			if (OnEndActionDelegate->ExecuteIfBound()) {
+				return true;
+			}
 		}
 	}
-
 	return false;
 }
 
 bool UInteractableComponent::Select()
 {
-	if (OnSelectDelegate) {
-		if (OnSelectDelegate->ExecuteIfBound()) {
-			return true;
+	if (bIsActive) {
+		if (OnSelectDelegate) {
+			if (OnSelectDelegate->ExecuteIfBound()) {
+				return true;
+			}
 		}
 	}
-
 	return false;
 }
 
 bool UInteractableComponent::Deselect()
 {
-	if (OnDeselectDelegate) {
-		if (OnDeselectDelegate->ExecuteIfBound()) {
-			return true;
+	if (bIsActive) {
+		if (OnDeselectDelegate) {
+			if (OnDeselectDelegate->ExecuteIfBound()) {
+				return true;
+			}
 		}
 	}
-
 	return false;
 }
 
 bool UInteractableComponent::BeginGrab(USceneComponent * AttachActor)
 {
-	if (OnBeginGrabDelegate) {
-		if (OnBeginGrabDelegate->ExecuteIfBound(AttachActor)) {
-			return true;
+	if (bIsActive) {
+		if (OnBeginGrabDelegate) {
+			if (OnBeginGrabDelegate->ExecuteIfBound(AttachActor)) {
+				return true;
+			}
 		}
 	}
-
 	return false;
 }
 
 bool UInteractableComponent::EndGrab()
 {
-	if (OnEndGrabDelegate) {
-		if (OnEndGrabDelegate->ExecuteIfBound()) {
-			return true;
+	if (bIsActive) {
+		if (OnEndGrabDelegate) {
+			if (OnEndGrabDelegate->ExecuteIfBound()) {
+				return true;
+			}
 		}
 	}
-
 	return false;
 }

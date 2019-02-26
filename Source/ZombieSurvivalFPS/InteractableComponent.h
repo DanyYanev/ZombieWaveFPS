@@ -22,6 +22,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent * Box;
 
+	//UPROPERTY(EditAnywhere)
+	//bool bIsActive = true;
+
 	//Setup function delegates to call on BeginUse, EndUse, Select, Deselect, HoverBegin, HoverEnd
 	void InitializeUseDelegates(SignatureOnFunction * pOnBeginUse, SignatureOnFunction * pOnEndUse = NULL);
 	void InitializeSelectDelegates(SignatureOnFunction * pOnSelect, SignatureOnFunction * pOnDeselect = NULL);

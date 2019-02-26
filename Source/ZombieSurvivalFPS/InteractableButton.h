@@ -53,6 +53,8 @@ public:
 	UFUNCTION()
 	void Deselect();
 
+
+
 	void SetState(EButtonState NewState);
 
 	void InitializeButton(SignatureOnLevelPurchased * pOnPurchasedDelegate);
@@ -60,7 +62,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-private:
 	EButtonState CurrentState = EButtonState::VE_Locked;
 
 	SignatureOnFunction OnUseDelegate;
@@ -69,5 +70,11 @@ private:
 
 	SignatureOnFunction OnDeselectDelegate;
 
-	SignatureOnLevelPurchased * OnLevelPurchasedDelegate;	
+	SignatureOnFunction OnUseUnlockedDelegate;
+
+	SignatureOnFunction OnUsePurchaseableDelegate;
+
+	SignatureOnFunction OnUseLockedDelegate;
+
+	SignatureOnLevelPurchased * OnLevelPurchasedDelegate;
 };

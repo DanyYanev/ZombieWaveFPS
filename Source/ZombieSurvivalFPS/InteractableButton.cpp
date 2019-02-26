@@ -48,6 +48,7 @@ void AInteractableButton::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+
 void AInteractableButton::SetState(EButtonState NewState)
 {
 	CurrentState = NewState;
@@ -84,6 +85,8 @@ void AInteractableButton::Deselect()
 void AInteractableButton::Use()
 {
 	if (CurrentState == EButtonState::VE_Purchasable) {
+		OnUsePurchaseableDelegate.ExecuteIfBound();
+
 		if (OnLevelPurchasedDelegate) {
 			if (!OnLevelPurchasedDelegate->ExecuteIfBound()) {
 				UE_LOG(LogTemp, Error, TEXT("OnLevelPurchasedDelegate not bound"));
@@ -93,7 +96,11 @@ void AInteractableButton::Use()
 			UE_LOG(LogTemp, Error, TEXT("OnLevelPurchasedDelegate is null"));
 		}
 	}
-
-	UE_LOG(LogTemp, Display, TEXT("Useed button :)"));
+	else if (CurrentState == EButtonState::VE_Unlocked) {
+		OnUseUnlockedDelegate.ExecuteIfBound();
+	}
+	else if (CurrentState == EButtonState::VE_Locked) {
+		OnUseLockedDelegate.ExecuteIfBound();
+	}
 
 }
