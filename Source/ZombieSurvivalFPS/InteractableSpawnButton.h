@@ -21,12 +21,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, Category = "Gameplay")
-	class USceneComponent* SpawnPreviewLocation;
-
-	UPROPERTY(EditAnywhere, Category = "Gameplay")
 	class USceneComponent* SpawnLocation;
 
-	UPROPERTY(EditAnywhere, NoClear, Category = "Gameplay")
+	UPROPERTY(EditAnywhere, Category = "Gameplay")
 	class TSubclassOf<class AWeaponBase> SpawnClass;
 
 	UPROPERTY(VisibleAnywhere, Category = "Runtime")
@@ -38,5 +35,4 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	AWeaponBase* SpawnActor(FTransform Transform);
 };

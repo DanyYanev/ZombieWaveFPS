@@ -34,17 +34,19 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<AInteractableButton *> Buttons;
 
+	UPROPERTY(EditAnywhere)
+	TArray<int32> CostPerButton;
+
 	UFUNCTION()
 	void UpdateMoney(int Value);
 
 	UFUNCTION()
-	void LevelPurchased();
+	bool LevelPurchased(UObject* ButtonObject);
 	
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	bool bPurchaseWasAvaiable = false;
 
 	int CurrentLevel = 0;
 

@@ -28,19 +28,19 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	int Countdown = TimeBetweenWaves;
 
 	UPROPERTY(VisibleAnywhere)
-	int InitialZombies;
+	int InitialZombies = 0;
 
 	UPROPERTY(VisibleAnywhere)
-	int Score;
+	int Score = 0;
+
+	UPROPERTY(EditAnyWhere)
+	int Money = 0;
 
 	UPROPERTY(VisibleAnywhere)
-	int Money;
+	int AliveZombies = 0;
 
 	UPROPERTY(VisibleAnywhere)
-	int AliveZombies;
-
-	UPROPERTY(VisibleAnywhere)
-	int Wave;
+	int Wave = 0;
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<FTransform> ZombieSpawnEast;

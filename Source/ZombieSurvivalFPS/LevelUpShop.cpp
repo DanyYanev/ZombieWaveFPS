@@ -36,7 +36,7 @@ void ALevelUpShop::BeginPlay()
 
 		if (IsValid(ZombieGameMode)) {
 			ZombieGameMode->AttachLevelUpShop(this);
-			UpdateMoney(0);
+			ZombieGameMode->UpdateCurrentMoneyBy(0);
 		}
 		else {
 			UE_LOG(LogTemp, Error, TEXT("GameMode Cast Failed"));
@@ -57,38 +57,52 @@ void ALevelUpShop::UpdateMoney(int Value)
 {
 	Money->SetText(FText().FromString(FString::FromInt(Value) + FString("$")));
 
-	if (CurrentLevel < MaxLevel) {
-		if (Value >= CostForNextLevel) {
-			Buttons[CurrentLevel]->SetState(EButtonState::VE_Purchasable);
-			bPurchaseWasAvaiable = true;
-		}
-		else if (bPurchaseWasAvaiable) {
-			Buttons[CurrentLevel]->SetState(EButtonState::VE_Locked);
+	for (AInteractableButton* Button : Buttons) {
+		EButtonState CurrentState = Button->GetState();
+
+		if (CurrentState == EButtonState::VE_Purchasable ||
+			CurrentState == EButtonState::VE_Locked) 
+		{
+			int32 ButtonCost = Button->GetCost();
+			if (Value >= ButtonCost) {
+				Button->SetState(EButtonState::VE_Purchasable);
+			}
+			else {
+				Button->SetState(EButtonState::VE_Locked);
+			}
 		}
 	}
-	
 }
 
-void ALevelUpShop::LevelPurchased()
+bool ALevelUpShop::LevelPurchased(UObject* ButtonObject)
 {
-	if (IsValid(ZombieGameMode)) {
-
-		UE_LOG(LogTemp, Display, TEXT("Level Purchased!"));
-
-		ZombieGameMode->UpdateCurrentMoneyBy(-(CostForNextLevel));
-		Buttons[CurrentLevel]->SetState(EButtonState::VE_Unlocked);
-
-		CurrentLevel++;
-		CostForNextLevel *= 2;
-		bPurchaseWasAvaiable = false;
-
-		// try and play the sound if specified
-		if (PurchaseCue != NULL){
-			UGameplayStatics::PlaySoundAtLocation(this, PurchaseCue, GetActorLocation());
-		}
+	if (!IsValid(ZombieGameMode)) {
+		UE_LOG(LogTemp, Error, TEXT("ZombieGameMode reference is not valid."));
+		return false;
 	}
-	else {
-		UE_LOG(LogTemp, Error, TEXT("ZombieGameMode reference is not vlaid."));
+
+	AInteractableButton* Button = Cast<AInteractableButton>(ButtonObject);
+	if (!IsValid(Button)) {
+		UE_LOG(LogTemp, Error, TEXT("ButtonObject reference is not valid."));
+		return false;
 	}
+
+	int32 ButtonIndex = -1;
+	Buttons.Find(Button, ButtonIndex);
+
+	if (ButtonIndex == -1) {
+		UE_LOG(LogTemp, Error, TEXT("Button reference is not registrated in ButtonsArray."));
+		return false;
+	}
+
+	ZombieGameMode->UpdateCurrentMoneyBy(-(Button->GetCost()));
+	Buttons[ButtonIndex]->SetState(EButtonState::VE_Unlocked);
+
+	// try and play the sound if specified
+	if (PurchaseCue != NULL) {
+		UGameplayStatics::PlaySoundAtLocation(this, PurchaseCue, GetActorLocation());
+	}
+
+	return true;
 }
 

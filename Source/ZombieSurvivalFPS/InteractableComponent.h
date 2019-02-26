@@ -8,7 +8,8 @@
 #include "InteractableComponent.generated.h"
 
 DECLARE_DELEGATE(SignatureOnFunction);
-DECLARE_DELEGATE_OneParam(SignatureOnBeginGrab, USceneComponent*)
+DECLARE_DELEGATE_OneParam(SignatureOnBeginGrab, USceneComponent*);
+DECLARE_DELEGATE_RetVal_OneParam(bool, SignatureOnLevelPurchased, UObject*);
 
 /** Provides interface for 4 programmable actions*/
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -22,8 +23,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent * Box;
 
-	//UPROPERTY(EditAnywhere)
-	//bool bIsActive = true;
+	UPROPERTY(EditAnywhere)
+	bool bIsInteractionActive = true;
 
 	//Setup function delegates to call on BeginUse, EndUse, Select, Deselect, HoverBegin, HoverEnd
 	void InitializeUseDelegates(SignatureOnFunction * pOnBeginUse, SignatureOnFunction * pOnEndUse = NULL);

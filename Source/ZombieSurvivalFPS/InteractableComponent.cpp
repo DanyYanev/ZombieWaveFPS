@@ -64,7 +64,7 @@ void UInteractableComponent::InitializeActionDelegates(SignatureOnFunction * pOn
 
 bool UInteractableComponent::BeginUse()
 {
-	if (bIsActive) {
+	if (bIsInteractionActive) {
 		if (OnBeginUseDelegate) {
 			if (OnBeginUseDelegate->ExecuteIfBound()) {
 				return true;
@@ -77,7 +77,7 @@ bool UInteractableComponent::BeginUse()
 
 bool UInteractableComponent::EndUse()
 {
-	if (bIsActive) {
+	if (bIsInteractionActive) {
 		if (OnEndUseDelegate) {
 			if (OnEndUseDelegate->ExecuteIfBound()) {
 				return true;
@@ -90,7 +90,7 @@ bool UInteractableComponent::EndUse()
 
 bool UInteractableComponent::BeginAction()
 {
-	if (bIsActive) {
+	if (bIsInteractionActive) {
 		if (OnBeginActionDelegate) {
 			if (OnBeginActionDelegate->ExecuteIfBound()) {
 				return true;
@@ -102,7 +102,7 @@ bool UInteractableComponent::BeginAction()
 
 bool UInteractableComponent::EndAction()
 {
-	if (bIsActive) {
+	if (bIsInteractionActive) {
 		if (OnEndActionDelegate) {
 			if (OnEndActionDelegate->ExecuteIfBound()) {
 				return true;
@@ -114,7 +114,7 @@ bool UInteractableComponent::EndAction()
 
 bool UInteractableComponent::Select()
 {
-	if (bIsActive) {
+	if (bIsInteractionActive) {
 		if (OnSelectDelegate) {
 			if (OnSelectDelegate->ExecuteIfBound()) {
 				return true;
@@ -126,7 +126,7 @@ bool UInteractableComponent::Select()
 
 bool UInteractableComponent::Deselect()
 {
-	if (bIsActive) {
+	if (bIsInteractionActive) {
 		if (OnDeselectDelegate) {
 			if (OnDeselectDelegate->ExecuteIfBound()) {
 				return true;
@@ -138,7 +138,7 @@ bool UInteractableComponent::Deselect()
 
 bool UInteractableComponent::BeginGrab(USceneComponent * AttachActor)
 {
-	if (bIsActive) {
+	if (bIsInteractionActive) {
 		if (OnBeginGrabDelegate) {
 			if (OnBeginGrabDelegate->ExecuteIfBound(AttachActor)) {
 				return true;
@@ -150,7 +150,7 @@ bool UInteractableComponent::BeginGrab(USceneComponent * AttachActor)
 
 bool UInteractableComponent::EndGrab()
 {
-	if (bIsActive) {
+	if (bIsInteractionActive) {
 		if (OnEndGrabDelegate) {
 			if (OnEndGrabDelegate->ExecuteIfBound()) {
 				return true;

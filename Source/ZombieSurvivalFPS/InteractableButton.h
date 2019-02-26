@@ -17,7 +17,6 @@ enum class EButtonState : uint8
 	VE_Purchasable		UMETA(DisplayName = "Purchasable")
 };
 
-DECLARE_DELEGATE(SignatureOnLevelPurchased);
 
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ZOMBIESURVIVALFPS_API AInteractableButton : public AActor
@@ -44,6 +43,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	UInteractableComponent * InteractableComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Gameplay")
+	int32 Cost = 0;
+
 	UFUNCTION()
 	void Use();
 
@@ -53,7 +55,9 @@ public:
 	UFUNCTION()
 	void Deselect();
 
+	FORCEINLINE int32 GetCost() const { return Cost; };
 
+	FORCEINLINE EButtonState GetState() const { return CurrentState; };
 
 	void SetState(EButtonState NewState);
 
@@ -76,5 +80,5 @@ protected:
 
 	SignatureOnFunction OnUseLockedDelegate;
 
-	SignatureOnLevelPurchased * OnLevelPurchasedDelegate;
+	SignatureOnLevelPurchased* OnLevelPurchasedDelegate;
 };

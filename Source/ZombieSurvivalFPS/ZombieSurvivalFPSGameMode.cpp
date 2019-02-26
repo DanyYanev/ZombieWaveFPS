@@ -19,14 +19,8 @@ AZombieSurvivalFPSGameMode::AZombieSurvivalFPSGameMode()
 	//DefaultPawnClass = PlayerPawnClassFinder.Class;
 
 	// use our custom HUD class
-	HUDClass = AZombieSurvivalFPSHUD::StaticClass();
+	//HUDClass = AZombieSurvivalFPSHUD::StaticClass();
 
-	Score = 0;
-	Wave = 0;
-	Countdown = TimeBetweenWaves;
-
-	AliveZombies = 0;
-	InitialZombies = 0;
 }
 
 void AZombieSurvivalFPSGameMode::BeginPlay()
@@ -85,6 +79,8 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 		}
 	}
 
+	UpdateCurrentMoneyBy(Money);
+	UpdateCurrentScoreBy(Score);
 	NextWave();
 }
 

@@ -88,7 +88,12 @@ void AInteractableButton::Use()
 		OnUsePurchaseableDelegate.ExecuteIfBound();
 
 		if (OnLevelPurchasedDelegate) {
-			if (!OnLevelPurchasedDelegate->ExecuteIfBound()) {
+			if (OnLevelPurchasedDelegate->IsBound()) {
+				if (!OnLevelPurchasedDelegate->Execute(this)) {
+					UE_LOG(LogTemp, Error, TEXT("OnLevelPurchasedDeleagte Execute returned false"));
+				}
+			}
+			else {
 				UE_LOG(LogTemp, Error, TEXT("OnLevelPurchasedDelegate not bound"));
 			}
 		}
