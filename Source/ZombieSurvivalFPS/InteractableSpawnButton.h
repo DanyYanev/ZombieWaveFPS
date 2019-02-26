@@ -29,6 +29,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Runtime")
 	class AWeaponBase* SpawnedWeapon;
 
+	UPROPERTY(EditAnywhere)
+	class UTextRenderComponent * CostText;
+
 	UFUNCTION()
 	void OnUseUnlocked();
 

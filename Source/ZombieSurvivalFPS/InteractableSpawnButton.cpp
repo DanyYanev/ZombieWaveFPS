@@ -2,12 +2,16 @@
 
 #include "InteractableSpawnButton.h"
 #include "Components/SceneComponent.h"
+#include "Components/TextRenderComponent.h"
 #include "WeaponBase.h"
 #include "InteractableComponent.h"
 
 AInteractableSpawnButton::AInteractableSpawnButton() {
 	SpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("SpawnLocation"));
 	SpawnLocation->SetupAttachment(RootComponent);
+
+	CostText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("CostText"));
+	CostText->SetupAttachment(RootComponent);
 }
 
 void AInteractableSpawnButton::Tick(float DeltaTime)
@@ -20,6 +24,8 @@ void AInteractableSpawnButton::BeginPlay() {
 
 	OnUseUnlockedDelegate.BindUFunction(this, TEXT("OnUseUnlocked"));
 	OnUsePurchaseableDelegate.BindUFunction(this, TEXT("OnUseUnlocked"));
+
+	CostText->SetText(FText().FromString(FString::FromInt(Cost) + FString("$")));
 }
 
 void AInteractableSpawnButton::OnUseUnlocked()

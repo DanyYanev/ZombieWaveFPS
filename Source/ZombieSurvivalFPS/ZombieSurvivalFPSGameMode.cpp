@@ -21,6 +21,7 @@ AZombieSurvivalFPSGameMode::AZombieSurvivalFPSGameMode()
 	// use our custom HUD class
 	//HUDClass = AZombieSurvivalFPSHUD::StaticClass();
 
+	Countdown = TimeBetweenWaves;
 }
 
 void AZombieSurvivalFPSGameMode::BeginPlay()
@@ -79,8 +80,9 @@ void AZombieSurvivalFPSGameMode::BeginPlay()
 		}
 	}
 
-	UpdateCurrentMoneyBy(Money);
-	UpdateCurrentScoreBy(Score);
+	//After Money and Score are setup with default values, call this to force update on all relevant actors
+	UpdateCurrentMoneyBy(0);
+	UpdateCurrentScoreBy(0);
 	NextWave();
 }
 

@@ -120,6 +120,7 @@ void AZombieBarrier::GenerateTargetPoints()
 		}
 	}
 
+	/*
 	for (int i = 0; i < TargetPoints.Num(); i++) {
 		DrawDebugPoint(
 			GetWorld(),
@@ -129,5 +130,6 @@ void AZombieBarrier::GenerateTargetPoints()
 			40
 		);
 	}
+	*/
 
 }
