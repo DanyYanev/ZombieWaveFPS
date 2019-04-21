@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "InteractableComponent.h"
+#include "Placeables/InteractableComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "ZombieSurvivalFPSCharacter.generated.h"
 

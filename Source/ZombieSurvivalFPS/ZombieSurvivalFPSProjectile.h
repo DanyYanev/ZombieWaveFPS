@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ProjectileBase.h"
+#include "Characters/Common/ProjectileBase.h"
 #include "ZombieSurvivalFPSProjectile.generated.h"
 
 UCLASS(config=Game)

@@ -1,13 +1,13 @@
-// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "ZombieSurvivalFPSProjectile.h"
+#include "Characters/Common/ProjectileBase.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
-#include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/StaticMeshComponent.h"
 #include "Characters/ZombieCharacter.h"
 
-AZombieSurvivalFPSProjectile::AZombieSurvivalFPSProjectile() 
+AProjectileBase::AProjectileBase()
 {
 	// Use a sphere as a simple collision representation
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
@@ -21,18 +21,15 @@ AZombieSurvivalFPSProjectile::AZombieSurvivalFPSProjectile()
 	// Set as root component
 	SetRootComponent(CollisionComp);
 
-	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 
-	ProjectileMesh->SetupAttachment(CollisionComp);
+	Mesh->SetupAttachment(CollisionComp);
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
-	ProjectileMovement->InitialSpeed = 3000.f;
-	ProjectileMovement->MaxSpeed = 3000.f;
-	ProjectileMovement->bRotationFollowsVelocity = true;
-	ProjectileMovement->bShouldBounce = false;
 
+	//Setup base damage
 	Damage = 50.f;
 
 	// Die after 3 seconds by default

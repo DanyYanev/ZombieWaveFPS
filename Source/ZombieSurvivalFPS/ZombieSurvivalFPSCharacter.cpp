@@ -1,7 +1,7 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "ZombieSurvivalFPSCharacter.h"
-#include "ZombieSurvivalFPSGameMode.h"
+#include "Core/ZombieSurvivalFPSGameMode.h"
 #include "ZombieSurvivalFPSProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
