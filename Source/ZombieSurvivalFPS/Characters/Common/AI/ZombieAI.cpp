@@ -139,9 +139,9 @@ FVector AZombieAI::FindClosestTargetPoint()
 	return NewTarget;
 }
 
-void AZombieAI::Possess(APawn * InPawn)
+void AZombieAI::OnPossess(APawn * InPawn)
 {
-	Super::Possess(InPawn);
+	Super::OnPossess(InPawn);
 
 	AZombieBase * Zombie = Cast<AZombieBase>(InPawn);
 

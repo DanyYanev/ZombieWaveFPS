@@ -37,7 +37,7 @@ public:
 
 	virtual void BeginPlay() override;
 
-	virtual void Possess(APawn* InPawn) override;
+	virtual void OnPossess(APawn* InPawn) override;
 
 private:
 	UPROPERTY(transient)
