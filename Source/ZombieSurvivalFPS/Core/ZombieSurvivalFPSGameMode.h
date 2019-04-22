@@ -10,6 +10,29 @@
 #include "Blueprint/UserWidget.h"
 #include "ZombieSurvivalFPSGameMode.generated.h"
 
+USTRUCT()
+struct FSpawnDetails{
+
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	signed NormalZombiesCount = 0;
+
+	UPROPERTY(EditAnywhere)
+	signed MorigeshZombiesCount = 0;
+
+	UPROPERTY(EditAnywhere)
+	signed GruxZombiesCount = 0;
+
+	UPROPERTY(EditAnywhere)
+	signed RampageZombiesCount = 0;
+
+	FSpawnDetails() : NormalZombiesCount(0), MorigeshZombiesCount(0), GruxZombiesCount(0), RampageZombiesCount(0) {};
+
+	FSpawnDetails(signed pNormalZombiesCount, signed pMorigeshZombiesCount = 0, signed pGruxZombiesCount = 0, signed pRampageZombiesCount = 0)
+		: NormalZombiesCount(pNormalZombiesCount), MorigeshZombiesCount(pMorigeshZombiesCount), GruxZombiesCount(pGruxZombiesCount), RampageZombiesCount(pRampageZombiesCount) {};
+};
+
 UCLASS(minimalapi)
 class AZombieSurvivalFPSGameMode : public AGameModeBase
 {
@@ -63,6 +86,9 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	//In seconds
 	UPROPERTY(EditAnywhere)
 	int TimeBetweenWaves = 20;
+
+	UPROPERTY(EditANywhere)
+	TArray<FSpawnDetails> LevelSpawnDetails;
 
 	UFUNCTION()
 	void TickTimer();

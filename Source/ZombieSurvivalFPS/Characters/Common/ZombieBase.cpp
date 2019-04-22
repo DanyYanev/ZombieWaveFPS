@@ -70,9 +70,9 @@ void AZombieBase::DealDamageToTargetActor(AActor * DamagedActor)
 void AZombieBase::OnGameEnded(bool Won)
 {
 	if (Won) {
-		USkeletalMeshComponent * Mesh = GetMesh();
-		if (IsValid(Mesh)) {
-			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(Mesh->GetAnimInstance());
+		USkeletalMeshComponent * MeshRef = GetMesh();
+		if (IsValid(MeshRef)) {
+			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(MeshRef->GetAnimInstance());
 			if (IsValid(AnimInstance)) {
 				AnimInstance->SetIsCheering(true);
 			}
@@ -127,9 +127,9 @@ float AZombieBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEve
 
 		bIsDying = true;
 		//Notifies AnimInstance that death has occured.
-		USkeletalMeshComponent * Mesh = GetMesh();
-		if (IsValid(Mesh)) {
-			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(Mesh->GetAnimInstance());
+		USkeletalMeshComponent * MeshRef = GetMesh();
+		if (IsValid(MeshRef)) {
+			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(MeshRef->GetAnimInstance());
 			if (IsValid(AnimInstance)) {
 				AnimInstance->SetIsDying(true);
 			}

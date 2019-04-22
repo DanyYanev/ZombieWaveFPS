@@ -50,9 +50,9 @@ void AZombieMorigesh::BeginPlay()
 void AZombieMorigesh::Attack(AActor * Target)
 {
 	if (IsValid(Target)) {
-		USkeletalMeshComponent * Mesh = GetMesh();
-		if (IsValid(Mesh)) {
-			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(Mesh->GetAnimInstance());
+		USkeletalMeshComponent * MeshRef = GetMesh();
+		if (IsValid(MeshRef)) {
+			UZombieBaseAnimationInstance* AnimInstance = Cast<UZombieBaseAnimationInstance>(MeshRef->GetAnimInstance());
 			if (IsValid(AnimInstance)) {
 				AnimInstance->SetIsAttacking(true);
 				AnimInstance->SetTarget(Target);
@@ -115,9 +115,9 @@ void AZombieMorigesh::LaunchProjectile()
 		UWorld* const World = GetWorld();
 		if (IsValid(World))
 		{
-			AZombieAI* Controller = Cast<AZombieAI>(GetController());
-			if (IsValid(Controller)) {
-				FVector TargetPoint = Controller->GetTargetPoint();
+			AZombieAI* ControllerRef = Cast<AZombieAI>(GetController());
+			if (IsValid(ControllerRef)) {
+				FVector TargetPoint = ControllerRef->GetTargetPoint();
 				FVector Location = ProjectileOffSet->GetComponentLocation();
 				FVector Direction = ProjectileOffSet->GetComponentLocation() - TargetPoint;
 				FRotator Rotation = Direction.Rotation();

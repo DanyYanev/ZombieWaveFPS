@@ -40,8 +40,8 @@ void AZombieAI::BeginPlay()
 void AZombieAI::AttackTarget(AActor * Target)
 {
 
-	APawn* Pawn = GetPawn();
-	AZombieBase* Zombie = Cast<AZombieBase>(Pawn);
+	APawn* PawnRef = GetPawn();
+	AZombieBase* Zombie = Cast<AZombieBase>(PawnRef);
 
 	if (IsValid(Zombie)) {
 		Zombie->Attack(Target);
@@ -84,10 +84,10 @@ AActor * AZombieAI::FindClosestTarget()
 	if (Targets != NULL) {
 		if (Targets->Num() != 0) {
 			float MinDistance = TNumericLimits< float >::Max();
-			APawn * Character = GetPawn();
-			if (IsValid(Character)) {
+			APawn * CharacterRef = GetPawn();
+			if (IsValid(CharacterRef)) {
 				for (int i = 0; i < Targets->Num(); i++) {
-					FVector Distance = Character->GetActorLocation() - (*Targets)[i]->GetActorLocation();
+					FVector Distance = CharacterRef->GetActorLocation() - (*Targets)[i]->GetActorLocation();
 
 					if (Distance.Size() < MinDistance) {
 						NewTarget = (*Targets)[i];
@@ -115,11 +115,11 @@ FVector AZombieAI::FindClosestTargetPoint()
 
 	if (IsValid(Barrier)) {
 		float MinDistance = TNumericLimits< float >::Max();
-		APawn * Character = GetPawn();
+		APawn * CharacterRef = GetPawn();
 		TArray<FVector> * const TargetPoints = &Barrier->TargetPoints;
-		if (IsValid(Character)) {
+		if (IsValid(CharacterRef)) {
 			for (int i = 0; i < TargetPoints->Num(); i++) {
-				FVector Distance = Character->GetActorLocation() - (*TargetPoints)[i];
+				FVector Distance = CharacterRef->GetActorLocation() - (*TargetPoints)[i];
 
 				if (Distance.Size() < MinDistance) {
 					NewTarget = (*TargetPoints)[i];
