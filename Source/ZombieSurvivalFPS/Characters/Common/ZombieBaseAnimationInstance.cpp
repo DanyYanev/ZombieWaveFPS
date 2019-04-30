@@ -29,7 +29,7 @@ void UZombieBaseAnimationInstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 	}
 	else {
-		UE_LOG(LogTemp, Error, TEXT("OwningPawn not valid while AnimInstance keeps updating!"));
+		//UE_LOG(LogTemp, Error, TEXT("OwningPawn not valid while AnimInstance keeps updating!"));
 	}
 }
 

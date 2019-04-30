@@ -208,8 +208,57 @@ void AZombieSurvivalFPSGameMode::NextWave()
 	}
 }
 
+bool AZombieSurvivalFPSGameMode::SpawnZombie(FTransform Transform, TSubclassOf<AZombieBase> ZombieClass)
+{
+	UWorld* World = GetWorld();
+	if (IsValid(World)) {
+		AZombieBase* Zombie = World->SpawnActor<AZombieBase>(ZombieClass, Transform.GetLocation(), Transform.Rotator());
+		if (IsValid(Zombie)) {
+			AliveZombies++;
+			Zombies.Add(Zombie);
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("Zombie Spawn Failed"));
+			return false;
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Couldnt retrive a valid World reference."));
+		return false;
+	}
+
+	return true;
+}
+
 void AZombieSurvivalFPSGameMode::SpawnZombies()
 {
+
+	TArray<FTransform> SpawnArray = ZombieSpawnEast += ZombieSpawnWest;
+
+	if (SpawnArray.Num() == 0) {
+		UE_LOG(LogTemp, Warning, TEXT("SpawnArray empty, canceling wave spawning."));
+		return;
+	}
+
+	if (LevelSpawnDetails.Num() < 5) {
+		UE_LOG(LogTemp, Error, TEXT("Not enough entries in LevelSpawnDetails."));
+	}
+
+	signed spawnIndex = 0;
+	for (int i = 0; i < LevelSpawnDetails[Wave - 1].BasicZombiesCount; i++, spawnIndex = ++spawnIndex % SpawnArray.Num()) {
+		SpawnZombie(SpawnArray[spawnIndex], BasicZombieClass);
+	}
+	for (int i = 0; i < LevelSpawnDetails[Wave - 1].MorigeshZombiesCount; i++, spawnIndex = ++spawnIndex % SpawnArray.Num()) {
+		SpawnZombie(SpawnArray[spawnIndex], MorigeshZombieClass);
+	}
+	for (int i = 0; i < LevelSpawnDetails[Wave - 1].GruxZombiesCount; i++, spawnIndex = ++spawnIndex % SpawnArray.Num()) {
+		SpawnZombie(SpawnArray[spawnIndex], GruxZombieClass);
+	}
+	for (int i = 0; i < LevelSpawnDetails[Wave - 1].RampageZombiesCount; i++, spawnIndex = ++spawnIndex % SpawnArray.Num()) {
+		SpawnZombie(SpawnArray[spawnIndex], RampageZombieClass);
+	}
+
+	/*
 	InitialZombies = Wave * 3;
 
 	TArray<FTransform> SpawnArray = ZombieSpawnEast;
@@ -239,6 +288,9 @@ void AZombieSurvivalFPSGameMode::SpawnZombies()
 		}
 		
 	}
+	*/
+
+
 }
 
 void AZombieSurvivalFPSGameMode::OnGameEnded(bool Won)

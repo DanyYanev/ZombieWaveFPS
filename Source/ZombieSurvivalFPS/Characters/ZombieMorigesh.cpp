@@ -128,7 +128,7 @@ void AZombieMorigesh::LaunchProjectile()
 
 				// spawn the projectile at the muzzle
 				World->SpawnActor<AZombieMorigeshProjectile>(ProjectileClass, Location, GetActorRotation(), ActorSpawnParams);
-				DrawDebugPoint(GetWorld(), Location, 20, FColor(255, 0, 255), true, 3);
+				//DrawDebugPoint(GetWorld(), Location, 20, FColor(255, 0, 255), true, 3);
 			}
 			else {
 				UE_LOG(LogTemp, Error, TEXT("Controller not of type ZombieAI."));

@@ -16,7 +16,7 @@ struct FSpawnDetails{
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	signed NormalZombiesCount = 0;
+	signed BasicZombiesCount = 0;
 
 	UPROPERTY(EditAnywhere)
 	signed MorigeshZombiesCount = 0;
@@ -27,10 +27,9 @@ struct FSpawnDetails{
 	UPROPERTY(EditAnywhere)
 	signed RampageZombiesCount = 0;
 
-	FSpawnDetails() : NormalZombiesCount(0), MorigeshZombiesCount(0), GruxZombiesCount(0), RampageZombiesCount(0) {};
+	FSpawnDetails() : BasicZombiesCount(0), MorigeshZombiesCount(0), GruxZombiesCount(0), RampageZombiesCount(0) {};
 
-	FSpawnDetails(signed pNormalZombiesCount, signed pMorigeshZombiesCount = 0, signed pGruxZombiesCount = 0, signed pRampageZombiesCount = 0)
-		: NormalZombiesCount(pNormalZombiesCount), MorigeshZombiesCount(pMorigeshZombiesCount), GruxZombiesCount(pGruxZombiesCount), RampageZombiesCount(pRampageZombiesCount) {};
+	FORCEINLINE const unsigned TotalZombies() { return BasicZombiesCount + MorigeshZombiesCount + GruxZombiesCount + RampageZombiesCount; }
 };
 
 UCLASS(minimalapi)
@@ -87,6 +86,7 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	UPROPERTY(EditAnywhere)
 	int TimeBetweenWaves = 20;
 
+	//Each entry in this array coresponds to enemy configuration on a wave. Entries are added and edited from the blueprint child of this class.
 	UPROPERTY(EditANywhere)
 	TArray<FSpawnDetails> LevelSpawnDetails;
 
@@ -100,6 +100,8 @@ class AZombieSurvivalFPSGameMode : public AGameModeBase
 	void OnGameEnded(bool Won);
 
 	void NextWave();
+
+	bool SpawnZombie(FTransform Transform, TSubclassOf<AZombieBase> ZombieClass);
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<AZombieBase *> Zombies;
@@ -121,6 +123,10 @@ public:
 	/** The class of Zombie to spawn. */
 	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
 	TSubclassOf<AZombieBase> GruxZombieClass;
+
+	/** The class of Zombie to spawn. */
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
+	TSubclassOf<AZombieBase> RampageZombieClass;
 
 	/*The widget to spawn after pause*/
 	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = "Widgets")
