@@ -127,7 +127,14 @@ void AZombieMorigesh::LaunchProjectile()
 				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 				// spawn the projectile at the muzzle
-				World->SpawnActor<AZombieMorigeshProjectile>(ProjectileClass, Location, Rotation, ActorSpawnParams);
+				AZombieMorigeshProjectile* SpawnedProjectile = World->SpawnActor<AZombieMorigeshProjectile>(ProjectileClass, Location, Rotation, ActorSpawnParams);
+				if (IsValid(SpawnedProjectile)) {
+					SpawnedProjectile->SetOwner(this);
+					SpawnedProjectile->SetOwnerController(GetController());
+				}
+				else {
+					UE_LOG(LogTemp, Error, TEXT("Zombie Morigesh failed to spawn projectile."));
+				}
 				//DrawDebugPoint(GetWorld(), Location, 20, FColor(255, 0, 255), true, 3);
 			}
 			else {

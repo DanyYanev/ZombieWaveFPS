@@ -38,12 +38,19 @@ AZombieMorigeshProjectile::AZombieMorigeshProjectile()
 	ProjectileMesh->SetupAttachment(CollisionComp);
 
 	Damage = 70.f;
-
-	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AZombieMorigeshProjectile::OnOverlap);
 }
 
-void AZombieMorigeshProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void AZombieMorigeshProjectile::BeginPlay()
 {
-	UE_LOG(LogTemp, Display, TEXT("Morigesh projectile OnOverlap"));
-	Destroy();
+	Super::BeginPlay();
+
+	CollisionComp->OnComponentHit.AddDynamic(this, &AZombieMorigeshProjectile::OnHit);
 }
+
+void AZombieMorigeshProjectile::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit)
+{
+	if (IsValid(OtherActor)) {
+		UGameplayStatics::ApplyDamage(OtherActor, Damage,  OwnerController, this, NULL);
+	}
+}
+

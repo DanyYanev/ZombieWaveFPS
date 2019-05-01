@@ -14,6 +14,12 @@ class ZOMBIESURVIVALFPS_API AZombieMorigeshProjectile : public AActor
 
 	UPROPERTY(EditAnywhere)
 	int Damage;
+
+	UPROPERTY(VisibleAnywhere)
+	AController* OwnerController;
+
+	UFUNCTION()
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 	
 public:	
 	// Sets default values for this actor's properties
@@ -30,8 +36,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
 
-	UFUNCTION()
-	virtual void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
-	
+	FORCEINLINE void SetOwnerController(AController* pOwnerController) { OwnerController = pOwnerController; }
+
 	FORCEINLINE int GetDamage() const { return Damage; }
+
+protected:
+
+	virtual void BeginPlay() override;
 };
