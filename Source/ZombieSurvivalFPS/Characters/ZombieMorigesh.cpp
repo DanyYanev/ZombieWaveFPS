@@ -119,7 +119,7 @@ void AZombieMorigesh::LaunchProjectile()
 			if (IsValid(ControllerRef)) {
 				FVector TargetPoint = ControllerRef->GetTargetPoint();
 				FVector Location = ProjectileOffSet->GetComponentLocation();
-				FVector Direction = ProjectileOffSet->GetComponentLocation() - TargetPoint;
+				FVector Direction = TargetPoint - ProjectileOffSet->GetComponentLocation();
 				FRotator Rotation = Direction.Rotation();
 
 				//Set Spawn Collision Handling Override
@@ -127,7 +127,7 @@ void AZombieMorigesh::LaunchProjectile()
 				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 				// spawn the projectile at the muzzle
-				World->SpawnActor<AZombieMorigeshProjectile>(ProjectileClass, Location, GetActorRotation(), ActorSpawnParams);
+				World->SpawnActor<AZombieMorigeshProjectile>(ProjectileClass, Location, Rotation, ActorSpawnParams);
 				//DrawDebugPoint(GetWorld(), Location, 20, FColor(255, 0, 255), true, 3);
 			}
 			else {
