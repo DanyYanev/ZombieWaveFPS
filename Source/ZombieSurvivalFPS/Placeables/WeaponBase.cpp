@@ -278,13 +278,12 @@ void AWeaponBase::BeginGrab(USceneComponent * AttachActor)
 	AttachToComponent(AttachActor, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weaponSocket"));
 	AddActorLocalOffset(AttachmentOffset);
 
+	//If weapon is in right handed mode and is picked up by left hand or the opposite swap weapon layout
 	if (IsLeftHand) {
-		AddActorLocalRotation(FRotator(0.f, 0.f, 180.f));
-		FVector newScale = GetActorRelativeScale3D();
-		newScale.Y *= -1;
-
-		SetActorRelativeScale3D(newScale);
-		UE_LOG(LogTemp, Display, TEXT("LEFT HAND"));
+		LeftHandGrab();
+	}
+	else {
+		RightHandGrab();
 	}
 	
 
@@ -312,4 +311,44 @@ void AWeaponBase::Select()
 void AWeaponBase::Deselect()
 {
 	Mesh->SetRenderCustomDepth(false);
+}
+
+
+void AWeaponBase::LeftHandGrab()
+{
+	AddActorLocalRotation(FRotator(0.f, 0.f, 180.f));
+
+	if (IsRightHanded) {
+		SwitchHand();
+	}
+}
+
+void AWeaponBase::RightHandGrab()
+{
+	if (!IsRightHanded) {
+		SwitchHand();
+	}
+}
+
+
+void AWeaponBase::SwitchHand()
+{
+	FVector newScale = GetActorRelativeScale3D();
+	newScale.Y *= -1;
+	SetActorRelativeScale3D(newScale);
+
+	newScale = LaserBeam->GetComponentScale();
+	newScale.Y *= -1;
+	LaserBeam->SetWorldScale3D(newScale);
+
+	FWidgetTransform newWidgetTranform = ReloadBarInstance->RenderTransform;
+	newWidgetTranform.Scale.X *= -1;
+	ReloadBarInstance->SetRenderTransform(FWidgetTransform(newWidgetTranform));
+
+	newWidgetTranform = AmmoBarInstance->RenderTransform;
+	newWidgetTranform.Scale.X *= -1;
+	AmmoBarInstance->SetRenderTransform(FWidgetTransform(newWidgetTranform));
+
+	IsRightHanded = !IsRightHanded;
+	UE_LOG(LogTemp, Display, TEXT("SwitchHand"));
 }

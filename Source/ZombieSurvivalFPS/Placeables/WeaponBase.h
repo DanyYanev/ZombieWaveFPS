@@ -95,6 +95,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UInteractableComponent* InteractableComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	bool IsRightHanded = true;
+
 	UFUNCTION()
 	void Fire();
 
@@ -121,6 +124,12 @@ public:
 
 	UFUNCTION()
 	void Deselect();
+
+	void SwitchHand();
+
+	void LeftHandGrab();
+
+	void RightHandGrab();
 
 private:
 
