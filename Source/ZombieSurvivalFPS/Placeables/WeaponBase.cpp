@@ -139,10 +139,10 @@ void AWeaponBase::Fire()
 
 		if (RV_Hit.IsValidBlockingHit()) {
 			if (IsValid(RV_Hit.GetActor())) {
-				AZombieBase* Target = Cast<AZombieBase>(RV_Hit.GetActor());
-				if (IsValid(Target)) {
-					UGameplayStatics::ApplyPointDamage(Target, Damage, GetActorLocation(), RV_Hit, NULL, this, NULL);
-				}
+				//AZombieBase* Target = Cast<AZombieBase>(RV_Hit.GetActor());
+				//if (IsValid(Target)) {
+					UGameplayStatics::ApplyPointDamage(RV_Hit.GetActor(), Damage, GetActorLocation(), RV_Hit, NULL, this, NULL);
+				//}
 			}
 		}
 	}

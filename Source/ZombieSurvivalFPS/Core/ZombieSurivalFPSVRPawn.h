@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "ZombieSurivalFPSVRPawn.generated.h"
 
 UCLASS()
@@ -134,5 +136,6 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 	UFUNCTION()
-	void QuitGame() { FGenericPlatformMisc::RequestExit(false); }
+		//void QuitGame() { UKismetSystemLibrary::QuitGame(GetWorld(), UGameplayStatics::GetPlayerController(GetWorld(), 0), EQuitPreference::Type::Quit, true); }
+		void QuitGame() { GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit"); }
 };

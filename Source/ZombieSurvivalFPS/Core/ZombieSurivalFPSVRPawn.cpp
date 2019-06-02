@@ -243,7 +243,7 @@ float AZombieSurivalFPSVRPawn::TakeDamage(float DamageAmount, FDamageEvent const
 
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.1);
 	
-	GetWorld()->GetTimerManager().SetTimer(SuicideTimerHandler, this, &AZombieSurivalFPSVRPawn::QuitGame, .2, false);
+	GetWorld()->GetTimerManager().SetTimer(SuicideTimerHandler, this, &AZombieSurivalFPSVRPawn::QuitGame, .2, true);
 
 	return 0.0f;
 }
