@@ -183,28 +183,7 @@ void AZombieSurvivalFPSGameMode::NextWave()
 		GetWorld()->GetTimerManager().SetTimer(CountdownTimerHandle, this, &AZombieSurvivalFPSGameMode::TickTimer, 1, true);
 	}
 	else {
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-
-		if (IsValid(PlayerController)) {
-			AHUD * HUD = PlayerController->GetHUD();
-
-			if (IsValid(HUD)) {
-				HUD->ShowHUD();
-			}
-			else {
-				UE_LOG(LogTemp, Error, TEXT("Hud cast failed"));
-			}
-
-			EndGameWidgetInstance->AddToViewport();
-
-			PlayerController->bShowMouseCursor = true;
-			PlayerController->bEnableClickEvents = true;
-			PlayerController->bEnableMouseOverEvents = true;
-
-		}
-		else {
-			UE_LOG(LogTemp, Error, TEXT("PlayerController is invalid"));
-		}
+		OnGameEnded(true);
 	}
 }
 
@@ -300,6 +279,10 @@ void AZombieSurvivalFPSGameMode::OnGameEnded(bool Won)
 
 	for (int i = 0; i < Zombies.Num(); i++) {
 		Zombies[i]->OnGameEnded(!Won);
+	}
+
+	if (IsValid(Scoreboard)) {
+		Scoreboard->OnGameEnded(Won);
 	}
 
 	/*

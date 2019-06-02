@@ -9,6 +9,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/ArrowComponent.h"
 
+#define HITBOX_CHANNEL ECollisionChannel::ECC_GameTraceChannel3
+
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
@@ -127,7 +129,7 @@ void AWeaponBase::Fire()
 			RV_Hit,
 			Start,
 			End,
-			ECollisionChannel::ECC_Visibility,
+			HITBOX_CHANNEL,
 			Params
 		);
 

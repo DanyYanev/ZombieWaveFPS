@@ -66,6 +66,9 @@ public:
 	UFUNCTION()
 	void Use();
 
+	UFUNCTION()
+	void OnGameEnded(bool Won);
+
 protected:
 	virtual void BeginPlay() override;
 

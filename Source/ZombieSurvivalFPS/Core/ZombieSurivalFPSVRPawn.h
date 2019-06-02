@@ -23,6 +23,10 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Mesh)
 	class UCameraComponent* Camera;
 
+	/** Player Head Hitbox*/
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Mesh)
+	class USphereComponent* Head;
+
 	/** Floating Pawn Movement Component*/
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	class UFloatingPawnMovement* MovementComponent;
@@ -104,6 +108,9 @@ private:
 	class UInteractableComponent* R_InteractableComponent;
 
 	class UInteractableComponent* L_InteractableComponent;
+
+	FTimerHandle SuicideTimerHandler;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -122,4 +129,10 @@ public:
 
 	UFUNCTION()
 	void L_OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
+
+	UFUNCTION()
+	void QuitGame() { FGenericPlatformMisc::RequestExit(false); }
 };

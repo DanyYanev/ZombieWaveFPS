@@ -122,3 +122,16 @@ void AScoreboard::Use()
 	}
 }
 
+void AScoreboard::OnGameEnded(bool Won)
+{
+	Wave->SetText(FText().FromString(FString("")));
+
+	if (Won) {
+		Countdown->SetText(TEXT("You won"));
+	}
+	else {
+		Countdown->SetText(TEXT("You lost"));
+	}
+	
+}
+

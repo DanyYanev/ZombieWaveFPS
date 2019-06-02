@@ -26,6 +26,9 @@ AZombieSurivalFPSVRPawn::AZombieSurivalFPSVRPawn()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(VROrigin);
 
+	Head = CreateDefaultSubobject<USphereComponent>(TEXT("HeadHitbox"));
+	Head->SetupAttachment(Camera);
+
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
 	MovementComponent->SetUpdatedComponent(RootComponent);
 
@@ -232,6 +235,17 @@ void AZombieSurivalFPSVRPawn::L_OverlapEnd(UPrimitiveComponent* OverlappedCompon
 	else {
 		L_InteractableComponent = NULL;
 	}
+}
+
+float AZombieSurivalFPSVRPawn::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	//You commited suicide
+
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.1);
+	
+	GetWorld()->GetTimerManager().SetTimer(SuicideTimerHandler, this, &AZombieSurivalFPSVRPawn::QuitGame, .2, false);
+
+	return 0.0f;
 }
 
 void AZombieSurivalFPSVRPawn::R_BeginUse()
