@@ -1,8 +1,9 @@
 # ZombieWaveFPS
 
+FPS VR game under <b>Unreal Engine</b> 
+
+
 Graduation Thesis at ELSYS
-
-
 
 ## Installation
 
