@@ -19,7 +19,7 @@ The whole documentation is in <b>Bulgarian</b>
 <i> The fun begins at chapter 3 </i>
 
 
-## Latest Code Metrics
+## Latest Code Metrics (Source code only)
 last updated 02.06.2019
 
       59 text files.
